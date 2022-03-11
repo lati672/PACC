@@ -1,6 +1,8 @@
 import 'dart:io';
 
 // Packages
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:file_picker/file_picker.dart';
@@ -27,6 +29,30 @@ class CloudStorageService {
       return await _task.then(
         (_result) => _result.ref.getDownloadURL(),
       );
+    } catch (error) {
+      debugPrint('$error');
+    }
+    return null;
+  }
+
+  Future<String?> saveDefaultUserImageProfileToStorage(String _uid) async {
+    try {
+      final _reference = _firebaseStorage.ref('images/users/$_uid/profile.jpg');
+      String img = 'assets/images/default-image.jpg';
+      String imageName = img
+          .substring(img.lastIndexOf("/"), img.lastIndexOf("."))
+          .replaceAll("/", "");
+
+      String path = img.substring(img.indexOf("/") + 1, img.lastIndexOf("/"));
+
+      final Directory systemTempDir = Directory.systemTemp;
+      final byteData = await rootBundle.load(img);
+      final file = File('${systemTempDir.path}/$imageName.jpg');
+      await file.writeAsBytes(byteData.buffer
+          .asUint8List(byteData.offsetInBytes, byteData.lengthInBytes));
+      TaskSnapshot taskSnapshot = await _reference.putFile(file);
+      final String downloadUrl = await taskSnapshot.ref.getDownloadURL();
+      return downloadUrl;
     } catch (error) {
       debugPrint('$error');
     }

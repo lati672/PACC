@@ -115,11 +115,12 @@ class _RegisterPageState extends State<RegisterPage> {
       onTap: () =>
           GetIt.instance.get<MediaService>().pickImageFromLibrary().then(
         (_file) {
-          setState(
-            () {
-              _profileImage = _file;
-            },
-          );
+          if (_file != null)
+            setState(
+              () {
+                _profileImage = _file;
+              },
+            );
         },
       ),
       child: () {
@@ -132,14 +133,19 @@ class _RegisterPageState extends State<RegisterPage> {
           );
         } else {
           // Default Image
-
+          return RoundedAssetImage(
+            key: UniqueKey(),
+            image: 'assets/images/default-image.jpg',
+            size: _deviceHeight * .15,
+          );
+          /*
           return RoundedImageNetwork(
             key: UniqueKey(),
             size: _deviceHeight * .15,
             //imagePath: '../image/default-profile-icon-24.jpg'
             imagePath:
                 'https://icon-library.com/images/default-profile-icon/default-profile-icon-24.jpg', //'http://i.pravatar.cc/1000?img=65',
-          );
+          );*/
         }
       }(),
     );
@@ -234,8 +240,7 @@ class _RegisterPageState extends State<RegisterPage> {
       height: _deviceHeight * .075,
       onPress: () async {
         //print('button clicked');
-        if (_registerFormKey.currentState!.validate() &&
-            _profileImage != null) {
+        if (_registerFormKey.currentState!.validate()) {
           //* Saving the input
           _registerFormKey.currentState!.save();
           //* Register user in the Firebase Authentication
@@ -245,18 +250,24 @@ class _RegisterPageState extends State<RegisterPage> {
           );
           //print('regist completed');
           //* Upload the user image to the Firebase Storage
-          final _imageUrl =
-              await _cloudStorageService.saveUserImageProfileToStorage(
-            _uid!,
-            _profileImage!,
-          );
+          final _imageUrl;
+          if (_profileImage != null) {
+            _imageUrl =
+                await _cloudStorageService.saveUserImageProfileToStorage(
+              _uid!,
+              _profileImage!,
+            );
+          } else {
+            _imageUrl = await _cloudStorageService
+                .saveDefaultUserImageProfileToStorage(_uid!);
+          }
           // Go to database to create user with uid
           //print('image uploaded');
           await _database.createUser(
             _uid,
             _email!,
             _name!,
-            _imageUrl!,
+            _imageUrl,
             isChecked ? 'Student' : 'Parent',
           );
           //print('user created');

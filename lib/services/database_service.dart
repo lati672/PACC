@@ -211,4 +211,18 @@ class DatabaseService {
       debugPrint('$error');
     }
   }
+
+  //
+  Future<String> getRoleBySenderID(String senderid) async {
+    try {
+      return await _dataBase
+          .collection(userCollection)
+          .doc(senderid)
+          .get()
+          .then((value) => value.toString());
+    } catch (error) {
+      debugPrint('$error');
+      throw ('error');
+    }
+  }
 }

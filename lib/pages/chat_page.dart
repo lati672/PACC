@@ -1,8 +1,10 @@
 // Packages
 import 'package:chatifyapp/models/chat_message_model.dart';
+import 'package:chatifyapp/pages/checkwhitelist_page.dart';
 import 'package:chatifyapp/pages/home_page.dart';
 import 'package:chatifyapp/pages/whitelist_page.dart';
 import 'package:chatifyapp/providers/chat_page_provider.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:provider/provider.dart';
@@ -17,7 +19,8 @@ import '../models/chats_model.dart';
 // Providers
 import '../providers/authentication_provider.dart';
 import '../providers/chat_page_provider.dart';
-
+// Services
+import '../services/database_service.dart';
 import '../services/navigation_service.dart';
 
 class ChatPage extends StatefulWidget {
@@ -33,6 +36,7 @@ class _ChatPageState extends State<ChatPage> {
   final TextEditingController _textController = new TextEditingController();
   late double _deviceWidth;
   late double _deviceHeight;
+  late DatabaseService _database;
 
   late AuthenticationProvider _auth;
   late ChatPageProvider _pageProvider;
@@ -53,6 +57,7 @@ class _ChatPageState extends State<ChatPage> {
   @override
   Widget build(BuildContext context) {
     // * Initializations
+    _database = GetIt.instance.get<DatabaseService>();
     _deviceWidth = MediaQuery.of(context).size.width;
     _deviceHeight = MediaQuery.of(context).size.height;
     _auth = Provider.of<AuthenticationProvider>(context);
@@ -143,7 +148,7 @@ class _ChatPageState extends State<ChatPage> {
                                   MaterialPageRoute(
                                     builder: (context) => WhiteListPage(),
                                   ));
-                              print('result: $result');
+                              //print('result: $result');
                               if (result != null) {
                                 _pageProvider.sendWhiteList(result);
                                 print(_pageProvider.getchatid());
@@ -204,38 +209,6 @@ class _ChatPageState extends State<ChatPage> {
     return whitelist.split(',');
   }
 
-  Widget _getModalSheetHeaderWithConfirm(String title, {onCancel, onConfirm}) {
-    return SizedBox(
-      height: 50,
-      child: Row(
-        children: [
-          IconButton(
-            icon: Icon(Icons.close),
-            onPressed: () {
-              onCancel();
-            },
-          ),
-          Expanded(
-            child: Center(
-              child: Text(
-                title,
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16.0),
-              ),
-            ),
-          ),
-          IconButton(
-              icon: Icon(
-                Icons.check,
-                color: Colors.blue,
-              ),
-              onPressed: () {
-                onConfirm();
-              }),
-        ],
-      ),
-    );
-  }
-
 // * Rendenring Messages from Firebase
   Widget _messagesListView() {
     if (_pageProvider.messages != null) {
@@ -266,51 +239,30 @@ class _ChatPageState extends State<ChatPage> {
                   {
                     List<String> appList = decodewhitelist(_message.content);
                     print('applist: $appList');
-                    return Container();
-                    /*return Column(
-                      children: [
-                        _getModalSheetHeaderWithConfirm('白名单'),
-                        Divider(height: 1.0),
-                        Expanded(
-                          child: ListView.builder(
-                            itemBuilder: (BuildContext context, int index) {
-                              return ListTile(
-                                trailing: Icon(
-                                    selected.contains(index)
-                                        ? Icons.check_box
-                                        : Icons.check_box_outline_blank,
-                                    color: Theme.of(context).primaryColor),
-                                title: Text(appList[index]),
-                                onTap: () {
-                                  setState(() {
-                                    if (selected.contains(index)) {
-                                      selected.remove(index);
-                                    } else {
-                                      selected.add(index);
-                                    }
-                                  });
-                                },
-                              );
-                            },
-                            itemCount: appList.length,
-                          ),
-                        )
-                      ],
-                    );
-                    return 
-                    
-                    
-                    return ListView.builder(
-                      itemCount: applist.length,
-                      itemBuilder: (context, index) {
-                        return GestureDetector(
-                            onTap: () {},
-                            child: Container(
-                                height: 10.0,
-                                margin: EdgeInsets.all(10),
-                                child: Text(applist[index])));
+
+                    return ElevatedButton.icon(
+                      icon: _auth.user.role == 'Student'
+                          ? Icon(Icons.send)
+                          : Icon(Icons.ac_unit),
+                      label: _auth.user.role == 'Parent'
+                          ? Text("家长审核白名单")
+                          : Text("学生查看白名单"),
+                      onPressed: () async {
+                        final result = await Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => CheckWhiteListPage(
+                                applist: appList,
+                                role: _auth.user.role,
+                              ),
+                            ));
+                        print('result:  $result');
+                        if (result != null) {
+                          _pageProvider.sendWhiteList(result);
+                          print(_pageProvider.getchatid());
+                        }
                       },
-                    );*/
+                    );
                   }
 
                 default:

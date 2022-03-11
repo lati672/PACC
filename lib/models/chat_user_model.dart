@@ -28,15 +28,7 @@ class ChatUserModel {
     );
   }
 
-  Map<String, dynamic> toMap() {
-    return {
-      'name': name,
-      'email': email,
-      'image': imageUrl,
-      'role': role,
-      'last_active': lastActive,
-    };
-  }
+  
 
   String lastDayActive() {
     return '${lastActive.month}/${lastActive.day}/${lastActive.year}';

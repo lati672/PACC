@@ -35,6 +35,36 @@ class RoundedImageNetwork extends StatelessWidget {
   }
 }
 
+class RoundedAssetImage extends StatelessWidget {
+  const RoundedAssetImage({
+    Key? key,
+    required this.image,
+    required this.size,
+  }) : super(key: key);
+
+  final String image;
+  final double size;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: size,
+      height: size,
+      decoration: BoxDecoration(
+        color: Colors.black,
+        borderRadius: BorderRadius.all(
+          Radius.circular(size),
+        ),
+        image: DecorationImage(
+          fit: BoxFit.cover,
+          image: AssetImage(
+            image,
+          ),
+        ),
+      ),
+    );
+  }
+}
 // TODO: Colocar um icon de camera no profile screen
 
 class RoundedImageFile extends StatelessWidget {

@@ -123,7 +123,7 @@ class _ChatsPageState extends State<ChatsPage> {
           } else {
             return const Center(
               child: Text(
-                'No Chats Found.',
+                '没有进行的聊天',
                 style: TextStyle(
                   color: Colors.white,
                 ),
