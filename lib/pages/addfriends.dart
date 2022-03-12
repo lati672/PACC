@@ -22,19 +22,25 @@ class AddFriendsPage extends StatefulWidget {
 }
 
 class _AddFriendsPageState extends State<AddFriendsPage> {
-  final TextEditingController _textController = new TextEditingController();
-  bool _isComposing = false;
+  final TextEditingController _textController1 = new TextEditingController();
+  final TextEditingController _textController2 = new TextEditingController();
+  bool _isComposing1 = false;
+  bool _isComposing2 = false;
   List<Text> AlertTitle = [
     Text('用户未找到'),
     Text('不能与自己建立聊天'),
     Text('成功添加聊天'),
-    Text('聊天已经存在')
+    Text('聊天已经存在'),
+    Text('用户未找到'),
+    Text('不能与自己建立聊天'),
   ];
   List<Text> AlertContent = [
     Text('请输入正确的邮箱'),
     Text('请输入正确的邮箱'),
     Text('成功'),
-    Text('不能重复添加聊天')
+    Text('不能重复添加聊天'),
+    Text('请输入正确的用户名'),
+    Text('请输入正确的用户名')
   ];
   // Responsive UI for diferent devices
   late DatabaseService _database;
@@ -77,7 +83,8 @@ class _AddFriendsPageState extends State<AddFriendsPage> {
                   ),
                 ),
               ),
-              _buildTextComposer(),
+              _AddFriendbyEmail(),
+              _AddFriendbyName(),
             ],
           ),
         ),
@@ -85,13 +92,23 @@ class _AddFriendsPageState extends State<AddFriendsPage> {
     );
   }
 
-  void _handleSubmitted(text) {
-    print(_textController.text);
-    addfriends();
+  void _handleSubmitted1(text) {
+    print(_textController1.text);
+    addfriend(1);
 
-    _textController.clear();
+    _textController1.clear();
     setState(() {
-      _isComposing = false;
+      _isComposing1 = false;
+    });
+  }
+
+  void _handleSubmitted2(text) {
+    print(_textController2.text);
+    addfriend(2);
+
+    _textController2.clear();
+    setState(() {
+      _isComposing2 = false;
     });
   }
 
@@ -116,13 +133,18 @@ class _AddFriendsPageState extends State<AddFriendsPage> {
     );
   }
 
-  Future<String> getUserList() async {
+  Future<String> getUserList(int type) async {
     QuerySnapshot qshot;
 
     print('getting list');
-    qshot = await _database.getUserbyEmail(_textController.text);
-    if (qshot.size == 0) {
+    if (type == 1)
+      qshot = await _database.getUserbyEmail(_textController1.text);
+    else
+      qshot = await _database.getUserbyName(_textController2.text);
+    if (qshot.size == 0 && type == 1) {
       _showAlert(context, 0);
+    } else if (qshot.size == 0 && type == 2) {
+      _showAlert(context, 4);
     }
     List<ChatUserModel> l = qshot.docs
         .map((e) => ChatUserModel(
@@ -136,21 +158,27 @@ class _AddFriendsPageState extends State<AddFriendsPage> {
     return l[0].uid;
   }
 
-  void addfriends() async {
-    print('adding friends');
-    String friendid = await getUserList();
-    if (_auth.user.uid == friendid) {
+  //type=1:email;type=2:name
+  void addfriend(int type) async {
+    print('adding friends based on type: $type');
+    String friendid = await getUserList(type);
+    if (_auth.user.uid == friendid && type == 1) {
       _showAlert(context, 1);
+      return;
+    } else if (_auth.user.uid == friendid && type == 2) {
+      _showAlert(context, 5);
+      return;
+    }
+    if (await _database.checkChatexist(_auth.user.uid, friendid)) {
+      _showAlert(context, 3);
       return;
     }
     List<String> usersid = new List.from([_auth.user.uid, friendid]);
-    //print(_auth.user.name);
-    //print(friendid);
     await _database.createChat(_auth.user.uid, true, false, usersid);
     _showAlert(context, 2);
   }
 
-  Widget _buildTextComposer() {
+  Widget _AddFriendbyEmail() {
     return IconTheme(
         data: IconThemeData(color: Theme.of(context).accentColor),
         child: Container(
@@ -158,13 +186,13 @@ class _AddFriendsPageState extends State<AddFriendsPage> {
             child: Row(children: <Widget>[
               Flexible(
                   child: TextField(
-                controller: _textController,
+                controller: _textController1,
                 onChanged: (String text) {
                   setState(() {
-                    _isComposing = text.length > 0;
+                    _isComposing1 = text.length > 0;
                   });
                 },
-                onSubmitted: _handleSubmitted,
+                onSubmitted: _handleSubmitted1,
                 decoration: const InputDecoration(
                     filled: true, fillColor: Colors.white, hintText: '输入邮箱'),
               )),
@@ -172,8 +200,37 @@ class _AddFriendsPageState extends State<AddFriendsPage> {
                 margin: const EdgeInsets.symmetric(horizontal: 4.0),
                 child: IconButton(
                     icon: const Icon(Icons.send),
-                    onPressed: _isComposing
-                        ? () => _handleSubmitted(_textController.text)
+                    onPressed: _isComposing1
+                        ? () => _handleSubmitted1(_textController1.text)
+                        : null),
+              )
+            ])));
+  }
+
+  Widget _AddFriendbyName() {
+    return IconTheme(
+        data: IconThemeData(color: Theme.of(context).accentColor),
+        child: Container(
+            margin: const EdgeInsets.symmetric(horizontal: 8.0),
+            child: Row(children: <Widget>[
+              Flexible(
+                  child: TextField(
+                controller: _textController2,
+                onChanged: (String text) {
+                  setState(() {
+                    _isComposing2 = text.length > 0;
+                  });
+                },
+                onSubmitted: _handleSubmitted2,
+                decoration: const InputDecoration(
+                    filled: true, fillColor: Colors.white, hintText: '输入用户名'),
+              )),
+              Container(
+                margin: const EdgeInsets.symmetric(horizontal: 4.0),
+                child: IconButton(
+                    icon: const Icon(Icons.send),
+                    onPressed: _isComposing2
+                        ? () => _handleSubmitted2(_textController2.text)
                         : null),
               )
             ])));

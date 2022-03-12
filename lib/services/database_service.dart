@@ -38,6 +38,7 @@ class DatabaseService {
     }
   }
 
+  // Create a new chat for the users and add a initial hello text message
   Future<void> createChat(String _currentuserUid, bool _activity, bool _group,
       List<String> _members) async {
     try {
@@ -54,6 +55,7 @@ class DatabaseService {
     }
   }
 
+  // Create a new whitelist, currently not using
   Future<void> createwhitelist(String _from, String _to, List<String> _appname,
       List<bool> _check) async {
     try {
@@ -80,10 +82,12 @@ class DatabaseService {
     return _dataBase.collection(userCollection).doc(_uid).get();
   }
 
+  //Getting all the Users
   Future<QuerySnapshot> getUsers() async {
     return _dataBase.collection(userCollection).get();
   }
 
+  // Getting user by email
   Future<QuerySnapshot> getUserbyEmail(String email) async {
     print('getting users by email');
     QuerySnapshot qshot = await _dataBase
@@ -93,11 +97,29 @@ class DatabaseService {
     return qshot;
   }
 
+  //Getting user by name
   Future<QuerySnapshot> getUserbyName(String name) async {
-    return _dataBase
+    print('getting users by name');
+    QuerySnapshot qshot = await _dataBase
         .collection(userCollection)
         .where('name', isEqualTo: name)
         .get();
+    return qshot;
+  }
+
+  // query the result of whether the chat exist or not
+  Future<bool> checkChatexist(String uid1, String uid2) async {
+    QuerySnapshot qshot = await _dataBase
+        .collection(chatCollection)
+        .where('members', arrayContains: uid1)
+        .get();
+    List<dynamic> l = qshot.docs.map((e) => e.get('members')).toList();
+    for (var i = 0; i < l.length; i++) {
+      if (l[i].contains(uid2)) {
+        return true;
+      }
+    }
+    return false;
   }
 
 //* Getting the chats from the users
