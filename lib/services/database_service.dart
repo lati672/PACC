@@ -82,6 +82,15 @@ class DatabaseService {
     return _dataBase.collection(userCollection).doc(_uid).get();
   }
 
+//left some problems
+  Future<String> getUserRole(String _uid) async {
+    print('getting user role: $_uid');
+    await _dataBase.collection(userCollection).doc(_uid).get().then((value) {
+      return value.data()!['role'];
+    });
+    return "Student";
+  }
+
   //Getting all the Users
   Future<QuerySnapshot> getUsers() async {
     return _dataBase.collection(userCollection).get();
@@ -89,7 +98,7 @@ class DatabaseService {
 
   // Getting user by email
   Future<QuerySnapshot> getUserbyEmail(String email) async {
-    print('getting users by email');
+    //print('getting users by email');
     QuerySnapshot qshot = await _dataBase
         .collection(userCollection)
         .where('email', isEqualTo: email)
@@ -143,6 +152,17 @@ class DatabaseService {
           'sent_time',
           descending: true,
         )
+        .limit(1)
+        .get();
+  }
+
+  Future<QuerySnapshot> getLatestWhitelist(String _chatId) async {
+    return await _dataBase
+        .collection(chatCollection)
+        .doc(_chatId)
+        .collection(messagesCollection)
+        .orderBy('sent_time', descending: false)
+        .where('type', isEqualTo: 'whitelist')
         .limit(1)
         .get();
   }
@@ -234,7 +254,7 @@ class DatabaseService {
     }
   }
 
-  //
+  //literally the function name
   Future<String> getRoleBySenderID(String senderid) async {
     try {
       return await _dataBase

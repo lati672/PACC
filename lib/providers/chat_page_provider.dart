@@ -4,6 +4,7 @@ import 'dart:async';
 import 'package:chatifyapp/models/chat_message_model.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
+import 'package:file_picker/file_picker.dart';
 
 // Services
 import '../services/database_service.dart';
@@ -13,7 +14,7 @@ import '../services/navigation_service.dart';
 
 // Providers
 import '../providers/authentication_provider.dart';
-
+import 'package:provider/provider.dart';
 // Models
 
 class ChatPageProvider extends ChangeNotifier {
@@ -28,7 +29,7 @@ class ChatPageProvider extends ChangeNotifier {
   late CloudStorageService _storage;
   late MediaService _media;
   late NavigationService _navigation;
-
+  late CloudStorageService _cloudStorageService;
   final AuthenticationProvider _auth;
   final ScrollController _messagesListViewController;
 
@@ -36,7 +37,7 @@ class ChatPageProvider extends ChangeNotifier {
   List<ChatMessage>? messages;
 
   late StreamSubscription _messagesStream;
-
+  PlatformFile? _ChatImage;
   String? _message;
 
   String get message => _message as String;
@@ -112,13 +113,18 @@ class ChatPageProvider extends ChangeNotifier {
 
   // * IMAGE messages
   void sendImageMessage() async {
+    _cloudStorageService = GetIt.instance.get<CloudStorageService>();
     try {
-      final _file = await _media.pickImageFromLibrary();
-      if (_file != null) {
+      print('start fetch image');
+
+      _ChatImage =
+          await GetIt.instance.get<MediaService>().pickImageFromLibrary();
+
+      if (_ChatImage != null) {
         final downloadUrl = await _storage.saveChatImageToStorage(
           _chatId,
           _auth.user.uid,
-          _file,
+          _ChatImage!,
         );
         final _messageToSend = ChatMessage(
           senderID: _auth.user.uid,

@@ -128,7 +128,7 @@ class MainActivity : FlutterActivity() {
     }
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
-    public override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent) {
+    public override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == MY_PERMISSIONS_REQUEST_PACKAGE_USAGE_STATS) {
             Log.i("TAG", "top running app is : " + hasPermission())

@@ -72,7 +72,6 @@ class CloudStorageService {
       UploadTask _task = _reference.putFile(
         File(_file.path as String),
       );
-
       //* Returning the photo url
       return await _task.then(
         (_result) => _result.ref.getDownloadURL(),

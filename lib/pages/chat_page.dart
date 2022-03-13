@@ -8,6 +8,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:provider/provider.dart';
+import 'package:file_picker/file_picker.dart';
 
 // Widgets
 import '../widgets/top_bar.dart';
@@ -19,9 +20,13 @@ import '../models/chats_model.dart';
 // Providers
 import '../providers/authentication_provider.dart';
 import '../providers/chat_page_provider.dart';
+import 'package:provider/provider.dart';
+
 // Services
 import '../services/database_service.dart';
 import '../services/navigation_service.dart';
+import '../services/media_service.dart';
+import '../services/cloud_storage_service.dart';
 
 class ChatPage extends StatefulWidget {
   const ChatPage({Key? key, required this.chat}) : super(key: key);
@@ -37,7 +42,7 @@ class _ChatPageState extends State<ChatPage> {
   late double _deviceWidth;
   late double _deviceHeight;
   late DatabaseService _database;
-
+  PlatformFile? _profileImage;
   late AuthenticationProvider _auth;
   late ChatPageProvider _pageProvider;
   late NavigationService _navigation;
@@ -65,7 +70,7 @@ class _ChatPageState extends State<ChatPage> {
 
     return GestureDetector(
         onTap: () {
-          print('ontap');
+          //print('ontap');
           FocusScopeNode currentFocus = FocusScope.of(context);
           if (!currentFocus.hasPrimaryFocus) {
             currentFocus.unfocus();
@@ -134,7 +139,10 @@ class _ChatPageState extends State<ChatPage> {
                       children: [
                         IconButton(
                             iconSize: 20.0,
-                            onPressed: () {},
+                            onPressed: () {
+                              _pageProvider.sendImageMessage();
+                              print('successfully sent an image');
+                            },
                             icon: const Icon(
                               Icons.image_sharp,
                               color: Colors.white,
@@ -151,7 +159,7 @@ class _ChatPageState extends State<ChatPage> {
                               //print('result: $result');
                               if (result != null) {
                                 _pageProvider.sendWhiteList(result);
-                                print(_pageProvider.getchatid());
+                                //print(_pageProvider.getchatid());
                               }
                             },
                             icon: const Icon(
@@ -234,11 +242,13 @@ class _ChatPageState extends State<ChatPage> {
                           .first,
                     );
                   }
-
+                case MessageType.image:
+                  {
+                    return Image.network(_message.content);
+                  }
                 case MessageType.whitelist:
                   {
                     List<String> appList = decodewhitelist(_message.content);
-                    print('applist: $appList');
 
                     return ElevatedButton.icon(
                       icon: _auth.user.role == 'Student'

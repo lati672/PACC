@@ -136,11 +136,11 @@ class _CheckWhiteListPageState extends State<CheckWhiteListPage> {
                       return StatefulBuilder(builder: (context1, setState) {
                         return Container(
                           clipBehavior: Clip.antiAlias,
-                          decoration: BoxDecoration(
+                          decoration: const BoxDecoration(
                             color: Colors.white,
                             borderRadius: BorderRadius.only(
-                              topLeft: const Radius.circular(20.0),
-                              topRight: const Radius.circular(20.0),
+                              topLeft: Radius.circular(20.0),
+                              topRight: Radius.circular(20.0),
                             ),
                           ),
                           height: MediaQuery.of(context).size.height / 2.0,

@@ -7,17 +7,17 @@ class UsersPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("用户"),
+        title: const Text("用户"),
         centerTitle: true,
       ),
       body: StreamBuilder<QuerySnapshot>(
         stream: db.collection('Users').snapshots(),
         builder: (context, snapshot) {
           if (!snapshot.hasData) {
-            return Center(
+            return const Center(
               child: CircularProgressIndicator(),
             );
-          } else
+          } else {
             return ListView(
               children: snapshot.data!.docs.map((doc) {
                 return Card(
@@ -30,6 +30,7 @@ class UsersPage extends StatelessWidget {
                 );
               }).toList(),
             );
+          }
         },
       ),
     );

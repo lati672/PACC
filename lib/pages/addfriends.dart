@@ -22,10 +22,11 @@ class AddFriendsPage extends StatefulWidget {
 }
 
 class _AddFriendsPageState extends State<AddFriendsPage> {
-  final TextEditingController _textController1 = new TextEditingController();
-  final TextEditingController _textController2 = new TextEditingController();
-  bool _isComposing1 = false;
-  bool _isComposing2 = false;
+  final TextEditingController _EmailtextController =
+      new TextEditingController();
+  final TextEditingController _NametextController = new TextEditingController();
+  bool _EmailisComposing = false;
+  bool _NameisComposing = false;
   List<Text> AlertTitle = [
     Text('用户未找到'),
     Text('不能与自己建立聊天'),
@@ -92,23 +93,23 @@ class _AddFriendsPageState extends State<AddFriendsPage> {
     );
   }
 
-  void _handleSubmitted1(text) {
-    print(_textController1.text);
+  void _EmailhandleSubmitted(text) {
+    print(_EmailtextController.text);
     addfriend(1);
 
-    _textController1.clear();
+    _EmailtextController.clear();
     setState(() {
-      _isComposing1 = false;
+      _EmailisComposing = false;
     });
   }
 
-  void _handleSubmitted2(text) {
-    print(_textController2.text);
+  void _NamehandleSubmitted(text) {
+    print(_NametextController.text);
     addfriend(2);
 
-    _textController2.clear();
+    _NametextController.clear();
     setState(() {
-      _isComposing2 = false;
+      _NameisComposing = false;
     });
   }
 
@@ -118,7 +119,7 @@ class _AddFriendsPageState extends State<AddFriendsPage> {
       content: AlertContent[AlertType],
       actions: [
         FlatButton(
-            child: Text("确认"),
+            child: const Text("确认"),
             onPressed: () {
               _navigation.goBack();
             })
@@ -137,10 +138,11 @@ class _AddFriendsPageState extends State<AddFriendsPage> {
     QuerySnapshot qshot;
 
     print('getting list');
-    if (type == 1)
-      qshot = await _database.getUserbyEmail(_textController1.text);
-    else
-      qshot = await _database.getUserbyName(_textController2.text);
+    if (type == 1) {
+      qshot = await _database.getUserbyEmail(_EmailtextController.text);
+    } else {
+      qshot = await _database.getUserbyName(_NametextController.text);
+    }
     if (qshot.size == 0 && type == 1) {
       _showAlert(context, 0);
     } else if (qshot.size == 0 && type == 2) {
@@ -162,19 +164,24 @@ class _AddFriendsPageState extends State<AddFriendsPage> {
   void addfriend(int type) async {
     print('adding friends based on type: $type');
     String friendid = await getUserList(type);
+    //Email,the friend id is same as the user id
     if (_auth.user.uid == friendid && type == 1) {
       _showAlert(context, 1);
       return;
-    } else if (_auth.user.uid == friendid && type == 2) {
+    }
+    //Name, the friend id is same as the user id
+    else if (_auth.user.uid == friendid && type == 2) {
       _showAlert(context, 5);
       return;
     }
+    // the chat already exist
     if (await _database.checkChatexist(_auth.user.uid, friendid)) {
       _showAlert(context, 3);
       return;
     }
     List<String> usersid = new List.from([_auth.user.uid, friendid]);
     await _database.createChat(_auth.user.uid, true, false, usersid);
+    //successfully created the chat
     _showAlert(context, 2);
   }
 
@@ -186,13 +193,13 @@ class _AddFriendsPageState extends State<AddFriendsPage> {
             child: Row(children: <Widget>[
               Flexible(
                   child: TextField(
-                controller: _textController1,
+                controller: _EmailtextController,
                 onChanged: (String text) {
                   setState(() {
-                    _isComposing1 = text.length > 0;
+                    _EmailisComposing = text.length > 0;
                   });
                 },
-                onSubmitted: _handleSubmitted1,
+                onSubmitted: _EmailhandleSubmitted,
                 decoration: const InputDecoration(
                     filled: true, fillColor: Colors.white, hintText: '输入邮箱'),
               )),
@@ -200,8 +207,8 @@ class _AddFriendsPageState extends State<AddFriendsPage> {
                 margin: const EdgeInsets.symmetric(horizontal: 4.0),
                 child: IconButton(
                     icon: const Icon(Icons.send),
-                    onPressed: _isComposing1
-                        ? () => _handleSubmitted1(_textController1.text)
+                    onPressed: _EmailisComposing
+                        ? () => _EmailhandleSubmitted(_EmailtextController.text)
                         : null),
               )
             ])));
@@ -215,13 +222,13 @@ class _AddFriendsPageState extends State<AddFriendsPage> {
             child: Row(children: <Widget>[
               Flexible(
                   child: TextField(
-                controller: _textController2,
+                controller: _NametextController,
                 onChanged: (String text) {
                   setState(() {
-                    _isComposing2 = text.length > 0;
+                    _NameisComposing = text.length > 0;
                   });
                 },
-                onSubmitted: _handleSubmitted2,
+                onSubmitted: _NamehandleSubmitted,
                 decoration: const InputDecoration(
                     filled: true, fillColor: Colors.white, hintText: '输入用户名'),
               )),
@@ -229,8 +236,8 @@ class _AddFriendsPageState extends State<AddFriendsPage> {
                 margin: const EdgeInsets.symmetric(horizontal: 4.0),
                 child: IconButton(
                     icon: const Icon(Icons.send),
-                    onPressed: _isComposing2
-                        ? () => _handleSubmitted2(_textController2.text)
+                    onPressed: _NameisComposing
+                        ? () => _NamehandleSubmitted(_NametextController.text)
                         : null),
               )
             ])));
