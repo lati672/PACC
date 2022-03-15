@@ -58,6 +58,7 @@ class _ChatsPageState extends State<ChatsPage> {
   }
 
   Widget _buildUI() {
+    //print('in chat page the role is ${_auth.user.role}');
     return Builder(
       builder: (_context) {
         //* Triggers the info in the widgets to render themselves
@@ -75,7 +76,7 @@ class _ChatsPageState extends State<ChatsPage> {
             mainAxisSize: MainAxisSize.max,
             children: [
               TopBar(
-                'Chats',
+                'Chats' + (_auth.user.role == 'Student' ? '学生端' : '家长端'),
                 primaryAction: IconButton(
                   onPressed: () {
                     // * Logout the user if he/she presses the button icon

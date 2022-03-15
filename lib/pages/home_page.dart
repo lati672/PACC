@@ -1,10 +1,15 @@
 // Packages
 import 'package:chatifyapp/pages/settings.dart';
+import 'package:chatifyapp/pages/user_profile_page.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 // Pages
 import '../pages/chats_page.dart';
 import 'package:chatifyapp/pages/users_page.dart';
+
+//Provider
+import '../providers/authentication_provider.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -16,15 +21,17 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   // Page index
   int _currentPage = 0;
+  late AuthenticationProvider _auth;
   // * Pages to display and navigate
   final List<Widget> _pages = [
     const ChatsPage(),
     UsersPage(),
-    SettingPage(),
+    UserProfilePage()
   ];
 
   @override
   Widget build(BuildContext context) {
+    _auth = Provider.of<AuthenticationProvider>(context);
     return _buildUI();
   }
 
@@ -35,7 +42,7 @@ class _HomePageState extends State<HomePage> {
         currentIndex: _currentPage,
         items: const [
           BottomNavigationBarItem(
-            label: 'CHATS',
+            label: 'ChATS',
             icon: Icon(
               Icons.chat_bubble_sharp,
             ),
@@ -47,9 +54,9 @@ class _HomePageState extends State<HomePage> {
             ),
           ),
           BottomNavigationBarItem(
-            label: 'SETTINGS',
+            label: 'USERPROFILE',
             icon: Icon(
-              Icons.settings,
+              Icons.account_circle_rounded,
             ),
           ),
         ],

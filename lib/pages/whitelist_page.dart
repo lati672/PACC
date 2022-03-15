@@ -97,7 +97,7 @@ class _WhiteListPageState extends State<WhiteListPage> {
       },
     );
     Widget continueButton = FlatButton(
-        child: Text("确定"),
+        child: const Text("确定"),
         onPressed: () {
           is_sent = true;
           _navigation.goBack();
@@ -107,8 +107,8 @@ class _WhiteListPageState extends State<WhiteListPage> {
         });
     // set up the AlertDialog
     AlertDialog alert = AlertDialog(
-      title: Text("确认"),
-      content: Text("请问确定要发送白名单吗?"),
+      title: const Text("确认"),
+      content: const Text("请问确定要发送白名单吗?"),
       actions: [
         cancelButton,
         continueButton,
@@ -168,7 +168,7 @@ class _WhiteListPageState extends State<WhiteListPage> {
                       return StatefulBuilder(builder: (context1, setState) {
                         return Container(
                           clipBehavior: Clip.antiAlias,
-                          decoration: BoxDecoration(
+                          decoration: const BoxDecoration(
                             color: Colors.white,
                             borderRadius: BorderRadius.only(
                               topLeft: const Radius.circular(20.0),
@@ -192,13 +192,13 @@ class _WhiteListPageState extends State<WhiteListPage> {
                                 Navigator.pop(context, str);
 
                                 showAlertDialog(context);
-                                print(tmp);
-                                print(str);
+                                //print(tmp);
+                                //print(str);
 
                                 //print('printing list$selected.toList()');
                               },
                             ),
-                            Divider(height: 1.0),
+                            const Divider(height: 1.0),
                             Expanded(
                               child: ListView.builder(
                                 itemBuilder: (BuildContext context, int index) {
@@ -229,7 +229,7 @@ class _WhiteListPageState extends State<WhiteListPage> {
                     },
                   );
                 },
-                child: Text("白名单选择"),
+                child: const Text("白名单选择"),
               ),
               RaisedButton(
                 onPressed: () {
@@ -241,7 +241,7 @@ class _WhiteListPageState extends State<WhiteListPage> {
                       return StatefulBuilder(builder: (context1, setState) {
                         return Container(
                           clipBehavior: Clip.antiAlias,
-                          decoration: BoxDecoration(
+                          decoration: const BoxDecoration(
                             color: Colors.white,
                             borderRadius: BorderRadius.only(
                               topLeft: const Radius.circular(20.0),
@@ -259,21 +259,13 @@ class _WhiteListPageState extends State<WhiteListPage> {
                                 Navigator.of(context).pop(selected.toList());
                               },
                             ),
-                            Divider(height: 1.0),
+                            const Divider(height: 1.0),
                             Expanded(
                               child: ListView.builder(
                                 itemBuilder: (BuildContext context, int index) {
                                   return ListTile(
-                                    // trailing: Icon(
-                                    //     selected.contains(index)
-                                    //         ? Icons.check_box
-                                    //         : Icons.check_box_outline_blank,
-                                    //     color: Theme.of(context).primaryColor),
                                     title: Text(appList[index]),
-                                    onTap: () {
-                                      // 获取对应应用程序的包名
-                                      // 跳转其他APP
-                                    },
+                                    onTap: () {},
                                   );
                                 },
                                 itemCount: appList.length,
@@ -285,7 +277,7 @@ class _WhiteListPageState extends State<WhiteListPage> {
                     },
                   );
                 },
-                child: Text("打开其他APP"),
+                child: const Text("打开其他APP"),
               ),
             ],
           ),
@@ -301,7 +293,7 @@ Widget _getModalSheetHeaderWithConfirm(String title, {onCancel, onConfirm}) {
     child: Row(
       children: [
         IconButton(
-          icon: Icon(Icons.close),
+          icon: const Icon(Icons.close),
           onPressed: () {
             onCancel();
           },
@@ -310,12 +302,13 @@ Widget _getModalSheetHeaderWithConfirm(String title, {onCancel, onConfirm}) {
           child: Center(
             child: Text(
               title,
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16.0),
+              style:
+                  const TextStyle(fontWeight: FontWeight.bold, fontSize: 16.0),
             ),
           ),
         ),
         IconButton(
-            icon: Icon(
+            icon: const Icon(
               Icons.check,
               color: Colors.blue,
             ),

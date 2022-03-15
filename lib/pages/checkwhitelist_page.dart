@@ -43,13 +43,15 @@ class _CheckWhiteListPageState extends State<CheckWhiteListPage> {
   }
 
   List<String> generateAppList(List<int> numseq) {
-    List<String> tmp = ['要做核酸很烦'];
-    if (numseq.length > 0) {
-      List<String> Applist = new List.generate(
+    List<String> tmp = [''];
+    if (numseq.isNotEmpty) {
+      // ignore: non_constant_identifier_names
+      List<String> Applist = List.generate(
           numseq.length, (index) => widget.applist[numseq[index]]);
       return Applist;
-    } else
+    } else {
       return tmp;
+    }
   }
 
   String generateMessage(List<String> appList) {

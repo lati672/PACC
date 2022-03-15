@@ -14,7 +14,6 @@ import '../services/navigation_service.dart';
 
 // Providers
 import '../providers/authentication_provider.dart';
-import 'package:provider/provider.dart';
 // Models
 
 class ChatPageProvider extends ChangeNotifier {

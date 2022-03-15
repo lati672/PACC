@@ -1,9 +1,7 @@
 // Packages
-import 'package:chatifyapp/models/chat_message_model.dart';
 import 'package:chatifyapp/pages/checkwhitelist_page.dart';
 import 'package:chatifyapp/pages/home_page.dart';
 import 'package:chatifyapp/pages/whitelist_page.dart';
-import 'package:chatifyapp/providers/chat_page_provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
@@ -16,11 +14,13 @@ import '../widgets/custom_list_view_tiles.dart';
 
 // Models
 import '../models/chats_model.dart';
+import 'package:chatifyapp/models/chat_message_model.dart';
 
 // Providers
 import '../providers/authentication_provider.dart';
 import '../providers/chat_page_provider.dart';
 import 'package:provider/provider.dart';
+import 'package:chatifyapp/providers/chat_page_provider.dart';
 
 // Services
 import '../services/database_service.dart';
@@ -49,6 +49,7 @@ class _ChatPageState extends State<ChatPage> {
   late GlobalKey<FormState> _messageFormState;
   late ScrollController _messagesListViewController;
   final Widget _page = const WhiteListPage();
+  late String _role;
 
   bool _isComposing = false;
   Set<int> selected = Set<int>();
@@ -67,6 +68,7 @@ class _ChatPageState extends State<ChatPage> {
     _deviceHeight = MediaQuery.of(context).size.height;
     _auth = Provider.of<AuthenticationProvider>(context);
     _navigation = GetIt.instance.get<NavigationService>();
+    _role = _auth.user.role;
 
     return GestureDetector(
         onTap: () {
@@ -141,7 +143,6 @@ class _ChatPageState extends State<ChatPage> {
                             iconSize: 20.0,
                             onPressed: () {
                               _pageProvider.sendImageMessage();
-                              print('successfully sent an image');
                             },
                             icon: const Icon(
                               Icons.image_sharp,
@@ -150,16 +151,20 @@ class _ChatPageState extends State<ChatPage> {
                         IconButton(
                             iconSize: 20.0,
                             onPressed: () async {
-                              //_navigation.navigateToPage(WhiteListPage());
-                              final result = await Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => WhiteListPage(),
-                                  ));
-                              //print('result: $result');
-                              if (result != null) {
-                                _pageProvider.sendWhiteList(result);
-                                //print(_pageProvider.getchatid());
+                              if (_role == 'Parent') {
+                                _showAlert(context);
+                              } else {
+                                //_navigation.navigateToPage(WhiteListPage());
+                                final result = await Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => WhiteListPage(),
+                                    ));
+                                print('result: $result');
+                                if (result != null) {
+                                  _pageProvider.sendWhiteList(result);
+                                  print(_pageProvider.getchatid());
+                                }
                               }
                             },
                             icon: const Icon(
@@ -172,6 +177,27 @@ class _ChatPageState extends State<ChatPage> {
             ),
           ),
         );
+      },
+    );
+  }
+
+  void _showAlert(BuildContext context) {
+    final alert = AlertDialog(
+      title: const Text('不能申请白名单'),
+      content: const Text('您是家长'),
+      actions: [
+        FlatButton(
+            child: const Text("确认"),
+            onPressed: () {
+              _navigation.goBack();
+            })
+      ],
+    );
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return alert;
       },
     );
   }
