@@ -19,6 +19,21 @@ class TextMessageBubble extends StatelessWidget {
   final ChatMessage message;
   final double width;
   final double height;
+  String convertToAgo(DateTime input) {
+    Duration diff = DateTime.now().difference(input);
+
+    if (diff.inDays >= 1) {
+      return '${diff.inDays} 天前';
+    } else if (diff.inHours >= 1) {
+      return '${diff.inHours} 小时前';
+    } else if (diff.inMinutes >= 1) {
+      return '${diff.inMinutes} 分钟前';
+    } else if (diff.inSeconds >= 1) {
+      return '${diff.inSeconds} 秒前';
+    } else {
+      return '刚刚';
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -56,7 +71,8 @@ class TextMessageBubble extends StatelessWidget {
             ),
           ),
           Text(
-            timeago.format(message.sentTime),
+            //timeago.format(message.sentTime),
+            convertToAgo(message.sentTime),
             style: const TextStyle(
               color: Colors.white70,
             ),

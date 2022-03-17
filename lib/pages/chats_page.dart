@@ -13,6 +13,8 @@ import '../services/navigation_service.dart';
 
 // Pages
 import '../pages/chat_page.dart';
+import '../pages/parent_chat_page.dart';
+import '../pages/student_chat_page.dart';
 
 // Widgets
 import '../widgets/top_bar.dart';
@@ -167,9 +169,13 @@ class _ChatsPageState extends State<ChatsPage> {
       imagePath: _chat.chatImageURL(),
       isActive: _isActive,
       isActivity: _chat.activity,
-      onTap: () => _navigation.navigateToPage(
-        ChatPage(chat: _chat),
-      ),
+      onTap: () => _auth.user.role == 'Parent'
+          ? _navigation.navigateToPage(
+              ParentChatPage(chat: _chat),
+            )
+          : _navigation.navigateToPage(
+              StudentChatPage(chat: _chat),
+            ),
     );
   }
 }

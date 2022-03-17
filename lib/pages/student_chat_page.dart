@@ -2,7 +2,6 @@
 import 'package:chatifyapp/pages/checkwhitelist_page.dart';
 import 'package:chatifyapp/pages/home_page.dart';
 import 'package:chatifyapp/pages/whitelist_page.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:provider/provider.dart';
@@ -19,36 +18,30 @@ import 'package:chatifyapp/models/chat_message_model.dart';
 // Providers
 import '../providers/authentication_provider.dart';
 import '../providers/chat_page_provider.dart';
-import 'package:provider/provider.dart';
 import 'package:chatifyapp/providers/chat_page_provider.dart';
 
 // Services
-import '../services/database_service.dart';
 import '../services/navigation_service.dart';
-import '../services/media_service.dart';
-import '../services/cloud_storage_service.dart';
+import '../services/database_service.dart';
 
-class ChatPage extends StatefulWidget {
-  const ChatPage({Key? key, required this.chat}) : super(key: key);
+class StudentChatPage extends StatefulWidget {
+  const StudentChatPage({Key? key, required this.chat}) : super(key: key);
 
   final ChatsModel chat;
 
   @override
-  _ChatPageState createState() => _ChatPageState();
+  _StudentChatPageState createState() => _StudentChatPageState();
 }
 
-class _ChatPageState extends State<ChatPage> {
+class _StudentChatPageState extends State<StudentChatPage> {
   final TextEditingController _textController = new TextEditingController();
   late double _deviceWidth;
   late double _deviceHeight;
   late DatabaseService _database;
-  PlatformFile? _profileImage;
   late AuthenticationProvider _auth;
   late ChatPageProvider _pageProvider;
   late NavigationService _navigation;
-  late GlobalKey<FormState> _messageFormState;
   late ScrollController _messagesListViewController;
-  final Widget _page = const WhiteListPage();
   late String _role;
 
   bool _isComposing = false;
@@ -56,7 +49,6 @@ class _ChatPageState extends State<ChatPage> {
   @override
   void initState() {
     super.initState();
-    _messageFormState = GlobalKey<FormState>();
     _messagesListViewController = ScrollController();
   }
 
@@ -69,6 +61,7 @@ class _ChatPageState extends State<ChatPage> {
     _auth = Provider.of<AuthenticationProvider>(context);
     _navigation = GetIt.instance.get<NavigationService>();
     _role = _auth.user.role;
+    _database.getlatestWhitelistfromAlluser(_auth.user.uid);
     return GestureDetector(
         onTap: () {
           //print('ontap');
@@ -123,7 +116,6 @@ class _ChatPageState extends State<ChatPage> {
                       ),
                       secondaryAction: IconButton(
                         onPressed: () {
-                          //print('back');
                           _navigation.navigateToPage(HomePage());
                         },
                         icon: const Icon(
@@ -150,20 +142,16 @@ class _ChatPageState extends State<ChatPage> {
                         IconButton(
                             iconSize: 20.0,
                             onPressed: () async {
-                              if (_role == 'Parent') {
-                                _showAlert(context);
-                              } else {
-                                //_navigation.navigateToPage(WhiteListPage());
-                                final result = await Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => WhiteListPage(),
-                                    ));
-                                print('result: $result');
-                                if (result != null) {
-                                  _pageProvider.sendWhiteList(result);
-                                  print(_pageProvider.getchatid());
-                                }
+                              //_navigation.navigateToPage(WhiteListPage());
+                              final result = await Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => WhiteListPage(),
+                                  ));
+                              print('result: $result');
+                              if (result != null) {
+                                _pageProvider.sendWhiteList(result);
+                                print(_pageProvider.getchatid());
                               }
                             },
                             icon: const Icon(
@@ -176,27 +164,6 @@ class _ChatPageState extends State<ChatPage> {
             ),
           ),
         );
-      },
-    );
-  }
-
-  void _showAlert(BuildContext context) {
-    final alert = AlertDialog(
-      title: const Text('不能申请白名单'),
-      content: const Text('您是家长'),
-      actions: [
-        FlatButton(
-            child: const Text("确认"),
-            onPressed: () {
-              _navigation.goBack();
-            })
-      ],
-    );
-
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return alert;
       },
     );
   }
@@ -220,7 +187,7 @@ class _ChatPageState extends State<ChatPage> {
                 controller: _textController,
                 onChanged: (String text) {
                   setState(() {
-                    _isComposing = text.length > 0;
+                    _isComposing = text.isNotEmpty;
                   });
                 },
                 onSubmitted: _handleSubmitted,
@@ -276,12 +243,8 @@ class _ChatPageState extends State<ChatPage> {
                     List<String> appList = decodewhitelist(_message.content);
 
                     return ElevatedButton.icon(
-                      icon: _auth.user.role == 'Student'
-                          ? Icon(Icons.send)
-                          : Icon(Icons.ac_unit),
-                      label: _auth.user.role == 'Parent'
-                          ? Text("家长审核白名单")
-                          : Text("学生查看白名单"),
+                      icon: const Icon(Icons.ac_unit),
+                      label: const Text("学生查看白名单"),
                       onPressed: () async {
                         final result = await Navigator.push(
                             context,

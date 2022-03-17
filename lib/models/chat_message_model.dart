@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
 
 enum MessageType {
   text,
@@ -42,6 +43,26 @@ class ChatMessage {
       content: _json['content'],
       sentTime: _json['sent_time'].toDate(),
     );
+  }
+  MessageType convert(String type) {
+    switch (type) {
+      case 'text':
+        {
+          return MessageType.text;
+        }
+      case 'image':
+        {
+          return MessageType.image;
+        }
+      case 'whitelist':
+        {
+          return MessageType.whitelist;
+        }
+      default:
+        {
+          return MessageType.unknown;
+        }
+    }
   }
 
   Map<String, dynamic> toJson() {
