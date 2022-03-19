@@ -5,6 +5,7 @@ enum MessageType {
   text,
   image,
   whitelist,
+  confirm,
   unknown,
 }
 
@@ -34,6 +35,9 @@ class ChatMessage {
       case 'whitelist':
         _messageType = MessageType.whitelist;
         break;
+      case 'confirm':
+        _messageType = MessageType.confirm;
+        break;
       default:
         _messageType = MessageType.unknown;
     }
@@ -58,6 +62,10 @@ class ChatMessage {
         {
           return MessageType.whitelist;
         }
+      case 'confirm':
+        {
+          return MessageType.confirm;
+        }
       default:
         {
           return MessageType.unknown;
@@ -76,6 +84,9 @@ class ChatMessage {
         break;
       case MessageType.whitelist:
         _messageType = 'whitelist';
+        break;
+      case MessageType.confirm:
+        _messageType = 'confirm';
         break;
       default:
         _messageType = '';

@@ -1,4 +1,6 @@
 // Packages
+// ignore_for_file: non_constant_identifier_names
+
 import 'package:chatifyapp/pages/home_page.dart';
 import 'package:chatifyapp/pages/whitelist_page.dart';
 import 'package:chatifyapp/providers/chat_page_provider.dart';
@@ -12,15 +14,18 @@ import '../widgets/top_bar.dart';
 import '../widgets/custom_list_view_tiles.dart';
 //page
 import 'package:chatifyapp/pages/chat_page.dart';
-
+import '../providers/authentication_provider.dart';
 import '../services/navigation_service.dart';
 
 class CheckWhiteListPage extends StatefulWidget {
   const CheckWhiteListPage(
-      {Key? key, required this.applist, required this.role})
+      {Key? key,
+      required this.applist,
+      required this.sender_role,
+      required this.receiver_role})
       : super(key: key);
   final List<String> applist;
-  final String role;
+  final String sender_role, receiver_role;
   @override
   State<CheckWhiteListPage> createState() => _CheckWhiteListPageState();
 }
@@ -30,6 +35,7 @@ class _CheckWhiteListPageState extends State<CheckWhiteListPage> {
   late double _deviceHeight;
   bool is_sent = false;
   bool checkState = false;
+  late AuthenticationProvider _auth;
   late ChatPageProvider _pageProvider;
   late NavigationService _navigation;
   late ScrollController _messagesListViewController;
@@ -54,6 +60,28 @@ class _CheckWhiteListPageState extends State<CheckWhiteListPage> {
     }
   }
 
+  showAlertDialog(BuildContext context) {
+    // show the dialog
+    return showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text("确认"),
+          content: const Text("您只能查看白名单"),
+          actions: [
+            FlatButton(
+                child: const Text("确定"),
+                onPressed: () {
+                  is_sent = true;
+
+                  Navigator.of(context).pop();
+                }),
+          ],
+        );
+      },
+    );
+  }
+
   String generateMessage(List<String> appList) {
     String str = appList[0];
     for (var i = 1; i < appList.length; i++) {
@@ -62,44 +90,14 @@ class _CheckWhiteListPageState extends State<CheckWhiteListPage> {
     return str;
   }
 
-  showAlertDialog(BuildContext context) {
-    Widget cancelButton = FlatButton(
-      child: Text("取消"),
-      onPressed: () {
-        is_sent = false;
-        _navigation.goBack();
-      },
-    );
-    Widget continueButton = FlatButton(
-        child: Text("确定"),
-        onPressed: () {
-          is_sent = true;
-          _navigation.goBack();
-        });
-
-    AlertDialog alert = AlertDialog(
-      title: Text("确认"),
-      content: Text("请问确定要发送白名单吗?"),
-      actions: [
-        cancelButton,
-        continueButton,
-      ],
-    );
-    // show the dialog
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return alert;
-      },
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
+    _auth = Provider.of<AuthenticationProvider>(context);
     _deviceWidth = MediaQuery.of(context).size.width;
     _deviceHeight = MediaQuery.of(context).size.height;
     _navigation = GetIt.instance.get<NavigationService>();
-
+    print(
+        'the sender role is ${widget.sender_role} and the receiver role is ${widget.receiver_role}');
     return Scaffold(
       body: SingleChildScrollView(
         physics: const BouncingScrollPhysics(),
@@ -114,7 +112,7 @@ class _CheckWhiteListPageState extends State<CheckWhiteListPage> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
               TopBar(
-                "审核白名单",
+                (_auth.user.role + "审核白名单"),
                 //widget.chat.title(),
                 fontSize: 16,
                 primaryAction: IconButton(
@@ -153,21 +151,22 @@ class _CheckWhiteListPageState extends State<CheckWhiteListPage> {
                                 Navigator.of(context).pop();
                               },
                               onConfirm: () {
-                                print('selected on confirm${selected}');
                                 Navigator.of(context).pop(selected.toList());
-                                //final x = selected.toList();
-                                print('selected to list:${selected.toList()}');
+
                                 List<String> tmp =
                                     generateAppList(selected.toList());
                                 str = generateMessage(tmp);
-                                print('List of String: $tmp');
-                                print('Message type applist: $str');
-                                Navigator.pop(context, str);
+                                if (widget.sender_role == 'Parent') {
+                                  //show alert you cannot modify the whitelist
+                                  Navigator.pop(context);
+                                } else {
+                                  Navigator.pop(context, str);
+                                }
 
-                                showAlertDialog(context);
+                                //showAlertDialog(context);
                               },
                             ),
-                            Divider(height: 1.0),
+                            const Divider(height: 1.0),
                             Expanded(
                               child: ListView.builder(
                                 itemBuilder: (BuildContext context, int index) {
@@ -185,7 +184,7 @@ class _CheckWhiteListPageState extends State<CheckWhiteListPage> {
                                         } else {
                                           selected.add(index);
                                         }
-                                        print('currently selected$selected');
+                                        //print('currently selected$selected');
                                       });
                                     },
                                   );
@@ -199,7 +198,7 @@ class _CheckWhiteListPageState extends State<CheckWhiteListPage> {
                     },
                   );
                 },
-                child: Text("白名单选择"),
+                child: const Text("白名单选择"),
               ),
             ],
           ),
@@ -215,7 +214,7 @@ Widget _getModalSheetHeaderWithConfirm(String title, {onCancel, onConfirm}) {
     child: Row(
       children: [
         IconButton(
-          icon: Icon(Icons.close),
+          icon: const Icon(Icons.close),
           onPressed: () {
             onCancel();
           },

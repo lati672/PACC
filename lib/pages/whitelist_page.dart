@@ -22,8 +22,10 @@ import '../providers/chat_page_provider.dart';
 import '../services/navigation_service.dart';
 
 class WhiteListPage extends StatefulWidget {
-  const WhiteListPage({Key? key}) : super(key: key);
-
+  const WhiteListPage(
+      {Key? key, required this.sender_role, required this.receiver_role})
+      : super(key: key);
+  final String sender_role, receiver_role;
   @override
   State<WhiteListPage> createState() => _WhiteListPageState();
 }
@@ -87,38 +89,36 @@ class _WhiteListPageState extends State<WhiteListPage> {
     return str;
   }
 
-  showAlertDialog(BuildContext context) {
-    // set up the buttons
-    Widget cancelButton = FlatButton(
-      child: Text("取消"),
-      onPressed: () {
-        is_sent = false;
-        _navigation.goBack();
-      },
-    );
-    Widget continueButton = FlatButton(
-        child: const Text("确定"),
-        onPressed: () {
-          is_sent = true;
-          _navigation.goBack();
-          //print('str:$str');
-          // Navigator.pop(context, 'str');
-          //_navigation.goBack();
-        });
-    // set up the AlertDialog
-    AlertDialog alert = AlertDialog(
-      title: const Text("确认"),
-      content: const Text("请问确定要发送白名单吗?"),
-      actions: [
-        cancelButton,
-        continueButton,
-      ],
-    );
+  Future<void> showAlertDialog(BuildContext context) async {
     // show the dialog
-    showDialog(
+    await showDialog(
       context: context,
       builder: (BuildContext context) {
-        return alert;
+        return AlertDialog(
+          title: const Text("确认"),
+          content: const Text("请问确定要发送白名单吗?"),
+          actions: [
+            FlatButton(
+              child: Text("取消"),
+              onPressed: () {
+                print('in the cancel alert the context is $context');
+                //tmp = false;
+                is_sent = false;
+                //_navigation.goBack();
+                Navigator.of(context).pop();
+              },
+            ),
+            FlatButton(
+                child: const Text("确定"),
+                onPressed: () {
+                  print('in the continue alert the context is $context');
+                  is_sent = true;
+                  //Navigator.pop(context, str);
+                  //_navigation.goBack();
+                  Navigator.of(context).pop();
+                }),
+          ],
+        );
       },
     );
   }
@@ -183,19 +183,11 @@ class _WhiteListPageState extends State<WhiteListPage> {
                                 Navigator.of(context).pop();
                               },
                               onConfirm: () {
-                                //print()
                                 Navigator.of(context).pop(selected.toList());
                                 List<String> tmp =
                                     generateAppList(selected.toList());
                                 str = generateMessage(tmp);
-
                                 Navigator.pop(context, str);
-
-                                showAlertDialog(context);
-                                //print(tmp);
-                                //print(str);
-
-                                //print('printing list$selected.toList()');
                               },
                             ),
                             const Divider(height: 1.0),

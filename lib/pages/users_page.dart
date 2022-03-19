@@ -25,7 +25,7 @@ class UsersPage extends StatelessWidget {
                     title: Text('name:' +
                         (doc.data() as dynamic)['name'] +
                         '       role:' +
-                        (doc.data() as dynamic)['role']),
+                        (doc.data() as dynamic)['uid']),
                   ),
                 );
               }).toList(),

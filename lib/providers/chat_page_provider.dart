@@ -147,4 +147,12 @@ class ChatPageProvider extends ChangeNotifier {
   void goBack() {
     _navigation.goBack();
   }
+
+  Future<List<String>> membersrole() async {
+    List<String> roles = [];
+    roles = await _database.getmembers(_chatId);
+    print('the chatid is $_chatId');
+    print('the roles are $roles');
+    return roles;
+  }
 }

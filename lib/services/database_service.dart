@@ -1,4 +1,6 @@
 // Packages
+import 'dart:html';
+
 import 'package:chatifyapp/models/chat_user_model.dart';
 import 'package:chatifyapp/models/todo_list_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -45,11 +47,16 @@ class DatabaseService {
 
 //left some problems
   Future<String> getUserRole(String _uid) async {
-    print('getting user role: $_uid');
     await _dataBase.collection(userCollection).doc(_uid).get().then((value) {
       return value.data()!['role'];
     });
     return "Student";
+  }
+
+  Future<String> getUserName(String _uid) async {
+    DocumentSnapshot docshot =
+        await _dataBase.collection(userCollection).doc(_uid).get();
+    return docshot['name'];
   }
 
   //Getting all the Users
@@ -93,11 +100,20 @@ class DatabaseService {
   //literally the function name
   Future<String> getRoleBySenderID(String senderid) async {
     try {
-      return await _dataBase
-          .collection(userCollection)
-          .doc(senderid)
-          .get()
-          .then((value) => value.toString());
+      DocumentSnapshot qshot =
+          await _dataBase.collection(userCollection).doc(senderid).get();
+      return qshot['role'];
+    } catch (error) {
+      debugPrint('$error');
+      throw ('error');
+    }
+  }
+
+  Future<List<String>> getmembers(String _chatid) async {
+    try {
+      DocumentSnapshot docshot =
+          await _dataBase.collection(chatCollection).doc(_chatid).get();
+      return docshot['members'];
     } catch (error) {
       debugPrint('$error');
       throw ('error');
@@ -117,6 +133,22 @@ class DatabaseService {
           'members': _members,
         },
       ).then((docRef) => {addInitMessagesToChat(docRef.id, _currentuserUid)});
+    } catch (error) {
+      debugPrint('$error');
+    }
+  }
+
+  Future<void> friendrequest(String _currentuserUid, bool _activity,
+      bool _group, List<String> _members) async {
+    try {
+      await _dataBase.collection(chatCollection).add(
+        {
+          'currentUserUid': _currentuserUid,
+          'is_activity': _activity,
+          'is_group': _group,
+          'members': _members,
+        },
+      ).then((docRef) => {sendFriendRequest(docRef.id, _currentuserUid)});
     } catch (error) {
       debugPrint('$error');
     }
@@ -226,17 +258,18 @@ class DatabaseService {
   Future<String> getlatestWhitelistfromAlluser(String _uid) async {
     QuerySnapshot qshot;
     List<String> docid = <String>[];
-    List<ChatMessage> whitelist = [];
+    List<ChatMessage> allwhitelists = [];
+    List<ChatMessage> parentwhitelist = [];
+    //Get all the chat collections
     qshot = await _dataBase.collection(chatCollection).get();
+    //Select those chat contains the user
     qshot.docs.forEach((doc) {
       if (doc['members'].contains(_uid)) {
         docid.add(doc.id);
-        //print('docid: ${doc.id}');
       }
-      ;
     });
+    //Select those messages where type is equal to whitelist and order by sent time
     for (var i = 0; i < docid.length; i++) {
-      //print('getting the $i doc');
       QuerySnapshot q = await _dataBase
           .collection(chatCollection)
           .doc(docid[i])
@@ -244,19 +277,26 @@ class DatabaseService {
           .orderBy('sent_time', descending: true)
           .where('type', isEqualTo: 'whitelist')
           .get();
-
-      if (q.size > 0) {
-        //print(q.docs.first['sent_time']);
-        whitelist.add(ChatMessage(
-            senderID: q.docs.first['sender_id'],
-            type: convert(q.docs.first['type']),
-            content: q.docs.first['content'],
-            sentTime: q.docs.first['sent_time'].toDate()));
-        //print('docid is: ${docid[i]} and the latest whitelist content is:${q.docs.first['content']}');
+      // convert to ChatMessage class
+      q.docs.forEach((doc) {
+        allwhitelists.add(ChatMessage(
+            senderID: doc['sender_id'],
+            type: convert(doc['type']),
+            content: doc['content'],
+            sentTime: doc['sent_time'].toDate()));
+      });
+    }
+    //Select those were sent by parent
+    for (var i = 0; i < allwhitelists.length; i++) {
+      String role = await getRoleBySenderID(allwhitelists[i].senderID);
+      if (role == 'Parent') {
+        parentwhitelist.add(allwhitelists[i]);
       }
     }
-    whitelist.sort(((a, b) => a.sentTime.compareTo(b.sentTime)));
-    return whitelist.last.content;
+    //Sorted by time
+    parentwhitelist.sort(((a, b) => a.sentTime.compareTo(b.sentTime)));
+
+    return parentwhitelist.last.content;
   }
 
   //#Message
@@ -308,6 +348,49 @@ class DatabaseService {
           senderID: currentuserid,
           content: 'Hello',
           type: MessageType.text,
+          sentTime: DateTime.now());
+      await _dataBase
+          .collection(chatCollection)
+          .doc(_chatId)
+          .collection(messagesCollection)
+          .add(
+            _message.toJson(),
+          );
+    } catch (error) {
+      debugPrint('$error');
+    }
+  }
+
+  //Send a new friend request
+  Future<void> sendFriendRequest(String _chatId, String currentuserid) async {
+    try {
+      String name = await getUserName(currentuserid);
+      final _message = ChatMessage(
+          senderID: currentuserid,
+          content: (name + '希望添加您为好友'),
+          type: MessageType.confirm,
+          sentTime: DateTime.now());
+      await _dataBase
+          .collection(chatCollection)
+          .doc(_chatId)
+          .collection(messagesCollection)
+          .add(
+            _message.toJson(),
+          );
+    } catch (error) {
+      debugPrint('$error');
+    }
+  }
+
+  //confirm the friend request
+  Future<void> confirmFriendRequest(
+      String _chatId, String currentuserid) async {
+    try {
+      String name = await getUserName(currentuserid);
+      final _message = ChatMessage(
+          senderID: currentuserid,
+          content: ('你们已经成功添加好友啦，开始聊天吧'),
+          type: MessageType.confirm,
           sentTime: DateTime.now());
       await _dataBase
           .collection(chatCollection)

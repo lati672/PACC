@@ -42,7 +42,7 @@ class _StudentChatPageState extends State<StudentChatPage> {
   late ChatPageProvider _pageProvider;
   late NavigationService _navigation;
   late ScrollController _messagesListViewController;
-  late String _role;
+  late String _memberid1, _memberid2;
 
   bool _isComposing = false;
   Set<int> selected = Set<int>();
@@ -60,8 +60,9 @@ class _StudentChatPageState extends State<StudentChatPage> {
     _deviceHeight = MediaQuery.of(context).size.height;
     _auth = Provider.of<AuthenticationProvider>(context);
     _navigation = GetIt.instance.get<NavigationService>();
-    _role = _auth.user.role;
     _database.getlatestWhitelistfromAlluser(_auth.user.uid);
+    _memberid1 = widget.chat.members[1].uid;
+    _memberid2 = widget.chat.members[0].uid;
     return GestureDetector(
         onTap: () {
           //print('ontap');
@@ -142,16 +143,25 @@ class _StudentChatPageState extends State<StudentChatPage> {
                         IconButton(
                             iconSize: 20.0,
                             onPressed: () async {
-                              //_navigation.navigateToPage(WhiteListPage());
+                              String senderid = _auth.user.uid;
+                              String receiverid = senderid == _memberid1
+                                  ? _memberid2
+                                  : _memberid1;
+                              String senderrole =
+                                  await _database.getRoleBySenderID(senderid);
+                              String receiverrole =
+                                  await _database.getRoleBySenderID(receiverid);
                               final result = await Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (context) => WhiteListPage(),
+                                    builder: (context) => WhiteListPage(
+                                        sender_role: senderrole,
+                                        receiver_role: receiverrole),
                                   ));
-                              print('result: $result');
+                              //print('result: $result');
                               if (result != null) {
                                 _pageProvider.sendWhiteList(result);
-                                print(_pageProvider.getchatid());
+                                //print(_pageProvider.getchatid());
                               }
                             },
                             icon: const Icon(
@@ -242,22 +252,30 @@ class _StudentChatPageState extends State<StudentChatPage> {
                   {
                     List<String> appList = decodewhitelist(_message.content);
 
+                    String senderid = _message.senderID;
+                    String receiverid =
+                        senderid == _memberid1 ? _memberid2 : _memberid1;
                     return ElevatedButton.icon(
                       icon: const Icon(Icons.ac_unit),
                       label: const Text("学生查看白名单"),
                       onPressed: () async {
+                        String senderrole =
+                            await _database.getRoleBySenderID(senderid);
+                        String receiverrole =
+                            await _database.getRoleBySenderID(receiverid);
                         final result = await Navigator.push(
                             context,
                             MaterialPageRoute(
                               builder: (context) => CheckWhiteListPage(
                                 applist: appList,
-                                role: _auth.user.role,
+                                sender_role: senderrole,
+                                receiver_role: receiverrole,
                               ),
                             ));
-                        print('result:  $result');
+                        //print('result:  $result');
                         if (result != null) {
                           _pageProvider.sendWhiteList(result);
-                          print(_pageProvider.getchatid());
+                          //print(_pageProvider.getchatid());
                         }
                       },
                     );
