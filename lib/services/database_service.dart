@@ -1,5 +1,5 @@
 // Packages
-import 'dart:html';
+//import 'dart:html';
 
 import 'package:chatifyapp/models/chat_user_model.dart';
 import 'package:chatifyapp/models/todo_list_model.dart';
@@ -365,9 +365,11 @@ class DatabaseService {
   Future<void> sendFriendRequest(String _chatId, String currentuserid) async {
     try {
       String name = await getUserName(currentuserid);
+      String role = await getRoleBySenderID(currentuserid);
       final _message = ChatMessage(
           senderID: currentuserid,
-          content: (name + '希望添加您为好友'),
+          content:
+              (name + '希望添加您为好友,他/她的身份是' + (role == 'Student' ? '学生' : '家长')),
           type: MessageType.confirm,
           sentTime: DateTime.now());
       await _dataBase

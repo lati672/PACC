@@ -86,35 +86,43 @@ class ChatPageProvider extends ChangeNotifier {
   }
 
   void sendText(String message) {
-    if (messages != null) {
-      final _messageToSend = ChatMessage(
-        senderID: _auth.user.uid,
-        type: MessageType.text,
-        content: message,
-        sentTime: DateTime.now(),
-      );
-      _database.addMessagesToChat(_chatId, _messageToSend);
-    }
+    final _messageToSend = ChatMessage(
+      senderID: _auth.user.uid,
+      type: MessageType.text,
+      content: message,
+      sentTime: DateTime.now(),
+    );
+    _database.addMessagesToChat(_chatId, _messageToSend);
   }
 
   void sendWhiteList(String whitelist) {
-    if (messages != null) {
-      final _messageToSend = ChatMessage(
-        senderID: _auth.user.uid,
-        type: MessageType.whitelist,
-        content: whitelist,
-        sentTime: DateTime.now(),
-      );
-      print(_messageToSend.type);
-      _database.addMessagesToChat(_chatId, _messageToSend);
-    }
+    final _messageToSend = ChatMessage(
+      senderID: _auth.user.uid,
+      type: MessageType.whitelist,
+      content: whitelist,
+      sentTime: DateTime.now(),
+    );
+    //print(_messageToSend.type);
+    _database.addMessagesToChat(_chatId, _messageToSend);
+  }
+
+  void sendFriendRequestReply() {
+    String replymessage = '你们已经是好友了，开始聊天吧！';
+    final _messageToSend = ChatMessage(
+      senderID: _auth.user.uid,
+      type: MessageType.confirm,
+      content: replymessage,
+      sentTime: DateTime.now(),
+    );
+    //print(_messageToSend.type);
+    _database.addMessagesToChat(_chatId, _messageToSend);
   }
 
   // * IMAGE messages
   void sendImageMessage() async {
     _cloudStorageService = GetIt.instance.get<CloudStorageService>();
     try {
-      print('start fetch image');
+      //print('start fetch image');
 
       _ChatImage =
           await GetIt.instance.get<MediaService>().pickImageFromLibrary();
@@ -151,8 +159,32 @@ class ChatPageProvider extends ChangeNotifier {
   Future<List<String>> membersrole() async {
     List<String> roles = [];
     roles = await _database.getmembers(_chatId);
-    print('the chatid is $_chatId');
-    print('the roles are $roles');
+    //print('the chatid is $_chatId');
+    //print('the roles are $roles');
     return roles;
+  }
+
+  int countConfirmbefore(DateTime t) {
+    int cnt = 0;
+    for (var i = 0; i < messages!.length; i++) {
+      if (messages![i].type == MessageType.confirm) {
+        if (messages![i].sentTime != t) {
+          cnt++;
+        } else {
+          return cnt;
+        }
+      }
+    }
+    return cnt;
+  }
+
+  int countConfirm() {
+    int cnt = 0;
+    for (var i = 0; i < messages!.length; i++) {
+      if (messages![i].type == MessageType.confirm) {
+        cnt++;
+      }
+    }
+    return cnt;
   }
 }

@@ -1,4 +1,6 @@
 //packages
+import 'dart:io';
+
 import 'package:chatifyapp/models/chat_user_model.dart';
 import 'package:chatifyapp/models/chats_model.dart';
 import 'package:chatifyapp/pages/chats_page.dart';
@@ -162,7 +164,7 @@ class _AddFriendsPageState extends State<AddFriendsPage> {
 
   //type=1:email;type=2:name
   void addfriend(int type) async {
-    print('adding friends based on type: $type');
+    //print('adding friends based on type: $type');
     String friendid = await getUserList(type);
     //Email,the friend id is same as the user id
     if (_auth.user.uid == friendid && type == 1) {
@@ -180,7 +182,8 @@ class _AddFriendsPageState extends State<AddFriendsPage> {
       return;
     }
     List<String> usersid = new List.from([_auth.user.uid, friendid]);
-    await _database.createChat(_auth.user.uid, true, false, usersid);
+    //await _database.createChat(_auth.user.uid, true, false, usersid);
+    await _database.friendrequest(_auth.user.uid, true, false, usersid);
     //successfully created the chat
     _showAlert(context, 2);
   }

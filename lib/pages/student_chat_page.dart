@@ -60,7 +60,7 @@ class _StudentChatPageState extends State<StudentChatPage> {
     _deviceHeight = MediaQuery.of(context).size.height;
     _auth = Provider.of<AuthenticationProvider>(context);
     _navigation = GetIt.instance.get<NavigationService>();
-    _database.getlatestWhitelistfromAlluser(_auth.user.uid);
+    //_database.getlatestWhitelistfromAlluser(_auth.user.uid);
     _memberid1 = widget.chat.members[1].uid;
     _memberid2 = widget.chat.members[0].uid;
     return GestureDetector(
@@ -89,6 +89,7 @@ class _StudentChatPageState extends State<StudentChatPage> {
     return Builder(
       builder: (_context) {
         _pageProvider = _context.watch<ChatPageProvider>();
+
         return Scaffold(
           body: SingleChildScrollView(
             physics: const BouncingScrollPhysics(),
@@ -219,6 +220,33 @@ class _StudentChatPageState extends State<StudentChatPage> {
     return whitelist.split(',');
   }
 
+  void _confirmrequest(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text("您有新的好友请求"),
+          content: const Text("确定要添加好友吗"),
+          actions: <Widget>[
+            FlatButton(
+              child: const Text("取消"),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            FlatButton(
+              child: const Text("确认"),
+              onPressed: () {
+                _pageProvider.sendFriendRequestReply();
+                Navigator.of(context).pop();
+              },
+            )
+          ],
+        );
+      },
+    );
+  }
+
 // * Rendenring Messages from Firebase
   Widget _messagesListView() {
     if (_pageProvider.messages != null) {
@@ -231,6 +259,7 @@ class _StudentChatPageState extends State<StudentChatPage> {
             itemBuilder: (BuildContext _context, int _index) {
               final _message = _pageProvider.messages![_index];
               final _isOwnMessage = _message.senderID == _auth.user.uid;
+              int confirmmessage_count = _pageProvider.countConfirm();
               switch (_message.type) {
                 case MessageType.text:
                   {
@@ -279,6 +308,35 @@ class _StudentChatPageState extends State<StudentChatPage> {
                         }
                       },
                     );
+                  }
+                case MessageType.confirm:
+                  {
+                    String senderid = _message.senderID;
+                    String receiverid =
+                        senderid == _memberid1 ? _memberid2 : _memberid1;
+                    int cnt =
+                        _pageProvider.countConfirmbefore(_message.sentTime);
+                    if (cnt == 0) {
+                      if (senderid == _auth.user.uid) {
+                        return const Text('您已发送好友请求，请等待回复');
+                      } else {
+                        return TextButton(
+                          style: TextButton.styleFrom(
+                            textStyle: const TextStyle(fontSize: 20),
+                          ),
+                          onPressed: () {
+                            if (confirmmessage_count == 2) {
+                              null;
+                            } else {
+                              _confirmrequest(context);
+                            }
+                          },
+                          child: Text(_message.content),
+                        );
+                      }
+                    } else {
+                      return Text(_message.content);
+                    }
                   }
 
                 default:
