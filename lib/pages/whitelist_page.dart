@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:provider/provider.dart';
+import 'dart:async';
 
 // Widgets
 import '../widgets/top_bar.dart';
@@ -43,21 +44,36 @@ class _WhiteListPageState extends State<WhiteListPage> {
   late ScrollController _messagesListViewController;
   String str = "";
 
+  int _count = 0;
+  void myTimer() {
+    // 定义一个函数，将定时器包裹起来
+    Timer _timer = Timer.periodic(Duration(milliseconds: 3000), (t) {
+      // print("111111");
+      _count++;
+      if (_count == 15) {
+        t.cancel(); // 定时器内部触发销毁
+      }
+      _getAppList();
+      // _initBlueTooth();
+    });
+  }
+
   Set<int> selected = Set<int>();
   @override
   void initState() {
-    _initBlueTooth();
+    // _initBlueTooth();
     super.initState();
     checkState = true;
+    myTimer();
   }
 
-  void _initBlueTooth() async {
+  void _getAppList() async {
     const platform = const MethodChannel('samples.flutter.dev');
     // Future future = platform.invokeMethod('initBlueTooth');
     try {
       // 通过渠道，调用原生代码代码的方法
       //Future future = channel.invokeMethod("your_method_name", {"msg": msg} );
-      String str = await platform.invokeMethod('initBlueTooth');
+      String str = await platform.invokeMethod('getAppList');
       // 打印执行的结果
       // print(str);
       // _appList = str;
@@ -70,11 +86,44 @@ class _WhiteListPageState extends State<WhiteListPage> {
     }
   }
 
-  // // 3.异步获取到电量，然后重新渲染页面
-  // getBlueTooth() async{
-  //   _appList = await BatteryChannel.getBlueTooth();
-  //   setState(() {});
-  // }
+  void _launch() async {
+    const platform = const MethodChannel('samples.flutter.dev');
+    // Future future = platform.invokeMethod('initBlueTooth');
+    try {
+      // 通过渠道，调用原生代码代码的方法
+      //Future future = channel.invokeMethod("your_method_name", {"msg": msg} );
+      String str = await platform.invokeMethod('launch');
+      // 打印执行的结果
+      print(str);
+      // _appList = str;
+      var strList = str.split('/n');
+      for (var i = 0; i < strList.length - 1; i++) {
+        appList.add(strList[i]);
+      }
+    } on PlatformException catch (e) {
+      print(e.toString());
+    }
+  }
+
+  void _appLock() async {
+    const platform = const MethodChannel('samples.flutter.dev');
+    // Future future = platform.invokeMethod('initBlueTooth');
+    try {
+      // 通过渠道，调用原生代码代码的方法
+      //Future future = channel.invokeMethod("your_method_name", {"msg": msg} );
+      String str = await platform.invokeMethod('appLock');
+      // 打印执行的结果
+      print(str);
+      // _appList = str;
+      var strList = str.split('/n');
+      for (var i = 0; i < strList.length - 1; i++) {
+        appList.add(strList[i]);
+      }
+    } on PlatformException catch (e) {
+      print(e.toString());
+    }
+  }
+
   List<String> generateAppList(List<int> numseq) {
     List<String> Applist =
         new List.generate(numseq.length, (index) => appList[numseq[index]]);
