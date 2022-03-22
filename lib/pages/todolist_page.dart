@@ -18,110 +18,61 @@ class TodoListPage extends StatefulWidget {
 class _TodoListState extends State<TodoListPage> {
   // final TodoListModel todoModel;
   // TodoListModel todoSqlite = new TodoListModel();
-  late DatabaseService _database;
-  late NavigationService _navigation;
+  // late DatabaseService _database;
+  // late NavigationService _navigation;
+  DatabaseService _database = GetIt.instance.get<DatabaseService>();
+  NavigationService _navigation = GetIt.instance.get<NavigationService>();
   // List<TodoListModel> todos = await _database.getTodoListAll(false);
-  // late List<TodoListModel> todos;
+  List<TodoListModel> todos = [];
   final _biggerFont = const TextStyle(fontSize: 18.0);
 
   @override
   void initState() {
     super.initState();
+    fetchTodos();
   }
 
   @override
   Widget build(BuildContext context) {
-    _database = GetIt.instance.get<DatabaseService>();
-    _navigation = GetIt.instance.get<NavigationService>();
-    // addTodos();
-    fetchTodos();
-    // return _buildUI();
+    return _buildUI();
+  }
+
+  Widget _buildUI() {
     return Scaffold(
-      appBar: AppBar(
-        elevation: 0.0,
-        leading: IconButton(
-          onPressed: () {},
-          icon: Icon(Icons.headset_off),
-        ),
-        title: Text('Pomodoro'),
-        centerTitle: true,
-        actions: [
-          IconButton(
-            onPressed: () {},
-            icon: Icon(Icons.alarm_off),
-          ),
-        ],
-      ),
-      body: Container(
-        child: Padding(
-          padding: const EdgeInsets.all(20.0),
-          child: Column(
-            children: <Widget>[
-              Text(
-                'kWorkLabel',
-                style: TextStyle(
-                  color: Colors.white,
-                ),
-              ),
-              SizedBox(
-                height: 10.0,
-              ),
-              FlatButton(
-                  child: const Text("开始番茄钟"),
-                  onPressed: () {
-                    _navigation.navigateToPage(Pomodoro());
-                  })
-            ],
-          ),
-        ),
-      ),
+      body: todos == null
+          ? Center(child: CircularProgressIndicator())
+          : ListView.builder(
+              padding: const EdgeInsets.all(16.0),
+              itemCount: todos.length,
+              itemBuilder: (BuildContext context, int index) {
+                return new ListTile(
+                  title: new Text(
+                    todos[index].name,
+                    style: _biggerFont,
+                  ),
+                  trailing: new Icon(
+                    Icons.check_box_outline_blank,
+                  ),
+                  onTap: () {
+                    // updateTodo(todos[index]);
+                    todos.removeAt(index);
+                    setState(() {
+                      todos = todos;
+                    });
+                  },
+                );
+              },
+            ),
     );
   }
 
-  // Widget _buildUI() {
-  //   return Scaffold(
-  //     body: todos == null
-  //         ? Center(child: CircularProgressIndicator())
-  //         : ListView.builder(
-  //             padding: const EdgeInsets.all(16.0),
-  //             itemCount: todos.length,
-  //             itemBuilder: (BuildContext context, int index) {
-  //               return new ListTile(
-  //                 title: new Text(
-  //                   // todos[index].title,
-  //                   'title',
-  //                   style: _biggerFont,
-  //                 ),
-  //                 trailing: new Icon(
-  //                   Icons.check_box_outline_blank,
-  //                 ),
-  //                 onTap: () {
-  //                   // updateTodo(todos[index]);
-  //                   todos.removeAt(index);
-  //                   setState(() {
-  //                     todos = todos;
-  //                   });
-  //                 },
-  //               );
-  //             },
-  //           ),
-  //   );
-  // }
-
   void fetchTodos() async {
     // late List<String> todos;
-    // List<String> todos = await _database.getTodoListAll(false);
     print('starting fetch todos');
-    List<TodoListModel> list = await _database.getTodoListAll();
-    // print(todos);
-
-    // todos = await _database.getTodoListAll(userId);
-    // await todoModel.openSqlite();
-    // todos = await todoModel.queryAll(false);
-    // setState(() {
-    //   todos = todos;
-    // });
-    // await todoModel.close();
+    List<TodoListModel> todos = await _database.getTodoListAll();
+    setState(() {
+      todos = todos;
+    });
   }
 
   // void addTodos() async {

@@ -128,6 +128,14 @@ class _PomodoroPageState extends State<PomodoroPage> {
                             onPressed: () {},
                             icon: Icon(Icons.wb_sunny),
                           ),
+                          IconButton(
+                            onPressed: () {},
+                            icon: Icon(Icons.stop),
+                          ),
+                          IconButton(
+                            onPressed: () {},
+                            icon: Icon(Icons.screen_rotation),
+                          ),
                         ],
                       )),
                 ),
