@@ -1,6 +1,6 @@
 // Packages
 //import 'dart:html';
-
+import 'package:flutter/material.dart';
 import 'package:chatifyapp/models/chat_user_model.dart';
 import 'package:chatifyapp/models/friend_model.dart';
 import 'package:chatifyapp/models/todo_list_model.dart';
@@ -430,15 +430,6 @@ class DatabaseService {
     List<TodoListModel> todo = [];
     QuerySnapshot qshot = await _dataBase.collection(todolistCollection).get();
     qshot.docs.forEach((doc) {
-      print("111111111111111111111111111111111111111");
-      print(doc.data());
-      // print(doc['senderid']);
-      // print(doc['description']);
-      // print(doc['start_time'].toDate());
-      // print(doc['end_time'].toDate());
-      // print(doc['todolist_name']);
-      // print(doc['interval']);
-      // print(doc['recipient']);
       todo.add(TodoListModel(
           uid: doc['senderid'],
           description: doc['description'],
@@ -446,7 +437,7 @@ class DatabaseService {
           end_time: doc['end_time'].toDate(),
           name: doc['todolist_name'],
           interval: doc['interval'],
-          recepients: doc['recepient']));
+          recipients: List.from(doc['recipient'])));
     });
     return todo;
   }

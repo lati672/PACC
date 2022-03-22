@@ -10,7 +10,7 @@ class TodoListModel {
   final String name;
   final String interval;
 
-  final List<ChatUserModel> recepients;
+  final List<String> recipients;
 
   TodoListModel({
     required this.uid,
@@ -19,7 +19,7 @@ class TodoListModel {
     required this.end_time,
     required this.name,
     required this.interval,
-    required this.recepients,
+    required this.recipients,
   });
   factory TodoListModel.fromJson(Map<String, dynamic> _json) {
     return TodoListModel(
@@ -36,7 +36,7 @@ class TodoListModel {
         end_time: _json['end_time'],
         name: _json['name'],
         interval: _json['interval'],
-        recepients: _json['recepients']);
+        recipients: _json['recipients']);
   }
   Map<String, dynamic> toMap() {
     return {
@@ -45,7 +45,7 @@ class TodoListModel {
       'end_time': end_time,
       'name': name,
       'interval': interval,
-      'recepients': recepients
+      'recipients': recipients
     };
   }
 //

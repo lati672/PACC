@@ -111,6 +111,7 @@ class _TodoListState extends State<TodoListPage> {
   void fetchTodos() async {
     // late List<String> todos;
     // List<String> todos = await _database.getTodoListAll(false);
+    print('starting fetch todos');
     List<TodoListModel> list = await _database.getTodoListAll();
     // print(todos);
 
