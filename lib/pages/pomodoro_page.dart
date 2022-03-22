@@ -6,21 +6,6 @@ import 'package:ndialog/ndialog.dart';
 import '../pages/whitelist_page.dart';
 
 class PomodoroPage extends StatefulWidget {
-  final List<Icon> timesCompleted = [];
-
-  PomodoroPage() {
-    // Initialize times completed dot icons
-    for (var i = 0; i < 3; i++) {
-      timesCompleted.add(
-        Icon(
-          Icons.brightness_1_rounded,
-          color: Colors.blueGrey,
-          size: 50.0,
-        ),
-      );
-    }
-  }
-
   @override
   _PomodoroPageState createState() => _PomodoroPageState();
 }
@@ -55,7 +40,6 @@ class _PomodoroPageState extends State<PomodoroPage> {
     // Half Screen Dimensions
     final double height = MediaQuery.of(context).size.height / 2;
     final double width = MediaQuery.of(context).size.width / 2;
-    int indexTimesCompleted = 0;
 
     CountDownTimer _countDownTimer = CountDownTimer(
       duration: kWorkDuration,
@@ -64,12 +48,6 @@ class _PomodoroPageState extends State<PomodoroPage> {
         /*这里要延时加载  否则会抱The widget on which setState() or markNeedsBuild() was called was:错误*/
         Future.delayed(Duration(milliseconds: 200)).then((e) {
           setState(() async {
-            widget.timesCompleted[indexTimesCompleted] = Icon(
-              Icons.brightness_1_rounded,
-              color: Colors.pink,
-              size: 50.0,
-            );
-            indexTimesCompleted++;
             // await NDialog(
             //   dialogStyle: DialogStyle(titleDivider: true),
             //   title: Text("Timer Completed"),
@@ -106,21 +84,6 @@ class _PomodoroPageState extends State<PomodoroPage> {
     );
 
     return Scaffold(
-      appBar: AppBar(
-        elevation: 0.0,
-        leading: IconButton(
-          onPressed: () {},
-          icon: Icon(Icons.headset_off),
-        ),
-        title: Text('Pomodoro'),
-        centerTitle: true,
-        actions: [
-          IconButton(
-            onPressed: () {},
-            icon: Icon(Icons.alarm_off),
-          ),
-        ],
-      ),
       body: Container(
         child: Padding(
           padding: const EdgeInsets.all(20.0),
@@ -130,17 +93,13 @@ class _PomodoroPageState extends State<PomodoroPage> {
                 child: clock,
               ),
               Text(
-                kWorkLabel,
+                "进行中",
                 style: TextStyle(
                   color: Colors.white,
                 ),
               ),
               SizedBox(
                 height: 10.0,
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: widget.timesCompleted,
               ),
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 20.0),
@@ -151,14 +110,26 @@ class _PomodoroPageState extends State<PomodoroPage> {
                     });
                   },
                   child: Container(
-                    width: width / 2.5,
-                    height: height / 8,
-                    decoration: BoxDecoration(
-                      color: Theme.of(context).primaryColor,
-                      borderRadius: BorderRadius.circular(10.0),
-                    ),
-                    child: _clockButton,
-                  ),
+                      // width: width / 2.5,
+                      // height: height / 8,
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).primaryColor,
+                        borderRadius: BorderRadius.circular(10.0),
+                      ),
+                      // child: _clockButton,
+                      child: Row(
+                        children: [
+                          _clockButton,
+                          IconButton(
+                            onPressed: () {},
+                            icon: Icon(Icons.headset_off),
+                          ),
+                          IconButton(
+                            onPressed: () {},
+                            icon: Icon(Icons.wb_sunny),
+                          ),
+                        ],
+                      )),
                 ),
               ),
             ],

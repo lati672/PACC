@@ -6,7 +6,7 @@ import 'package:provider/provider.dart';
 
 // Pages
 import '../pages/chats_page.dart';
-import 'package:chatifyapp/pages/users_page.dart';
+import 'package:chatifyapp/pages/todolist_page.dart';
 
 //Provider
 import '../providers/authentication_provider.dart';
@@ -25,7 +25,7 @@ class _HomePageState extends State<HomePage> {
   // * Pages to display and navigate
   final List<Widget> _pages = [
     const ChatsPage(),
-    UsersPage(),
+    TodoListPage(),
     UserProfilePage()
   ];
 

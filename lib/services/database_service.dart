@@ -422,6 +422,38 @@ class DatabaseService {
     }
   }
 
+  //remove a todo list
+  Future<void> removeTodoList(TodoListModel todolist) async {}
+
+  //get all todo list
+  Future<List<TodoListModel>> getTodoListAll() async {
+    List<TodoListModel> todo = [];
+    QuerySnapshot qshot = await _dataBase.collection(todolistCollection).get();
+    qshot.docs.forEach((doc) {
+      print("111111111111111111111111111111111111111");
+      print(doc.data());
+      // print(doc['senderid']);
+      // print(doc['description']);
+      // print(doc['start_time'].toDate());
+      // print(doc['end_time'].toDate());
+      // print(doc['todolist_name']);
+      // print(doc['interval']);
+      // print(doc['recipient']);
+      todo.add(TodoListModel(
+          uid: doc['senderid'],
+          description: doc['description'],
+          start_time: doc['start_time'].toDate(),
+          end_time: doc['end_time'].toDate(),
+          name: doc['todolist_name'],
+          interval: doc['interval'],
+          recepients: doc['recepient']));
+    });
+    return todo;
+  }
+
+  //update a todo list
+  Future<void> updateTodoList(TodoListModel todolist) async {}
+
   //#Friend
   Future<void> addFriends(String _chatid) async {
     try {
