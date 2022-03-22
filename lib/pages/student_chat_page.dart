@@ -140,7 +140,7 @@ class _StudentChatPageState extends State<StudentChatPage> {
                             },
                             icon: const Icon(
                               Icons.image_sharp,
-                              color: Colors.white,
+                              color: Colors.black26,
                             )),
                         IconButton(
                             iconSize: 20.0,
@@ -168,7 +168,7 @@ class _StudentChatPageState extends State<StudentChatPage> {
                             },
                             icon: const Icon(
                               Icons.add_chart,
-                              color: Colors.white,
+                              color: Colors.black26,
                             )),
                       ],
                     ),
@@ -192,7 +192,7 @@ class _StudentChatPageState extends State<StudentChatPage> {
     return IconTheme(
         data: IconThemeData(color: Theme.of(context).accentColor),
         child: Container(
-            margin: const EdgeInsets.symmetric(horizontal: 8.0),
+            margin: const EdgeInsets.symmetric(horizontal: 6.0),
             child: Row(children: <Widget>[
               Flexible(
                   child: TextField(
@@ -207,7 +207,8 @@ class _StudentChatPageState extends State<StudentChatPage> {
                     filled: true, fillColor: Colors.white, hintText: '发送信息'),
               )),
               Container(
-                margin: const EdgeInsets.symmetric(horizontal: 4.0),
+                color: Colors.green,
+                margin: const EdgeInsets.only(left: 4.0),
                 child: IconButton(
                     icon: const Icon(Icons.send),
                     onPressed: _isComposing
@@ -277,7 +278,15 @@ class _StudentChatPageState extends State<StudentChatPage> {
                   }
                 case MessageType.image:
                   {
-                    return Image.network(_message.content);
+                    return CustomChatListViewTile(
+                      width: _deviceWidth * .80,
+                      deviceHeight: _deviceHeight,
+                      isOwnMessage: _isOwnMessage,
+                      message: _message,
+                      sender: widget.chat.members
+                          .where((element) => element.uid == _message.senderID)
+                          .first,
+                    );
                   }
                 case MessageType.whitelist:
                   {

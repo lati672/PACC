@@ -1,24 +1,20 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-// Packages
-import 'package:timeago/timeago.dart' as timeago;
-
-// Models
 import '../models/chat_message_model.dart';
 
-class TextMessageBubble extends StatelessWidget {
-  const TextMessageBubble({
-    Key? key,
-    required this.isOwnMessage,
-    required this.message,
-    required this.width,
-    required this.height,
-  }) : super(key: key);
+class ImageMessageBubble extends StatelessWidget {
+  const ImageMessageBubble(
+      {Key? key,
+      required this.isOwnMessage,
+      required this.message,
+      required this.width //设置图片的最大高度和宽度
+      })
+      : super(key: key);
 
   final bool isOwnMessage;
   final ChatMessage message;
   final double width;
-  final double height;
 
   String convertToAgo(DateTime input) {
     Duration diff = DateTime.now().difference(input);
@@ -48,9 +44,8 @@ class TextMessageBubble extends StatelessWidget {
             const Color.fromRGBO(51, 49, 68, 1),
           ];
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10),
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
       constraints: BoxConstraints(maxWidth: width),
-      height: height + (message.content.length / 20 * 6),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(10),
         gradient: LinearGradient(
@@ -65,12 +60,7 @@ class TextMessageBubble extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         mainAxisSize: MainAxisSize.max,
         children: [
-          Text(
-            message.content,
-            style: const TextStyle(
-              color: Colors.white,
-            ),
-          ),
+          Image(image: NetworkImage("https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fmmbiz.qpic.cn%2Fmmbiz_jpg%2FADamEbibMMaN42xAkj7WklHbUc64TKL2Jgt7Dz4el7ria1fIdqxBOhmuLcP5tbpzibTJicwvAqmTDjVShAWGSSNsIQ%2F640%3Fwx_fmt%3Djpeg&refer=http%3A%2F%2Fmmbiz.qpic.cn&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=auto?sec=1650289065&t=0f7832b760284deed3d8facc1edd75ca")),
           Text(
             //timeago.format(message.sentTime),
             convertToAgo(message.sentTime),

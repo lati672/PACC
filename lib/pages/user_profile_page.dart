@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import '../models/chat_user_model.dart';
 import '../services/database_service.dart';
@@ -33,14 +34,11 @@ class _UserProfilePageState extends State<UserProfilePage> {
     _deviceHeight = MediaQuery.of(context).size.height;
     user = _auth.user;
     return Scaffold(
-      body: ListView(
-        children: <Widget>[
-          RoundedImageNetwork(
-            key: UniqueKey(),
-            size: _deviceHeight * .15,
-            imagePath: _auth.user.imageUrl,
-          ),
-          SizedBox(height: 20),
+      body: Container(
+        decoration: BoxDecoration(color: Colors.white),
+        child:ListView(
+          children: <Widget>[
+          SizedBox(height: _deviceHeight*.02 ),
           HeaderSection(),
           /*
           AnimatedSwitcher(
@@ -56,67 +54,93 @@ class _UserProfilePageState extends State<UserProfilePage> {
           ),*/
         ],
       ),
-    );
+    ));
   }
 
   Widget HeaderSection() {
     return Container(
       child: Column(
         children: <Widget>[
+          // Container(
+          //   height: 110,
+          //   width: 100,
+          //   decoration: BoxDecoration(
+          //     borderRadius: BorderRadius.circular(100),
+          //     image: DecorationImage(
+          //         image: AssetImage(_auth.user.imageUrl), fit: BoxFit.cover),
+          //   ),
+          // ),
           Container(
-            height: 110,
-            width: 100,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(100),
-              image: DecorationImage(
-                  image: AssetImage(_auth.user.imageUrl), fit: BoxFit.cover),
-            ),
-          ),
-          SizedBox(height: 20),
-          Container(
-            alignment: Alignment.center,
-            child: Text(
-              _auth.user.name,
-              textAlign: TextAlign.center,
-              style: TextStyle(fontWeight: FontWeight.w600, fontSize: 20),
-            ),
-          ),
-          SizedBox(height: 20),
-          Container(
-            margin: EdgeInsets.symmetric(horizontal: 20),
-            alignment: Alignment.center,
-            child: Text(
-              _auth.user.uid,
-              textAlign: TextAlign.center,
-            ),
-          ),
-          SizedBox(height: 20),
-          Container(
-            margin: EdgeInsets.symmetric(horizontal: 16),
+            decoration: BoxDecoration(color: Colors.white),
+            height: _deviceHeight*.2,
+            padding: EdgeInsets.all(_deviceWidth*.02),
+            //名片部分，头像、账号、用户名
             child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: <Widget>[
-                Column(
-                  children: <Widget>[
-                    const Text('邮箱'),
-                    Text(
-                      _auth.user.email,
-                      style: TextStyle(fontWeight: FontWeight.w600),
-                    )
-                  ],
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                CircleAvatar(
+                  backgroundImage: NetworkImage("https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fp9.itc.cn%2Fq_70%2Fimages03%2F20210628%2Faa3ecdcd663f46379f059cd06d3343f6.png&refer=http%3A%2F%2Fp9.itc.cn&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=auto?sec=1650254505&t=27fd1495e4b2bc7efe73d212d006f835"),
+                  radius: _deviceWidth*0.1,
                 ),
-                Column(
-                  children: <Widget>[
-                    const Text('角色'),
-                    Text(
-                      _auth.user.role == 'Parent' ? '家长' : '学生',
-                      style: TextStyle(fontWeight: FontWeight.w600),
-                    )
+                SizedBox(width: _deviceWidth*.05),
+                Expanded(child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Container(
+                      margin: EdgeInsets.only(bottom: _deviceWidth*.01),
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        _auth.user.name,
+                        textAlign: TextAlign.left,
+                        style: TextStyle(fontWeight: FontWeight.w600, fontSize: 20),
+                      ),
+                    ),
+                    Container(
+                      margin: EdgeInsets.only(top: _deviceWidth*.01),
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        _auth.user.uid,
+                        textAlign: TextAlign.left,
+                      ),
+                    ),
                   ],
-                ),
+                ))
               ],
             ),
-          )
+          ),
+          //used as a divider
+          Container(
+            color: Colors.black12,
+            height: _deviceHeight*.02
+          ),
+          Container(
+            //用户邮箱
+            margin: EdgeInsets.only(top: _deviceHeight*.008,bottom: _deviceHeight*.008),
+            child: Row(
+              children: [
+                Expanded(child: Icon(Icons.mail_outline_outlined), flex: 1,),
+                Expanded(child: Text('邮箱',style: TextStyle(fontSize: 20)), flex: 2,),
+                Expanded(child: Text(_auth.user.email, style: TextStyle(fontSize: 20,color: Colors.black26),textAlign: TextAlign.left,), flex: 5)
+              ],
+            ),
+          ),
+          Divider(
+            indent: _deviceWidth*.1,
+            endIndent: _deviceWidth*.1,
+            thickness: _deviceHeight*.002,
+            color: Colors.black12,
+          ),
+          Container(
+            //用户角色
+            margin: EdgeInsets.only(top: _deviceHeight*.008,bottom: _deviceHeight*.008),
+            child: Row(
+              children: [
+                Expanded(child: Icon(Icons.person), flex: 1,),
+                Expanded(child: Text('权限',style: TextStyle(fontSize: 20)), flex: 2,),
+                Expanded(child: Text(_auth.user.role == 'Parent' ? '家长' : '学生', style: TextStyle(fontSize: 20,color: Colors.black26),textAlign: TextAlign.left,), flex: 5)
+              ],
+            ),
+          ),
         ],
       ),
     );

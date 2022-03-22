@@ -41,10 +41,10 @@ class MainApp extends StatelessWidget {
         debugShowCheckedModeBanner: false,
         title: 'Chatify',
         theme: ThemeData(
-          backgroundColor: const Color.fromRGBO(36, 35, 49, 1),
-          scaffoldBackgroundColor: const Color.fromRGBO(36, 35, 49, 1),
+          backgroundColor: const Color.fromRGBO(255, 255, 255, 1),
+          scaffoldBackgroundColor: const Color.fromRGBO(255, 255, 255, 1),
           bottomNavigationBarTheme: const BottomNavigationBarThemeData(
-            backgroundColor: Color.fromRGBO(30, 29, 37, 1),
+            backgroundColor: Color.fromRGBO(240, 240, 240, 0.8),
           ),
         ),
         navigatorKey: NavigationService.navigatorKey,

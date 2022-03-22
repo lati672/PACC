@@ -48,6 +48,7 @@ class _ChatPageState extends State<ChatPage> {
   late NavigationService _navigation;
   late GlobalKey<FormState> _messageFormState;
   late ScrollController _messagesListViewController;
+  final Widget _page = const WhiteListPage();
   late String _role;
 
   bool _isComposing = false;
@@ -156,10 +157,7 @@ class _ChatPageState extends State<ChatPage> {
                                 final result = await Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                      builder: (context) => WhiteListPage(
-                                        sender_role: 'parent',
-                                        receiver_role: 'student',
-                                      ),
+                                      builder: (context) => WhiteListPage(),
                                     ));
                                 print('result: $result');
                                 if (result != null) {
@@ -290,8 +288,7 @@ class _ChatPageState extends State<ChatPage> {
                             MaterialPageRoute(
                               builder: (context) => CheckWhiteListPage(
                                 applist: appList,
-                                sender_role: 'student',
-                                receiver_role: 'student',
+                                role: _auth.user.role,
                               ),
                             ));
                         print('result:  $result');

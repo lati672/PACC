@@ -53,7 +53,7 @@ class _TopBarState extends State<TopBar> {
     return Text(
       widget._barTitle,
       style: TextStyle(
-        color: Colors.white,
+        color: Colors.black,
         fontSize: widget.fontSize,
         fontWeight: FontWeight.w700,
       ),
