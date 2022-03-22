@@ -34,7 +34,7 @@ class StudentChatPage extends StatefulWidget {
 }
 
 class _StudentChatPageState extends State<StudentChatPage> {
-  final TextEditingController _textController = new TextEditingController();
+  final TextEditingController _textController = TextEditingController();
   late double _deviceWidth;
   late double _deviceHeight;
   late DatabaseService _database;
@@ -43,6 +43,7 @@ class _StudentChatPageState extends State<StudentChatPage> {
   late NavigationService _navigation;
   late ScrollController _messagesListViewController;
   late String _memberid1, _memberid2;
+  bool isfriends = false;
 
   bool _isComposing = false;
   Set<int> selected = Set<int>();
@@ -237,6 +238,7 @@ class _StudentChatPageState extends State<StudentChatPage> {
             FlatButton(
               child: const Text("确认"),
               onPressed: () {
+                print('replying to the request');
                 _pageProvider.sendFriendRequestReply();
                 Navigator.of(context).pop();
               },
@@ -330,6 +332,7 @@ class _StudentChatPageState extends State<StudentChatPage> {
                             } else {
                               _confirmrequest(context);
                             }
+                            //_confirmrequest(context);
                           },
                           child: Text(_message.content),
                         );
@@ -351,7 +354,7 @@ class _StudentChatPageState extends State<StudentChatPage> {
         return const Align(
           alignment: Alignment.center,
           child: Text(
-            'Be the first to send a message!',
+            '暂无消息',
             style: TextStyle(
               color: Colors.white,
             ),

@@ -115,7 +115,8 @@ class ChatPageProvider extends ChangeNotifier {
       sentTime: DateTime.now(),
     );
     //print(_messageToSend.type);
-    _database.addMessagesToChat(_chatId, _messageToSend);
+    _database.confirmFriendRequest(_chatId, _auth.user.uid);
+    //_database.addMessagesToChat(_chatId, _messageToSend);
   }
 
   // * IMAGE messages

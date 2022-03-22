@@ -30,20 +30,20 @@ class _AddFriendsPageState extends State<AddFriendsPage> {
   bool _EmailisComposing = false;
   bool _NameisComposing = false;
   List<Text> AlertTitle = [
-    Text('用户未找到'),
-    Text('不能与自己建立聊天'),
-    Text('成功添加聊天'),
-    Text('聊天已经存在'),
-    Text('用户未找到'),
-    Text('不能与自己建立聊天'),
+    const Text('用户未找到'),
+    const Text('不能添加自己为好友'),
+    const Text('成功添加好友'),
+    const Text('你们已经是好友'),
+    const Text('用户未找到'),
+    const Text('不能添加自己为好友'),
   ];
   List<Text> AlertContent = [
-    Text('请输入正确的邮箱'),
-    Text('请输入正确的邮箱'),
-    Text('成功'),
-    Text('不能重复添加聊天'),
-    Text('请输入正确的用户名'),
-    Text('请输入正确的用户名')
+    const Text('请输入正确的邮箱'),
+    const Text('请输入正确的邮箱'),
+    const Text('成功'),
+    const Text('不能重复添加好友'),
+    const Text('请输入正确的用户名'),
+    const Text('请输入正确的用户名')
   ];
   // Responsive UI for diferent devices
   late DatabaseService _database;
@@ -96,7 +96,7 @@ class _AddFriendsPageState extends State<AddFriendsPage> {
   }
 
   void _EmailhandleSubmitted(text) {
-    print(_EmailtextController.text);
+    //print(_EmailtextController.text);
     addfriend(1);
 
     _EmailtextController.clear();
@@ -106,7 +106,7 @@ class _AddFriendsPageState extends State<AddFriendsPage> {
   }
 
   void _NamehandleSubmitted(text) {
-    print(_NametextController.text);
+    //print(_NametextController.text);
     addfriend(2);
 
     _NametextController.clear();
@@ -139,7 +139,7 @@ class _AddFriendsPageState extends State<AddFriendsPage> {
   Future<String> getUserList(int type) async {
     QuerySnapshot qshot;
 
-    print('getting list');
+    //print('getting list');
     if (type == 1) {
       qshot = await _database.getUserbyEmail(_EmailtextController.text);
     } else {
@@ -177,11 +177,16 @@ class _AddFriendsPageState extends State<AddFriendsPage> {
       return;
     }
     // the chat already exist
+    /*
     if (await _database.checkChatexist(_auth.user.uid, friendid)) {
       _showAlert(context, 3);
       return;
+    }*/
+    if (await _database.checkFriends(_auth.user.uid, friendid)) {
+      _showAlert(context, 3);
+      return;
     }
-    List<String> usersid = new List.from([_auth.user.uid, friendid]);
+    List<String> usersid = List.from([_auth.user.uid, friendid]);
     //await _database.createChat(_auth.user.uid, true, false, usersid);
     await _database.friendrequest(_auth.user.uid, true, false, usersid);
     //successfully created the chat

@@ -2,6 +2,7 @@
 //import 'dart:html';
 
 import 'package:chatifyapp/models/chat_user_model.dart';
+import 'package:chatifyapp/models/friend_model.dart';
 import 'package:chatifyapp/models/todo_list_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/widgets.dart';
@@ -15,6 +16,7 @@ const String chatCollection = 'Chats';
 const String messagesCollection = 'Messages';
 const String whitelistCollection = 'Whitelist';
 const String todolistCollection = 'Todolist';
+const String friendsCollection = 'Friends';
 
 class DatabaseService {
   DatabaseService();
@@ -401,6 +403,7 @@ class DatabaseService {
           .add(
             _message.toJson(),
           );
+      await addFriends(_chatId);
     } catch (error) {
       debugPrint('$error');
     }
@@ -417,5 +420,64 @@ class DatabaseService {
     } catch (error) {
       debugPrint('$error');
     }
+  }
+
+  //#Friend
+  Future<void> addFriends(String _chatid) async {
+    try {
+      DocumentSnapshot docshot =
+          await _dataBase.collection(chatCollection).doc(_chatid).get();
+
+      List<String> members = List.from(docshot['members']);
+      String user1id = members[0];
+      String user2id = members[1];
+      String user1role = await getRoleBySenderID(user1id);
+      String user2role = await getRoleBySenderID(user2id);
+      await _dataBase.collection(friendsCollection).add({
+        'user1id': user1id,
+        'user1role': user1role,
+        'user2id': user2id,
+        'user2role': user2role
+      });
+      print('successfully add new friends');
+    } catch (error) {
+      debugPrint('$error');
+    }
+  }
+
+  // check whether the chat members are friend
+  Future<bool> checkFriendsbyChatid(String _chatid) async {
+    bool result = false;
+    DocumentSnapshot chatshot =
+        await _dataBase.collection(chatCollection).doc(_chatid).get();
+    List<String> members = List.from(chatshot['members']);
+    String user1id = members[0];
+    String user2id = members[1];
+    QuerySnapshot friendshot =
+        await _dataBase.collection(friendsCollection).get();
+    friendshot.docs.forEach((doc) {
+      String user1 = doc['user1id'];
+      String user2 = doc['user2id'];
+      if ((user1 == user1id && user2 == user2id) ||
+          (user1 == user2id && user2 == user1id)) {
+        result = true;
+      }
+    });
+    return result;
+  }
+
+  //check whether the giving two users are friends
+  Future<bool> checkFriends(String _user1id, String _user2id) async {
+    bool result = false;
+    QuerySnapshot docshot = await _dataBase.collection(friendsCollection).get();
+    docshot.docs.forEach((doc) {
+      String user1 = doc['user1id'];
+      String user2 = doc['user2id'];
+      if ((user1 == _user1id && user2 == _user2id) ||
+          (user1 == _user2id && user2 == _user1id)) {
+        result = true;
+      }
+    });
+    return result;
   }
 }

@@ -34,7 +34,7 @@ class ParentChatPage extends StatefulWidget {
 }
 
 class _ParentChatPageState extends State<ParentChatPage> {
-  final TextEditingController _textController = new TextEditingController();
+  final TextEditingController _textController = TextEditingController();
   late double _deviceWidth;
   late double _deviceHeight;
   late AuthenticationProvider _auth;
@@ -42,10 +42,11 @@ class _ParentChatPageState extends State<ParentChatPage> {
   late NavigationService _navigation;
   late GlobalKey<FormState> _messageFormState;
   late ScrollController _messagesListViewController;
-  late String _memberid1, _memberid2;
   late DatabaseService _database;
   bool _isComposing = false;
   Set<int> selected = Set<int>();
+  late String _memberid1, _memberid2;
+  bool isfriends = false;
   @override
   void initState() {
     super.initState();
@@ -188,6 +189,34 @@ class _ParentChatPageState extends State<ParentChatPage> {
     });
   }
 
+  void _confirmrequest(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text("您有新的好友请求"),
+          content: const Text("确定要添加好友吗"),
+          actions: <Widget>[
+            FlatButton(
+              child: const Text("取消"),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            FlatButton(
+              child: const Text("确认"),
+              onPressed: () {
+                print('replying to the request');
+                _pageProvider.sendFriendRequestReply();
+                Navigator.of(context).pop();
+              },
+            )
+          ],
+        );
+      },
+    );
+  }
+
   Widget _buildTextComposer() {
     return IconTheme(
         data: IconThemeData(color: Theme.of(context).accentColor),
@@ -233,6 +262,7 @@ class _ParentChatPageState extends State<ParentChatPage> {
             itemBuilder: (BuildContext _context, int _index) {
               final _message = _pageProvider.messages![_index];
               final _isOwnMessage = _message.senderID == _auth.user.uid;
+              int confirmmessage_count = _pageProvider.countConfirm();
               switch (_message.type) {
                 case MessageType.text:
                   {
@@ -276,12 +306,41 @@ class _ParentChatPageState extends State<ParentChatPage> {
                         //print('result:  $result');
                         if (result != null) {
                           _pageProvider.sendWhiteList(result);
-                          print(_pageProvider.getchatid());
+                          //print(_pageProvider.getchatid());
                         }
                       },
                     );
                   }
-
+                case MessageType.confirm:
+                  {
+                    String senderid = _message.senderID;
+                    String receiverid =
+                        senderid == _memberid1 ? _memberid2 : _memberid1;
+                    int cnt =
+                        _pageProvider.countConfirmbefore(_message.sentTime);
+                    if (cnt == 0) {
+                      if (senderid == _auth.user.uid) {
+                        return const Text('您已发送好友请求，请等待回复');
+                      } else {
+                        return TextButton(
+                          style: TextButton.styleFrom(
+                            textStyle: const TextStyle(fontSize: 20),
+                          ),
+                          onPressed: () {
+                            if (confirmmessage_count == 2) {
+                              null;
+                            } else {
+                              _confirmrequest(context);
+                            }
+                            //_confirmrequest(context);
+                          },
+                          child: Text(_message.content),
+                        );
+                      }
+                    } else {
+                      return Text(_message.content);
+                    }
+                  }
                 default:
                   {
                     return Container();
