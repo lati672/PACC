@@ -29,7 +29,11 @@ class _TodoListState extends State<TodoListPage> {
   @override
   void initState() {
     super.initState();
-    fetchTodos();
+    Future.delayed(
+        Duration.zero,
+        () => setState(() {
+              fetchTodos();
+            }));
   }
 
   @override
@@ -38,6 +42,8 @@ class _TodoListState extends State<TodoListPage> {
   }
 
   Widget _buildUI() {
+    print('starting building UI');
+    print('the length is ${todos.length}');
     return Scaffold(
       body: todos == null
           ? Center(child: CircularProgressIndicator())
@@ -45,12 +51,12 @@ class _TodoListState extends State<TodoListPage> {
               padding: const EdgeInsets.all(16.0),
               itemCount: todos.length,
               itemBuilder: (BuildContext context, int index) {
-                return new ListTile(
-                  title: new Text(
+                return ListTile(
+                  title: Text(
                     todos[index].name,
                     style: _biggerFont,
                   ),
-                  trailing: new Icon(
+                  trailing: const Icon(
                     Icons.check_box_outline_blank,
                   ),
                   onTap: () {
@@ -69,10 +75,11 @@ class _TodoListState extends State<TodoListPage> {
   void fetchTodos() async {
     // late List<String> todos;
     print('starting fetch todos');
-    List<TodoListModel> todos = await _database.getTodoListAll();
+    todos = await _database.getTodoListAll();
     setState(() {
       todos = todos;
     });
+    print('got the todos');
   }
 
   // void addTodos() async {
