@@ -1,7 +1,9 @@
 // Packages
 import 'package:chatifyapp/pages/checkwhitelist_page.dart';
+import 'package:chatifyapp/pages/countdown_timer.dart';
 import 'package:chatifyapp/pages/home_page.dart';
 import 'package:chatifyapp/pages/whitelist_page.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:provider/provider.dart';
@@ -37,6 +39,7 @@ class _StudentChatPageState extends State<StudentChatPage> {
   final TextEditingController _textController = TextEditingController();
   late double _deviceWidth;
   late double _deviceHeight;
+  late double _deviceTop;
   late DatabaseService _database;
   late AuthenticationProvider _auth;
   late ChatPageProvider _pageProvider;
@@ -47,6 +50,7 @@ class _StudentChatPageState extends State<StudentChatPage> {
 
   bool _isComposing = false;
   Set<int> selected = Set<int>();
+
   @override
   void initState() {
     super.initState();
@@ -57,6 +61,7 @@ class _StudentChatPageState extends State<StudentChatPage> {
   Widget build(BuildContext context) {
     // * Initializations
     _database = GetIt.instance.get<DatabaseService>();
+    _deviceTop = MediaQuery.of(context).padding.top;
     _deviceWidth = MediaQuery.of(context).size.width;
     _deviceHeight = MediaQuery.of(context).size.height;
     _auth = Provider.of<AuthenticationProvider>(context);
@@ -92,90 +97,90 @@ class _StudentChatPageState extends State<StudentChatPage> {
         _pageProvider = _context.watch<ChatPageProvider>();
 
         return Scaffold(
-          body: SingleChildScrollView(
-            physics: const BouncingScrollPhysics(),
-            child: Container(
-              padding: EdgeInsets.symmetric(
-                  horizontal: _deviceWidth * .03,
-                  vertical: _deviceHeight * .02),
-              width: _deviceWidth,
-              height: _deviceHeight,
-              child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisSize: MainAxisSize.max,
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    TopBar(
-                      widget.chat.title(),
-                      fontSize: 16,
-                      primaryAction: IconButton(
-                        onPressed: () {
-                          _pageProvider.deleteChat();
-                        },
-                        icon: const Icon(
-                          Icons.delete,
-                          color: Color.fromRGBO(0, 82, 218, 1),
-                        ),
-                      ),
-                      secondaryAction: IconButton(
-                        onPressed: () {
-                          _navigation.navigateToPage(HomePage());
-                        },
-                        icon: const Icon(
-                          Icons.arrow_back_ios,
-                          color: Color.fromRGBO(0, 82, 218, 1),
-                        ),
+            body: Container(
+          width: _deviceWidth,
+          height: _deviceHeight,
+          child: SafeArea(
+            child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.start,
+                mainAxisSize: MainAxisSize.max,
+                children: [
+                  TopBar(
+                    widget.chat.title(),
+                    fontSize: 16,
+                    primaryAction: IconButton(
+                      onPressed: () {
+                        _pageProvider.deleteChat();
+                      },
+                      icon: const Icon(
+                        Icons.delete,
+                        color: Color.fromRGBO(0, 82, 218, 1),
                       ),
                     ),
-                    _messagesListView(),
-                    _buildTextComposer(),
-                    Row(
-                      //mainAxisSize: MainAxisSize.min,
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        IconButton(
-                            iconSize: 20.0,
-                            onPressed: () {
-                              _pageProvider.sendImageMessage();
-                            },
-                            icon: const Icon(
-                              Icons.image_sharp,
-                              color: Colors.black26,
-                            )),
-                        IconButton(
-                            iconSize: 20.0,
-                            onPressed: () async {
-                              String senderid = _auth.user.uid;
-                              String receiverid = senderid == _memberid1
-                                  ? _memberid2
-                                  : _memberid1;
-                              String senderrole =
-                                  await _database.getRoleBySenderID(senderid);
-                              String receiverrole =
-                                  await _database.getRoleBySenderID(receiverid);
-                              final result = await Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => WhiteListPage(
-                                        sender_role: senderrole,
-                                        receiver_role: receiverrole),
-                                  ));
-                              //print('result: $result');
-                              if (result != null) {
-                                _pageProvider.sendWhiteList(result);
-                                //print(_pageProvider.getchatid());
-                              }
-                            },
-                            icon: const Icon(
-                              Icons.add_chart,
-                              color: Colors.black26,
-                            )),
-                      ],
+                    secondaryAction: IconButton(
+                      onPressed: () {
+                        _navigation.navigateToPage(HomePage());
+                      },
+                      icon: const Icon(
+                        Icons.arrow_back_ios,
+                        color: Color.fromRGBO(0, 82, 218, 1),
+                      ),
                     ),
-                  ]),
-            ),
+                  ),
+                  Expanded(child: _messagesListView()),
+                  _buildTextComposer(),
+                  SizedBox(
+                      height: 35,
+                      child: Row(
+                        //mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          IconButton(
+                              padding: const EdgeInsets.all(.01),
+                              iconSize: 20,
+                              onPressed: () {
+                                _pageProvider.sendImageMessage();
+                              },
+                              icon: const Icon(
+                                Icons.image_sharp,
+                                color: Colors.black26,
+                              )),
+                          IconButton(
+                              iconSize: 20,
+                              padding: const EdgeInsets.all(.01),
+                              onPressed: () async {
+                                String senderid = _auth.user.uid;
+                                String receiverid = senderid == _memberid1
+                                    ? _memberid2
+                                    : _memberid1;
+                                String senderrole =
+                                    await _database.getRoleBySenderID(senderid);
+                                String receiverrole = await _database
+                                    .getRoleBySenderID(receiverid);
+                                final result = await Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => WhiteListPage(
+                                          sender_role: senderrole,
+                                          receiver_role: receiverrole),
+                                    ));
+                                //print('result: $result');
+                                if (result != null) {
+                                  _pageProvider.sendWhiteList(result);
+                                  //print(_pageProvider.getchatid());
+                                }
+                              },
+                              icon: const Icon(
+                                Icons.add_chart,
+                                color: Colors.black26,
+                              )),
+                        ],
+                      )),
+                ]),
           ),
-        );
+        ));
       },
     );
   }
@@ -192,30 +197,43 @@ class _StudentChatPageState extends State<StudentChatPage> {
     return IconTheme(
         data: IconThemeData(color: Theme.of(context).accentColor),
         child: Container(
-            margin: const EdgeInsets.symmetric(horizontal: 6.0),
-            child: Row(children: <Widget>[
+            margin: const EdgeInsets.symmetric(horizontal: 1.0),
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
+                child: Row(children: <Widget>[
               Flexible(
+                  fit: FlexFit.tight,
                   child: TextField(
-                controller: _textController,
-                onChanged: (String text) {
-                  setState(() {
-                    _isComposing = text.isNotEmpty;
-                  });
-                },
-                onSubmitted: _handleSubmitted,
-                decoration: const InputDecoration(
-                    filled: true, fillColor: Colors.white, hintText: '发送信息'),
-              )),
+                    controller: _textController,
+                    onChanged: (String text) {
+                      setState(() {
+                        _isComposing = text.isNotEmpty;
+                      });
+                    },
+                    onSubmitted: _handleSubmitted,
+                    decoration: InputDecoration(
+                      isCollapsed: true,
+                        contentPadding: const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
+                        filled: true,
+                        fillColor: Colors.black12,
+                        hintText: '发送信息',
+                        border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(20.0),
+                            borderSide: BorderSide.none)),
+                  )),
               Container(
-                color: Colors.green,
-                margin: const EdgeInsets.only(left: 4.0),
-                child: IconButton(
-                    icon: const Icon(Icons.send),
-                    onPressed: _isComposing
-                        ? () => _handleSubmitted(_textController.text)
-                        : null),
-              )
-            ])));
+                  margin: const EdgeInsets.only(left: 4.0),
+                  child: SizedBox(
+                    width: 25,
+                    height: 25,
+                    child: IconButton(
+                        padding: EdgeInsets.zero,
+                        icon: const Icon(Icons.send),
+                        onPressed: _isComposing
+                            ? () => _handleSubmitted(_textController.text)
+                            : null),
+                  ))
+            ]))));
   }
 
   List<String> decodewhitelist(String whitelist) {
@@ -254,9 +272,9 @@ class _StudentChatPageState extends State<StudentChatPage> {
   Widget _messagesListView() {
     if (_pageProvider.messages != null) {
       if (_pageProvider.messages!.isNotEmpty) {
-        return SizedBox(
-          height: _deviceHeight * .70,
-          //height: _deviceHeight,
+        return Container(
+          padding: EdgeInsets.symmetric(horizontal: _deviceWidth * .02),
+          color: const Color.fromRGBO(240, 240, 240, 1),
           child: ListView.builder(
             itemCount: _pageProvider.messages!.length,
             itemBuilder: (BuildContext _context, int _index) {

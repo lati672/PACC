@@ -33,9 +33,10 @@ class _TopBarState extends State<TopBar> {
   }
 
   Widget _buildUI() {
-    return SizedBox(
+    return Container(
+      color: Colors.white24,
+        child: SizedBox(
       width: _deviceWidth,
-      height: _deviceHeight * .10,
       child: Row(
         mainAxisSize: MainAxisSize.max,
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -46,7 +47,7 @@ class _TopBarState extends State<TopBar> {
           if (widget.primaryAction != null) widget.primaryAction!,
         ],
       ),
-    );
+    ));
   }
 
   Widget _titleBar() {

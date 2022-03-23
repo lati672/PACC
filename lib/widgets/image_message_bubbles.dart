@@ -60,7 +60,7 @@ class ImageMessageBubble extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         mainAxisSize: MainAxisSize.max,
         children: [
-          Image(image: NetworkImage("https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fmmbiz.qpic.cn%2Fmmbiz_jpg%2FADamEbibMMaN42xAkj7WklHbUc64TKL2Jgt7Dz4el7ria1fIdqxBOhmuLcP5tbpzibTJicwvAqmTDjVShAWGSSNsIQ%2F640%3Fwx_fmt%3Djpeg&refer=http%3A%2F%2Fmmbiz.qpic.cn&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=auto?sec=1650289065&t=0f7832b760284deed3d8facc1edd75ca")),
+          Image(image: NetworkImage(message.content)),
           Text(
             //timeago.format(message.sentTime),
             convertToAgo(message.sentTime),
