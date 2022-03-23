@@ -79,7 +79,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 CircleAvatar(
-                  backgroundImage: NetworkImage("https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fp9.itc.cn%2Fq_70%2Fimages03%2F20210628%2Faa3ecdcd663f46379f059cd06d3343f6.png&refer=http%3A%2F%2Fp9.itc.cn&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=auto?sec=1650254505&t=27fd1495e4b2bc7efe73d212d006f835"),
+                  backgroundImage: NetworkImage(user.imageUrl),
                   radius: _deviceWidth*0.1,
                 ),
                 SizedBox(width: _deviceWidth*.05),

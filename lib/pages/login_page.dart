@@ -79,22 +79,33 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   Widget _pageTitle() {
-    return SizedBox(
-      height: _deviceHeight * .10,
-      child: const Text(
-        '番茄钟',
-        style: TextStyle(
-          color: Colors.white,
-          fontSize: 40,
-          fontWeight: FontWeight.w600,
-        ),
-      ),
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        Expanded(child: Container(
+          //用来放置app图标
+          height: _deviceHeight * .10,
+          decoration: BoxDecoration(
+            image: DecorationImage(
+              fit: BoxFit.fitHeight,
+              image: AssetImage('assets/images/logo.png')
+            )
+          ),
+        )),
+        Expanded(child: Text(
+          'ToDo！',
+          style: TextStyle(
+              color: Colors.black, fontSize: 40, fontWeight: FontWeight.w400),
+        ))
+      ],
     );
   }
 
   Widget _loginForm() {
     return SizedBox(
       height: _deviceHeight * .25,
+      width: _deviceWidth * .80,
       child: Form(
         key: _loginFormKey,
         child: Column(

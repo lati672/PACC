@@ -18,15 +18,15 @@ class CustomTextFormField extends StatelessWidget {
   Widget build(BuildContext context) {
     return TextFormField(
       decoration: InputDecoration(
-          fillColor: const Color.fromRGBO(30, 29, 27, 1),
+          fillColor: const Color.fromRGBO(220, 220, 220, 1),
           filled: true,
           border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(10),
+            borderRadius: BorderRadius.circular(30),
             borderSide: BorderSide.none,
           ),
           hintText: hintText,
           hintStyle: const TextStyle(
-            color: Colors.white54,
+            color: Colors.white,
           )),
       style: const TextStyle(
         color: Colors.white,
