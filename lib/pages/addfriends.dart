@@ -2,16 +2,12 @@
 import 'dart:io';
 
 import 'package:chatifyapp/models/chat_user_model.dart';
-import 'package:chatifyapp/models/chats_model.dart';
-import 'package:chatifyapp/pages/chats_page.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:get_it/get_it.dart';
 //Provider
 import '../providers/authentication_provider.dart';
-import '../providers/chat_page_provider.dart';
 // Widget
 import '../widgets/top_bar.dart';
 // Services
@@ -153,8 +149,10 @@ class _AddFriendsPageState extends State<AddFriendsPage> {
     }
     if (qshot.size == 0 && type == 1) {
       _showAlert(context, 0);
+      return "";
     } else if (qshot.size == 0 && type == 2) {
       _showAlert(context, 4);
+      return "";
     }
     List<ChatUserModel> l = qshot.docs
         .map((e) => ChatUserModel(
@@ -172,6 +170,9 @@ class _AddFriendsPageState extends State<AddFriendsPage> {
   void addfriend(int type) async {
     String userid = _auth.user.uid;
     String friendid = await getUserId(type);
+    if (friendid == "") {
+      return;
+    }
     //Email,the friend id is same as the user id
     if (_auth.user.uid == friendid && type == 1) {
       _showAlert(context, 1);
@@ -186,9 +187,11 @@ class _AddFriendsPageState extends State<AddFriendsPage> {
     String user2role = await _database.getRoleBySenderID(friendid);
     if (user1role == 'Parent' && user2role == 'Parent') {
       _showAlert(context, 6);
+      return;
     }
     if (user1role == 'Student' && user2role == 'Student') {
       _showAlert(context, 7);
+      return;
     }
     //Parent cannot add parent
     if (await _database.checkPSrel(userid, friendid)) {

@@ -465,36 +465,6 @@ class DatabaseService {
     });
     return result;
   }
-/*
-  //check whether the giving two users are friends
-  Future<bool> checkFriends(String _user1id, String _user2id) async {
-    bool result = false;
-    QuerySnapshot docshot = await _dataBase.collection(friendsCollection).get();
-    docshot.docs.forEach((doc) {
-      String user1 = doc['user1id'];
-      String user2 = doc['user2id'];
-      if ((user1 == _user1id && user2 == _user2id) ||
-          (user1 == _user2id && user2 == _user1id)) {
-        result = true;
-      }
-    });
-    return result;
-  }
-
-  Future<List<String>> getFriends(String user_id) async {
-    List<String> friends = [];
-    QuerySnapshot qshot = await _dataBase.collection(friendsCollection).get();
-    qshot.docs.forEach((doc) {
-      String member1 = doc['user1id'];
-      String member2 = doc['user2id'];
-      if (user_id == member1) {
-        friends.add(member2);
-      } else if (user_id == member2) {
-        friends.add(member1);
-      }
-    });
-    return friends;
-  }*/
 
   //#Parent-Student
   //add a new parent-student relationship
@@ -516,9 +486,8 @@ class DatabaseService {
       if (user2role == 'Parent' && user1role == 'Student') {
         await _dataBase
             .collection(parentstudentCollection)
-            .add({'parentid': user1id, 'studentid': user2id});
+            .add({'parentid': user2id, 'studentid': user1id});
       }
-      print('successfully add new P-S relationship');
     } catch (error) {
       debugPrint('$error');
     }

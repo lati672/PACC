@@ -1,4 +1,5 @@
 // Packages
+import 'package:chatifyapp/pages/friends.dart';
 import 'package:chatifyapp/pages/settings.dart';
 import 'package:chatifyapp/pages/user_profile_page.dart';
 import 'package:flutter/material.dart';
@@ -26,6 +27,7 @@ class _HomePageState extends State<HomePage> {
   final List<Widget> _pages = [
     const ChatsPage(),
     TodoListPage(),
+    FriendsPage(),
     UserProfilePage()
   ];
 
@@ -42,19 +44,25 @@ class _HomePageState extends State<HomePage> {
         currentIndex: _currentPage,
         items: const [
           BottomNavigationBarItem(
-            label: 'ChATS',
+            label: '聊天',
             icon: Icon(
               Icons.chat_bubble_sharp,
             ),
           ),
           BottomNavigationBarItem(
-            label: 'USERS',
+            label: '白名单',
             icon: Icon(
-              Icons.supervised_user_circle,
+              Icons.access_alarm_rounded,
             ),
           ),
           BottomNavigationBarItem(
-            label: 'USERPROFILE',
+            label: '朋友',
+            icon: Icon(
+              Icons.escalator_warning,
+            ),
+          ),
+          BottomNavigationBarItem(
+            label: '用户',
             icon: Icon(
               Icons.account_circle_rounded,
             ),

@@ -16,13 +16,8 @@ class TodoListPage extends StatefulWidget {
 }
 
 class _TodoListState extends State<TodoListPage> {
-  // final TodoListModel todoModel;
-  // TodoListModel todoSqlite = new TodoListModel();
-  // late DatabaseService _database;
-  // late NavigationService _navigation;
   DatabaseService _database = GetIt.instance.get<DatabaseService>();
   NavigationService _navigation = GetIt.instance.get<NavigationService>();
-  // List<TodoListModel> todos = await _database.getTodoListAll(false);
   List<TodoListModel> todos = [];
   final _biggerFont = const TextStyle(fontSize: 18.0);
 
