@@ -8,12 +8,10 @@ import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:provider/provider.dart';
-
 // Widgets
 import '../widgets/top_bar.dart';
 import '../widgets/custom_list_view_tiles.dart';
 //page
-import 'package:chatifyapp/pages/chat_page.dart';
 import '../providers/authentication_provider.dart';
 import '../services/navigation_service.dart';
 

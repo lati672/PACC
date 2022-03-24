@@ -11,8 +11,7 @@ import 'dart:async';
 // Widgets
 import '../widgets/top_bar.dart';
 import '../widgets/custom_list_view_tiles.dart';
-//page
-import 'package:chatifyapp/pages/chat_page.dart';
+
 // Models
 import '../models/chats_model.dart';
 

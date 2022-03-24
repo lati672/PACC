@@ -1,15 +1,15 @@
 // Packages
 //import 'dart:html';
 import 'package:flutter/material.dart';
-import 'package:chatifyapp/models/chat_user_model.dart';
-import 'package:chatifyapp/models/friend_model.dart';
-import 'package:chatifyapp/models/todo_list_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/widgets.dart';
 
 // Models
 import '../models/chat_message_model.dart';
 import '../models/todo_list_model.dart';
+import '../models/parent-student_model.dart';
+import 'package:chatifyapp/models/friend_model.dart';
+import 'package:chatifyapp/models/chat_user_model.dart';
 
 const String userCollection = 'Users';
 const String chatCollection = 'Chats';
@@ -17,6 +17,7 @@ const String messagesCollection = 'Messages';
 const String whitelistCollection = 'Whitelist';
 const String todolistCollection = 'Todolist';
 const String friendsCollection = 'Friends';
+const String parentstudentCollection = 'Parent-Student';
 
 class DatabaseService {
   DatabaseService();
@@ -403,7 +404,7 @@ class DatabaseService {
           .add(
             _message.toJson(),
           );
-      await addFriends(_chatId);
+      await addParentStudentRel(_chatId);
     } catch (error) {
       debugPrint('$error');
     }
@@ -444,30 +445,6 @@ class DatabaseService {
 
   //update a todo list
   Future<void> updateTodoList(TodoListModel todolist) async {}
-
-  //#Friend
-  Future<void> addFriends(String _chatid) async {
-    try {
-      DocumentSnapshot docshot =
-          await _dataBase.collection(chatCollection).doc(_chatid).get();
-
-      List<String> members = List.from(docshot['members']);
-      String user1id = members[0];
-      String user2id = members[1];
-      String user1role = await getRoleBySenderID(user1id);
-      String user2role = await getRoleBySenderID(user2id);
-      await _dataBase.collection(friendsCollection).add({
-        'user1id': user1id,
-        'user1role': user1role,
-        'user2id': user2id,
-        'user2role': user2role
-      });
-      print('successfully add new friends');
-    } catch (error) {
-      debugPrint('$error');
-    }
-  }
-
   // check whether the chat members are friend
   Future<bool> checkFriendsbyChatid(String _chatid) async {
     bool result = false;
@@ -488,7 +465,7 @@ class DatabaseService {
     });
     return result;
   }
-
+/*
   //check whether the giving two users are friends
   Future<bool> checkFriends(String _user1id, String _user2id) async {
     bool result = false;
@@ -496,6 +473,94 @@ class DatabaseService {
     docshot.docs.forEach((doc) {
       String user1 = doc['user1id'];
       String user2 = doc['user2id'];
+      if ((user1 == _user1id && user2 == _user2id) ||
+          (user1 == _user2id && user2 == _user1id)) {
+        result = true;
+      }
+    });
+    return result;
+  }
+
+  Future<List<String>> getFriends(String user_id) async {
+    List<String> friends = [];
+    QuerySnapshot qshot = await _dataBase.collection(friendsCollection).get();
+    qshot.docs.forEach((doc) {
+      String member1 = doc['user1id'];
+      String member2 = doc['user2id'];
+      if (user_id == member1) {
+        friends.add(member2);
+      } else if (user_id == member2) {
+        friends.add(member1);
+      }
+    });
+    return friends;
+  }*/
+
+  //#Parent-Student
+  //add a new parent-student relationship
+  Future<void> addParentStudentRel(String _chatid) async {
+    try {
+      DocumentSnapshot docshot =
+          await _dataBase.collection(chatCollection).doc(_chatid).get();
+
+      List<String> members = List.from(docshot['members']);
+      String user1id = members[0];
+      String user2id = members[1];
+      String user1role = await getRoleBySenderID(user1id);
+      String user2role = await getRoleBySenderID(user2id);
+      if (user1role == 'Parent' && user2role == 'Student') {
+        await _dataBase
+            .collection(parentstudentCollection)
+            .add({'parentid': user1id, 'studentid': user2id});
+      }
+      if (user2role == 'Parent' && user1role == 'Student') {
+        await _dataBase
+            .collection(parentstudentCollection)
+            .add({'parentid': user1id, 'studentid': user2id});
+      }
+      print('successfully add new P-S relationship');
+    } catch (error) {
+      debugPrint('$error');
+    }
+  }
+
+  //Get parents' id by student id
+  Future<List<String>> getParents(String student_id) async {
+    List<String> parents = [];
+    QuerySnapshot qshot =
+        await _dataBase.collection(parentstudentCollection).get();
+    qshot.docs.forEach((doc) {
+      String parentid = doc['parentid'];
+      String studentid = doc['studentid'];
+      if (student_id == studentid) {
+        parents.add(parentid);
+      }
+    });
+    return parents;
+  }
+
+  //Get students' id by parent id
+  Future<List<String>> getStudents(String parent_id) async {
+    List<String> students = [];
+    QuerySnapshot qshot =
+        await _dataBase.collection(parentstudentCollection).get();
+    qshot.docs.forEach((doc) {
+      String parentid = doc['parentid'];
+      String studentid = doc['studentid'];
+      if (parent_id == parentid) {
+        students.add(studentid);
+      }
+    });
+    return students;
+  }
+
+  Future<bool> checkPSrel(String _user1id, String _user2id) async {
+    bool result = false;
+    QuerySnapshot docshot =
+        await _dataBase.collection(parentstudentCollection).get();
+    docshot.docs.forEach((doc) {
+      String user1 = doc['parentid'];
+      String user2 = doc['studentid'];
       if ((user1 == _user1id && user2 == _user2id) ||
           (user1 == _user2id && user2 == _user1id)) {
         result = true;

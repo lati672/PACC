@@ -31,19 +31,23 @@ class _AddFriendsPageState extends State<AddFriendsPage> {
   bool _NameisComposing = false;
   List<Text> AlertTitle = [
     const Text('用户未找到'),
-    const Text('不能添加自己为好友'),
-    const Text('成功添加好友'),
+    const Text('不能添加自己'),
+    const Text('成功发送请求'),
     const Text('你们已经是好友'),
     const Text('用户未找到'),
-    const Text('不能添加自己为好友'),
+    const Text('不能添加自己'),
+    const Text('添加错误'),
+    const Text('添加错误'),
   ];
   List<Text> AlertContent = [
     const Text('请输入正确的邮箱'),
     const Text('请输入正确的邮箱'),
     const Text('成功'),
-    const Text('不能重复添加好友'),
+    const Text('不能重复添加'),
     const Text('请输入正确的用户名'),
-    const Text('请输入正确的用户名')
+    const Text('请输入正确的用户名'),
+    const Text('家长不能添加家长'),
+    const Text('学生不能添加学生')
   ];
   // Responsive UI for diferent devices
   late DatabaseService _database;
@@ -95,6 +99,7 @@ class _AddFriendsPageState extends State<AddFriendsPage> {
     );
   }
 
+  //Submitted by email
   void _EmailhandleSubmitted(text) {
     //print(_EmailtextController.text);
     addfriend(1);
@@ -105,6 +110,7 @@ class _AddFriendsPageState extends State<AddFriendsPage> {
     });
   }
 
+  //Submitted by user name
   void _NamehandleSubmitted(text) {
     //print(_NametextController.text);
     addfriend(2);
@@ -115,6 +121,7 @@ class _AddFriendsPageState extends State<AddFriendsPage> {
     });
   }
 
+  //Show Alert based on alert type
   void _showAlert(BuildContext context, int AlertType) {
     final alert = AlertDialog(
       title: AlertTitle[AlertType],
@@ -136,10 +143,9 @@ class _AddFriendsPageState extends State<AddFriendsPage> {
     );
   }
 
-  Future<String> getUserList(int type) async {
+  //Get the user id
+  Future<String> getUserId(int type) async {
     QuerySnapshot qshot;
-
-    //print('getting list');
     if (type == 1) {
       qshot = await _database.getUserbyEmail(_EmailtextController.text);
     } else {
@@ -164,8 +170,8 @@ class _AddFriendsPageState extends State<AddFriendsPage> {
 
   //type=1:email;type=2:name
   void addfriend(int type) async {
-    //print('adding friends based on type: $type');
-    String friendid = await getUserList(type);
+    String userid = _auth.user.uid;
+    String friendid = await getUserId(type);
     //Email,the friend id is same as the user id
     if (_auth.user.uid == friendid && type == 1) {
       _showAlert(context, 1);
@@ -176,19 +182,22 @@ class _AddFriendsPageState extends State<AddFriendsPage> {
       _showAlert(context, 5);
       return;
     }
-    // the chat already exist
-    /*
-    if (await _database.checkChatexist(_auth.user.uid, friendid)) {
-      _showAlert(context, 3);
-      return;
-    }*/
-    if (await _database.checkFriends(_auth.user.uid, friendid)) {
+    String user1role = await _database.getRoleBySenderID(userid);
+    String user2role = await _database.getRoleBySenderID(friendid);
+    if (user1role == 'Parent' && user2role == 'Parent') {
+      _showAlert(context, 6);
+    }
+    if (user1role == 'Student' && user2role == 'Student') {
+      _showAlert(context, 7);
+    }
+    //Parent cannot add parent
+    if (await _database.checkPSrel(userid, friendid)) {
       _showAlert(context, 3);
       return;
     }
-    List<String> usersid = List.from([_auth.user.uid, friendid]);
-    //await _database.createChat(_auth.user.uid, true, false, usersid);
-    await _database.friendrequest(_auth.user.uid, true, false, usersid);
+    List<String> usersid = List.from([userid, friendid]);
+
+    await _database.friendrequest(userid, true, false, usersid);
     //successfully created the chat
     _showAlert(context, 2);
   }

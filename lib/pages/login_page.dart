@@ -83,17 +83,17 @@ class _LoginPageState extends State<LoginPage> {
       mainAxisAlignment: MainAxisAlignment.center,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        Expanded(child: Container(
+        Expanded(
+            child: Container(
           //用来放置app图标
           height: _deviceHeight * .10,
           decoration: BoxDecoration(
-            image: DecorationImage(
-              fit: BoxFit.fitHeight,
-              image: AssetImage('assets/images/logo.png')
-            )
-          ),
+              image: DecorationImage(
+                  fit: BoxFit.fitHeight,
+                  image: AssetImage('assets/images/logo.png'))),
         )),
-        Expanded(child: Text(
+        Expanded(
+            child: Text(
           'ToDo！',
           style: TextStyle(
               color: Colors.black, fontSize: 40, fontWeight: FontWeight.w400),
@@ -122,7 +122,7 @@ class _LoginPageState extends State<LoginPage> {
               },
               regularExpression:
                   r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+",
-              hintText: 'Email',
+              hintText: '邮箱',
               obscureText: false,
             ),
             // Password Field
@@ -134,7 +134,7 @@ class _LoginPageState extends State<LoginPage> {
               },
               // Password longer than 8 chars
               regularExpression: r".{8,}",
-              hintText: 'Password',
+              hintText: '密码',
               obscureText: true,
             )
           ],

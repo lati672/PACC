@@ -42,8 +42,6 @@ class _TodoListState extends State<TodoListPage> {
   }
 
   Widget _buildUI() {
-    print('starting building UI');
-    print('the length is ${todos.length}');
     return Scaffold(
       body: todos == null
           ? Center(child: CircularProgressIndicator())
@@ -74,12 +72,10 @@ class _TodoListState extends State<TodoListPage> {
 
   void fetchTodos() async {
     // late List<String> todos;
-    print('starting fetch todos');
     todos = await _database.getTodoListAll();
     setState(() {
       todos = todos;
     });
-    print('got the todos');
   }
 
   // void addTodos() async {

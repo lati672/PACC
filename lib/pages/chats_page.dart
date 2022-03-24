@@ -12,7 +12,6 @@ import '../providers/chats_page_provider.dart';
 import '../services/navigation_service.dart';
 
 // Pages
-import '../pages/chat_page.dart';
 import '../pages/parent_chat_page.dart';
 import '../pages/student_chat_page.dart';
 
