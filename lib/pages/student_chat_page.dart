@@ -383,7 +383,7 @@ class _StudentChatPageState extends State<StudentChatPage> {
           child: Text(
             '暂无消息',
             style: TextStyle(
-              color: Colors.white,
+              color: Colors.black12,
             ),
           ),
         );
@@ -391,7 +391,7 @@ class _StudentChatPageState extends State<StudentChatPage> {
     } else {
       return const Center(
         child: CircularProgressIndicator(
-          color: Colors.white,
+          color: Colors.black12,
         ),
       );
     }

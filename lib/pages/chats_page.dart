@@ -64,13 +64,10 @@ class _ChatsPageState extends State<ChatsPage> {
       builder: (_context) {
         //* Triggers the info in the widgets to render themselves
         _pageProvider = _context.watch<ChatsPageProvider>();
-        return Container(
-          width: _deviceWidth * .97,
-          height: _deviceHeight * .98,
-          padding: EdgeInsets.symmetric(
-            horizontal: _deviceWidth * .03,
-            vertical: _deviceHeight * .02,
-          ),
+        return SafeArea(
+            child: Container(
+          width: _deviceWidth,
+          height: _deviceHeight,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.start,
@@ -102,7 +99,7 @@ class _ChatsPageState extends State<ChatsPage> {
               _chatsList(),
             ],
           ),
-        );
+        ));
       },
     );
   }
@@ -161,20 +158,28 @@ class _ChatsPageState extends State<ChatsPage> {
           : _chat.messages.first.content;
       //print('subtitletest: $_subtitleText');
     }
-    return CustomListViewTileWithActivity(
-      height: _deviceHeight * .10,
-      title: _chat.title(),
-      subtitle: _subtitleText,
-      imagePath: _chat.chatImageURL(),
-      isActive: _isActive,
-      isActivity: _chat.activity,
-      onTap: () => _auth.user.role == 'Parent'
-          ? _navigation.navigateToPage(
-              ParentChatPage(chat: _chat),
-            )
-          : _navigation.navigateToPage(
-              StudentChatPage(chat: _chat),
-            ),
-    );
+    return Column(children: [
+      CustomListViewTileWithActivity(
+        height: _deviceHeight * .10,
+        title: _chat.title(),
+        subtitle: _subtitleText,
+        imagePath: _chat.chatImageURL(),
+        isActive: _isActive,
+        isActivity: _chat.activity,
+        onTap: () => _auth.user.role == 'Parent'
+            ? _navigation.navigateToPage(
+                ParentChatPage(chat: _chat),
+              )
+            : _navigation.navigateToPage(
+                StudentChatPage(chat: _chat),
+              ),
+      ),
+      Divider(
+        indent: _deviceWidth *.03,
+        endIndent: _deviceWidth *.03,
+        height: 0.2,
+        color: Colors.black12,
+      )
+    ]);
   }
 }
