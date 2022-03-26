@@ -34,12 +34,20 @@ class _UserProfilePageState extends State<UserProfilePage> {
     _deviceHeight = MediaQuery.of(context).size.height;
     user = _auth.user;
     return Scaffold(
-      body: Container(
-        decoration: BoxDecoration(color: Colors.white),
-        child:ListView(
-          children: <Widget>[
-          SizedBox(height: _deviceHeight*.02 ),
+        body: Container(
+      decoration: const BoxDecoration(color: Colors.white),
+      child: ListView(
+        children: <Widget>[
+          SizedBox(height: _deviceHeight * .02),
           HeaderSection(),
+          TextButton(
+              onPressed: () {
+                _auth.logout();
+              },
+              child: const Text(
+                '退出登录',
+                style: TextStyle(color: Colors.black),
+              )),
           /*
           AnimatedSwitcher(
             duration: Duration(milliseconds: 750),
@@ -72,35 +80,29 @@ class _UserProfilePageState extends State<UserProfilePage> {
           // ),
           Container(
             decoration: BoxDecoration(color: Colors.white),
-            height: _deviceHeight*.2,
-            padding: EdgeInsets.all(_deviceWidth*.02),
+            height: _deviceHeight * .2,
+            padding: EdgeInsets.all(_deviceWidth * .02),
             //名片部分，头像、账号、用户名
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 CircleAvatar(
                   backgroundImage: NetworkImage(user.imageUrl),
-                  radius: _deviceWidth*0.1,
+                  radius: _deviceWidth * 0.1,
                 ),
-                SizedBox(width: _deviceWidth*.05),
-                Expanded(child: Column(
+                SizedBox(width: _deviceWidth * .05),
+                Expanded(
+                    child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Container(
-                      margin: EdgeInsets.only(bottom: _deviceWidth*.01),
+                      margin: EdgeInsets.only(bottom: _deviceWidth * .01),
                       alignment: Alignment.centerLeft,
                       child: Text(
                         _auth.user.name,
                         textAlign: TextAlign.left,
-                        style: TextStyle(fontWeight: FontWeight.w600, fontSize: 20),
-                      ),
-                    ),
-                    Container(
-                      margin: EdgeInsets.only(top: _deviceWidth*.01),
-                      alignment: Alignment.centerLeft,
-                      child: Text(
-                        _auth.user.uid,
-                        textAlign: TextAlign.left,
+                        style: const TextStyle(
+                            fontWeight: FontWeight.w600, fontSize: 20),
                       ),
                     ),
                   ],
@@ -109,35 +111,60 @@ class _UserProfilePageState extends State<UserProfilePage> {
             ),
           ),
           //used as a divider
-          Container(
-            color: Colors.black12,
-            height: _deviceHeight*.02
-          ),
+          Container(color: Colors.black12, height: _deviceHeight * .02),
           Container(
             //用户邮箱
-            margin: EdgeInsets.only(top: _deviceHeight*.008,bottom: _deviceHeight*.008),
+            margin: EdgeInsets.only(
+                top: _deviceHeight * .008, bottom: _deviceHeight * .008),
             child: Row(
               children: [
-                Expanded(child: Icon(Icons.mail_outline_outlined), flex: 1,),
-                Expanded(child: Text('邮箱',style: TextStyle(fontSize: 20)), flex: 2,),
-                Expanded(child: Text(_auth.user.email, style: TextStyle(fontSize: 20,color: Colors.black26),textAlign: TextAlign.left,), flex: 5)
+                const Expanded(
+                  child: Icon(Icons.mail_outline_outlined),
+                  flex: 1,
+                ),
+                const Expanded(
+                  child: Text('邮箱', style: TextStyle(fontSize: 20)),
+                  flex: 2,
+                ),
+                Expanded(
+                    child: Text(
+                      _auth.user.email,
+                      style:
+                          const TextStyle(fontSize: 20, color: Colors.black26),
+                      textAlign: TextAlign.left,
+                    ),
+                    flex: 5)
               ],
             ),
           ),
           Divider(
-            indent: _deviceWidth*.1,
-            endIndent: _deviceWidth*.1,
-            thickness: _deviceHeight*.002,
+            indent: _deviceWidth * .1,
+            endIndent: _deviceWidth * .1,
+            thickness: _deviceHeight * .002,
             color: Colors.black12,
           ),
           Container(
             //用户角色
-            margin: EdgeInsets.only(top: _deviceHeight*.008,bottom: _deviceHeight*.008),
+            margin: EdgeInsets.only(
+                top: _deviceHeight * .008, bottom: _deviceHeight * .008),
             child: Row(
               children: [
-                Expanded(child: Icon(Icons.person), flex: 1,),
-                Expanded(child: Text('权限',style: TextStyle(fontSize: 20)), flex: 2,),
-                Expanded(child: Text(_auth.user.role == 'Parent' ? '家长' : '学生', style: TextStyle(fontSize: 20,color: Colors.black26),textAlign: TextAlign.left,), flex: 5)
+                const Expanded(
+                  child: Icon(Icons.person),
+                  flex: 1,
+                ),
+                const Expanded(
+                  child: Text('权限', style: TextStyle(fontSize: 20)),
+                  flex: 2,
+                ),
+                Expanded(
+                    child: Text(
+                      _auth.user.role == 'Parent' ? '家长' : '学生',
+                      style:
+                          const TextStyle(fontSize: 20, color: Colors.black26),
+                      textAlign: TextAlign.left,
+                    ),
+                    flex: 5)
               ],
             ),
           ),

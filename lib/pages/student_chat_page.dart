@@ -47,9 +47,7 @@ class _StudentChatPageState extends State<StudentChatPage> {
   late ScrollController _messagesListViewController;
   late String _memberid1, _memberid2;
   bool isfriends = false;
-
   bool _isComposing = false;
-  Set<int> selected = Set<int>();
 
   @override
   void initState() {
@@ -199,41 +197,42 @@ class _StudentChatPageState extends State<StudentChatPage> {
         child: Container(
             margin: const EdgeInsets.symmetric(horizontal: 1.0),
             child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
+                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
                 child: Row(children: <Widget>[
-              Flexible(
-                  fit: FlexFit.tight,
-                  child: TextField(
-                    controller: _textController,
-                    onChanged: (String text) {
-                      setState(() {
-                        _isComposing = text.isNotEmpty;
-                      });
-                    },
-                    onSubmitted: _handleSubmitted,
-                    decoration: InputDecoration(
-                      isCollapsed: true,
-                        contentPadding: const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
-                        filled: true,
-                        fillColor: Colors.black12,
-                        hintText: '发送信息',
-                        border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(20.0),
-                            borderSide: BorderSide.none)),
-                  )),
-              Container(
-                  margin: const EdgeInsets.only(left: 4.0),
-                  child: SizedBox(
-                    width: 25,
-                    height: 25,
-                    child: IconButton(
-                        padding: EdgeInsets.zero,
-                        icon: const Icon(Icons.send),
-                        onPressed: _isComposing
-                            ? () => _handleSubmitted(_textController.text)
-                            : null),
-                  ))
-            ]))));
+                  Flexible(
+                      fit: FlexFit.tight,
+                      child: TextField(
+                        controller: _textController,
+                        onChanged: (String text) {
+                          setState(() {
+                            _isComposing = text.isNotEmpty;
+                          });
+                        },
+                        onSubmitted: _handleSubmitted,
+                        decoration: InputDecoration(
+                            isCollapsed: true,
+                            contentPadding: const EdgeInsets.symmetric(
+                                horizontal: 8, vertical: 10),
+                            filled: true,
+                            fillColor: Colors.black12,
+                            hintText: '发送信息',
+                            border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(20.0),
+                                borderSide: BorderSide.none)),
+                      )),
+                  Container(
+                      margin: const EdgeInsets.only(left: 4.0),
+                      child: SizedBox(
+                        width: 25,
+                        height: 25,
+                        child: IconButton(
+                            padding: EdgeInsets.zero,
+                            icon: const Icon(Icons.send),
+                            onPressed: _isComposing
+                                ? () => _handleSubmitted(_textController.text)
+                                : null),
+                      ))
+                ]))));
   }
 
   List<String> decodewhitelist(String whitelist) {
@@ -276,11 +275,13 @@ class _StudentChatPageState extends State<StudentChatPage> {
           padding: EdgeInsets.symmetric(horizontal: _deviceWidth * .02),
           color: const Color.fromRGBO(240, 240, 240, 1),
           child: ListView.builder(
+            controller: _messagesListViewController,
             itemCount: _pageProvider.messages!.length,
             itemBuilder: (BuildContext _context, int _index) {
               final _message = _pageProvider.messages![_index];
               final _isOwnMessage = _message.senderID == _auth.user.uid;
               int confirmmessage_count = _pageProvider.countConfirm();
+
               switch (_message.type) {
                 case MessageType.text:
                   {

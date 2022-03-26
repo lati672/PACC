@@ -78,16 +78,6 @@ class _ChatsPageState extends State<ChatsPage> {
                 primaryAction: IconButton(
                   onPressed: () {
                     // * Logout the user if he/she presses the button icon
-                    _auth.logout();
-                  },
-                  icon: const Icon(
-                    Icons.logout_outlined,
-                    color: Color.fromRGBO(0, 82, 218, 1),
-                  ),
-                ),
-                secondaryAction: IconButton(
-                  onPressed: () {
-                    // * Logout the user if he/she presses the button icon
                     _navigation.navigateToPage(AddFriendsPage());
                   },
                   icon: const Icon(
@@ -175,8 +165,8 @@ class _ChatsPageState extends State<ChatsPage> {
               ),
       ),
       Divider(
-        indent: _deviceWidth *.03,
-        endIndent: _deviceWidth *.03,
+        indent: _deviceWidth * .03,
+        endIndent: _deviceWidth * .03,
         height: 0.2,
         color: Colors.black12,
       )

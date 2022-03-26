@@ -188,4 +188,13 @@ class ChatPageProvider extends ChangeNotifier {
     }
     return cnt;
   }
+
+// This is what you're looking for!
+  void scrollDown() {
+    _messagesListViewController.animateTo(
+      _messagesListViewController.position.maxScrollExtent,
+      duration: const Duration(seconds: 1),
+      curve: Curves.fastOutSlowIn,
+    );
+  }
 }
