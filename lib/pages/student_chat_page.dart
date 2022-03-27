@@ -3,7 +3,6 @@ import 'package:chatifyapp/pages/checkwhitelist_page.dart';
 import 'package:chatifyapp/pages/countdown_timer.dart';
 import 'package:chatifyapp/pages/home_page.dart';
 import 'package:chatifyapp/pages/whitelist_page.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:provider/provider.dart';
@@ -20,7 +19,6 @@ import 'package:chatifyapp/models/chat_message_model.dart';
 // Providers
 import '../providers/authentication_provider.dart';
 import '../providers/chat_page_provider.dart';
-import 'package:chatifyapp/providers/chat_page_provider.dart';
 
 // Services
 import '../services/navigation_service.dart';
@@ -44,6 +42,7 @@ class _StudentChatPageState extends State<StudentChatPage> {
   late AuthenticationProvider _auth;
   late ChatPageProvider _pageProvider;
   late NavigationService _navigation;
+  late GlobalKey<FormState> _messageFormState;
   late ScrollController _messagesListViewController;
   late String _memberid1, _memberid2;
   bool isfriends = false;
@@ -53,6 +52,7 @@ class _StudentChatPageState extends State<StudentChatPage> {
   void initState() {
     super.initState();
     _messagesListViewController = ScrollController();
+    _messageFormState = GlobalKey<FormState>();
   }
 
   @override

@@ -100,6 +100,19 @@ class DatabaseService {
     }
   }
 
+  //update user profile image
+  Future<void> updataUserImage(String _uid, String _imageurl) async {
+    try {
+      await _dataBase.collection(userCollection).doc(_uid).update(
+        {
+          'image': _imageurl,
+        },
+      );
+    } catch (e) {
+      debugPrint('$e');
+    }
+  }
+
   //literally the function name
   Future<String> getRoleBySenderID(String senderid) async {
     try {

@@ -18,10 +18,27 @@ class CloudStorageService {
   Future<String?> saveUserImageProfileToStorage(
       String _uid, PlatformFile _file) async {
     try {
-      //* Referenciando a localizacao da pasta de imagens no firebase
       final _reference =
           _firebaseStorage.ref('images/users/$_uid/profile.${_file.extension}');
-      //* Uploading the image in the refered path
+      UploadTask _task = _reference.putFile(
+        File(_file.path as String),
+      );
+      //* Returning the photo url
+      return await _task.then(
+        (_result) => _result.ref.getDownloadURL(),
+      );
+    } catch (error) {
+      debugPrint('$error');
+    }
+    return null;
+  }
+
+  Future<String?> uploadUserImageProfileToStorage(
+      String _uid, PlatformFile _file) async {
+    try {
+      final _reference =
+          _firebaseStorage.ref('images/users/$_uid/profile.${_file.extension}');
+      await _reference.delete();
       UploadTask _task = _reference.putFile(
         File(_file.path as String),
       );

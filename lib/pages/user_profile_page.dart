@@ -6,6 +6,10 @@ import '../providers/authentication_provider.dart';
 import 'package:get_it/get_it.dart';
 import 'package:provider/provider.dart';
 import 'package:chatifyapp/widgets/rounded_image_network.dart';
+import '../services/cloud_storage_service.dart';
+import '../services/media_service.dart';
+import 'package:file_picker/file_picker.dart';
+import '../models/chat_message_model.dart';
 
 class UserProfilePage extends StatefulWidget {
   UserProfilePage({Key? key}) : super(key: key);
@@ -20,7 +24,10 @@ class _UserProfilePageState extends State<UserProfilePage> {
   late AuthenticationProvider _auth;
   late double _deviceWidth;
   late double _deviceHeight;
-
+  late CloudStorageService _cloudStorageService;
+  late CloudStorageService _storage;
+  late MediaService _media;
+  PlatformFile? _ChatImage;
   @override
   void initState() {
     super.initState();
@@ -28,6 +35,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
 
   @override
   Widget build(BuildContext context) {
+    _storage = GetIt.instance.get<CloudStorageService>();
     _auth = Provider.of<AuthenticationProvider>(context);
     _database = GetIt.instance.get<DatabaseService>();
     _deviceWidth = MediaQuery.of(context).size.width;
@@ -65,6 +73,20 @@ class _UserProfilePageState extends State<UserProfilePage> {
     ));
   }
 
+  void updateUserProfileImage() async {
+    _cloudStorageService = GetIt.instance.get<CloudStorageService>();
+    try {
+      _ChatImage =
+          await GetIt.instance.get<MediaService>().pickImageFromLibrary();
+      if (_ChatImage != null) {
+        final downloadUrl = await _storage.uploadUserImageProfileToStorage(
+            _auth.user.uid, _ChatImage!);
+      }
+    } catch (error) {
+      debugPrint('$error');
+    }
+  }
+
   Widget HeaderSection() {
     return Container(
       child: Column(
@@ -86,9 +108,12 @@ class _UserProfilePageState extends State<UserProfilePage> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                CircleAvatar(
-                  backgroundImage: NetworkImage(user.imageUrl),
-                  radius: _deviceWidth * 0.1,
+                GestureDetector(
+                  onTap: () => updateUserProfileImage(),
+                  child: CircleAvatar(
+                    backgroundImage: NetworkImage(user.imageUrl),
+                    radius: _deviceWidth * 0.1,
+                  ),
                 ),
                 SizedBox(width: _deviceWidth * .05),
                 Expanded(
