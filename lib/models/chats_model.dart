@@ -42,6 +42,8 @@ class ChatsModel {
   String chatImageURL() {
     // * True ->  returns the user profileImage
     // * False -> returns an imageurl from the internet
-    return !group ? _recepients.first.imageUrl : 'https://image.pngaaa.com/574/3863574-middle.png';
+    return !group
+        ? _recepients.first.imageUrl
+        : 'https://image.pngaaa.com/574/3863574-middle.png';
   }
 }

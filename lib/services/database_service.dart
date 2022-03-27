@@ -427,7 +427,6 @@ class DatabaseService {
   //add a todo list
   Future<void> addTodoList(TodoListModel todolist) async {
     try {
-      //print('in the database service: $_message.type');
       await _dataBase.collection(todolistCollection).add(
             todolist.toMap(),
           );
@@ -437,27 +436,63 @@ class DatabaseService {
   }
 
   //remove a todo list
-  Future<void> removeTodoList(TodoListModel todolist) async {}
+  Future<void> removeTodoList(TodoListModel todolist) async {
+    try {
+      await _dataBase
+          .collection(todolistCollection)
+          .doc(todolist.todolist_name)
+          .delete();
+    } catch (error) {
+      debugPrint('$error');
+    }
+  }
 
-  //get all todo list
-  Future<List<TodoListModel>> getTodoListAll() async {
+  Future<List<TodoListModel>> getTodoList(String userid) async {
     List<TodoListModel> todo = [];
-    QuerySnapshot qshot = await _dataBase.collection(todolistCollection).get();
+    QuerySnapshot qshot = await _dataBase
+        .collection(todolistCollection)
+        .where('recipients', arrayContains: userid)
+        .get();
     qshot.docs.forEach((doc) {
+      // print("111111111");
+      // print(doc['senderid']);
+      // print(doc['status']);
+      // print(doc['start_time']);
+      // print(doc['description']);
+      // print(doc['interval']);
+      // print(List.from(doc['recipients']));
       todo.add(TodoListModel(
-          uid: doc['senderid'],
-          description: doc['description'],
+          senderid: doc['senderid'],
+          status: doc['status'],
           start_time: doc['start_time'].toDate(),
-          end_time: doc['end_time'].toDate(),
-          name: doc['todolist_name'],
+          description: doc['description'],
+          todolist_name: doc['todolist_name'],
           interval: doc['interval'],
-          recipients: List.from(doc['recipient'])));
+          recipients: List.from(doc['recipients'])));
     });
     return todo;
   }
 
   //update a todo list
-  Future<void> updateTodoList(TodoListModel todolist) async {}
+  Future<void> updateTodoList(TodoListModel todolist) async {
+    try {
+      await _dataBase
+          .collection(userCollection)
+          .doc(todolist.todolist_name)
+          .set(
+        {
+          'status': todolist.status,
+          'start_time': todolist.start_time,
+          'description': todolist.description,
+          'interval': todolist.interval,
+          'recipients': todolist.recipients,
+        },
+      );
+    } catch (error) {
+      debugPrint('$error');
+    }
+  }
+
   // check whether the chat members are friend
   Future<bool> checkFriendsbyChatid(String _chatid) async {
     bool result = false;

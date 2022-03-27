@@ -4,46 +4,42 @@ import '../models/chat_user_model.dart';
 import '../models/chat_message_model.dart';
 
 class TodoListModel {
-  final String uid;
+  final String senderid;
   final String description;
-  final DateTime start_time, end_time;
-  final String name;
+  final DateTime start_time;
+  String status;
+  final String todolist_name;
   final String interval;
 
   final List<String> recipients;
 
   TodoListModel({
-    required this.uid,
-    required this.description,
+    required this.senderid,
     required this.start_time,
-    required this.end_time,
-    required this.name,
+    // required this.status,
+    this.status = "0",
+    required this.description,
+    required this.todolist_name,
     required this.interval,
     required this.recipients,
   });
   factory TodoListModel.fromJson(Map<String, dynamic> _json) {
     return TodoListModel(
-        // uid: _json['senderid'],
-        // description: _json['description'],
-        // start_time: _json['start_time'],
-        // end_time: _json['end_time'],
-        // name: _json['todolist_name'],
-        // interval: _json['interval'],
-        // recepients: _json['recepient']);
-        uid: _json['uid'],
-        description: _json['description'],
+        senderid: _json['senderid'],
         start_time: _json['start_time'],
-        end_time: _json['end_time'],
-        name: _json['name'],
+        status: _json['status'],
+        description: _json['description'],
+        todolist_name: _json['todolist_name'],
         interval: _json['interval'],
         recipients: _json['recipients']);
   }
   Map<String, dynamic> toMap() {
     return {
-      'description': description,
+      'senderid': senderid,
       'start_time': start_time,
-      'end_time': end_time,
-      'name': name,
+      'status': status,
+      'description': description,
+      'todolist_name': todolist_name,
       'interval': interval,
       'recipients': recipients
     };
