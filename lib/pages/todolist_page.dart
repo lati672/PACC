@@ -42,7 +42,15 @@ class _TodoListState extends State<TodoListPage> {
   @override
   Widget build(BuildContext context) {
     _auth = Provider.of<AuthenticationProvider>(context);
-    return _buildUI();
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider<TodoListPageProvider>(
+          create: (_) => TodoListPageProvider(_auth),
+        )
+      ],
+      child: _buildUI(),
+    );
+    // return _buildUI();
   }
 
   Widget _buildUI() {
@@ -50,38 +58,6 @@ class _TodoListState extends State<TodoListPage> {
       builder: (_context) {
         //* Triggers the info in the widgets to render themselves
         _pageProvider = _context.watch<TodoListPageProvider>();
-        List<TodoListModel>? todos = _pageProvider.todos;
-        // return Scaffold(
-        //     body: todos == null
-        //         ? Center(child: CircularProgressIndicator())
-        //         : Column(children: [
-        //             ListView.builder(
-        //               scrollDirection: Axis.vertical,
-        //               shrinkWrap: true,
-        //               padding: const EdgeInsets.all(16.0),
-        //               itemCount: todos.length,
-        //               itemBuilder: (BuildContext context, int index) {
-        //                 return ListTile(
-        //                   title: Text(
-        //                     todos[index].todolist_name,
-        //                     style: _biggerFont,
-        //                   ),
-        //                   trailing: const Icon(
-        //                     Icons.check_box_outline_blank,
-        //                   ),
-        //                   onTap: () {
-        //                     // updateTodo(todos[index].id);
-        //                     // todos.removeAt(index);
-        //                     // setState(() {
-        //                     //   todos = todos;
-        //                     // });
-        //                     // _navigation.navigateToPage(Pomodoro());
-        //                   },
-        //                 );
-        //               },
-        //             ),
-        //             // FlatButton(onPressed: updateTodo(todos[index].id), child: const Text('点击添加'))
-        //           ]));
         return SafeArea(
             child: Container(
           child: Column(

@@ -454,13 +454,6 @@ class DatabaseService {
         .where('recipients', arrayContains: userid)
         .get();
     qshot.docs.forEach((doc) {
-      // print("111111111");
-      // print(doc['senderid']);
-      // print(doc['status']);
-      // print(doc['start_time']);
-      // print(doc['description']);
-      // print(doc['interval']);
-      // print(List.from(doc['recipients']));
       todo.add(TodoListModel(
           senderid: doc['senderid'],
           status: doc['status'],
