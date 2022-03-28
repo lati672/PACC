@@ -466,6 +466,16 @@ class DatabaseService {
     return todo;
   }
 
+  Stream<QuerySnapshot> getUserTodoList(String _userid) {
+    return _dataBase
+        .collection(todolistCollection)
+        .where(
+          'recipients',
+          arrayContains: _userid,
+        )
+        .snapshots();
+  }
+
   //update a todo list
   Future<void> updateTodoList(TodoListModel todolist) async {
     try {

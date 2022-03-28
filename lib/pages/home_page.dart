@@ -1,6 +1,5 @@
 // Packages
 import 'package:chatifyapp/pages/friends.dart';
-import 'package:chatifyapp/pages/settings.dart';
 import 'package:chatifyapp/pages/user_profile_page.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';

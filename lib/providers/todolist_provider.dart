@@ -19,7 +19,8 @@ import '../models/chats_model.dart';
 class TodoListPageProvider extends ChangeNotifier {
   TodoListPageProvider(this._auth) {
     _database = GetIt.I.get<DatabaseService>();
-    getTodos();
+    //getTodos();
+    listenToTodolists();
   }
   final AuthenticationProvider _auth;
 
@@ -27,16 +28,40 @@ class TodoListPageProvider extends ChangeNotifier {
 
   List<TodoListModel>? todos;
 
-  late StreamSubscription _chatsStream;
+  late StreamSubscription _todosStream;
 
 // * Once not longer needed, it will be disposed
   @override
   void dispose() {
     super.dispose();
-    _chatsStream.cancel();
+    _todosStream.cancel();
   }
 
 //* Getting the chats
+  void listenToTodolists() {
+    try {
+      _todosStream = _database.getUserTodoList(_auth.user.uid).listen(
+        (_snapshot) {
+          List<TodoListModel> _todos = [];
+          _snapshot.docs.forEach((doc) {
+            _todos.add(TodoListModel(
+                senderid: doc['senderid'],
+                status: doc['status'],
+                start_time: doc['start_time'].toDate(),
+                description: doc['description'],
+                todolist_name: doc['todolist_name'],
+                interval: doc['interval'],
+                recipients: List.from(doc['recipients'])));
+          });
+          todos = _todos;
+          notifyListeners();
+        },
+      );
+    } catch (error) {
+      debugPrint('$error');
+    }
+  }
+
   void getTodos() async {
     try {
       todos = await _database.getTodoList(_auth.user.name);

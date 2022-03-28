@@ -185,16 +185,19 @@ class _AddFriendsPageState extends State<AddFriendsPage> {
     }
     String user1role = await _database.getRoleBySenderID(userid);
     String user2role = await _database.getRoleBySenderID(friendid);
+    //Parent cannot add another parent
     if (user1role == 'Parent' && user2role == 'Parent') {
       _showAlert(context, 6);
       return;
     }
+    //Student cannot add another student
     if (user1role == 'Student' && user2role == 'Student') {
       _showAlert(context, 7);
       return;
     }
-    //Parent cannot add parent
-    if (await _database.checkPSrel(userid, friendid)) {
+    //the relationship of chat already exist
+    if ((await _database.checkPSrel(userid, friendid)) ||
+        (await _database.checkChatexist(userid, friendid))) {
       _showAlert(context, 3);
       return;
     }

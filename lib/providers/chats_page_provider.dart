@@ -41,29 +41,23 @@ class ChatsPageProvider extends ChangeNotifier {
       //print('listing ${_database.getUser(_auth.user.uid)}');
       _chatsStream = _database.getChatsForsUser(_auth.user.uid).listen(
         (_snapshot) async {
-          //print("snapshot");
           chats = await Future.wait(
             _snapshot.docs.map(
               (_eachDoc) async {
-                //print('in asyn');
                 final _chatData = _eachDoc.data() as Map<String, dynamic>;
-                //print(_chatData);
+
                 // * Get users instance
                 List<ChatUserModel> _members = [];
                 // * Looping through the members arry from Firebase
                 for (var _uid in _chatData['members']) {
                   // * Getting the uid from each user
-                  //print(_uid);
                   final _userSnapshot = await _database.getUser(_uid);
-                  //final nam = _userSnapshot.get('name');
-                  //print('name: $nam');
                   if (_eachDoc.data() != null) {
                     //* Extracting the data from each user
                     final _userData =
                         _userSnapshot.data() as Map<String, dynamic>;
                     // * Acessing the user id
                     _userData['uid'] = _userSnapshot.id;
-                    //print(_userData['name']);
                     //* Adding to members list the user instance
                     _members.add(
                       ChatUserModel.fromJson(
