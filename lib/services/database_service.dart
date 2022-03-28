@@ -455,6 +455,7 @@ class DatabaseService {
         .get();
     qshot.docs.forEach((doc) {
       todo.add(TodoListModel(
+          sent_time: doc['sent_time'],
           senderid: doc['senderid'],
           status: doc['status'],
           start_time: doc['start_time'].toDate(),
@@ -469,6 +470,7 @@ class DatabaseService {
   Stream<QuerySnapshot> getUserTodoList(String _userid) {
     return _dataBase
         .collection(todolistCollection)
+        .orderBy('sent_time', descending: false)
         .where(
           'recipients',
           arrayContains: _userid,
