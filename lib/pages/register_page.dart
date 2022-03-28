@@ -31,10 +31,13 @@ class _RegisterPageState extends State<RegisterPage> {
 
   //* Store reference Provider
   late AuthenticationProvider _auth;
+
   //* Store database reference Provider
   late DatabaseService _database;
+
   //* Store cloud storage reference
   late CloudStorageService _cloudStorageService;
+
   // * Store reference to the navigation service
 
 // *Variables to store each Form field input values (texts)
@@ -65,48 +68,48 @@ class _RegisterPageState extends State<RegisterPage> {
 
   Widget _buildUI() {
     return Scaffold(
-      resizeToAvoidBottomInset: false,
-      body: Container(
-        padding: EdgeInsets.symmetric(
-          horizontal: _deviceWidth * .03,
-          vertical: _deviceHeight * .02,
-        ),
-        width: _deviceWidth * .97,
-        height: _deviceHeight * .98,
-        child: Column(
-          mainAxisSize: MainAxisSize.max,
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            _profileImageField(),
-            SizedBox(
-              height: _deviceHeight * .05,
+        resizeToAvoidBottomInset: false,
+        body: SafeArea(
+          child: Container(
+            width: _deviceWidth,
+            height: _deviceHeight,
+            padding: EdgeInsets.symmetric(horizontal: _deviceWidth * .02),
+            child: Column(
+              mainAxisSize: MainAxisSize.max,
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                _profileImageField(),
+                SizedBox(
+                  height: _deviceHeight * .05,
+                ),
+                _registerForm(),
+                SizedBox(
+                  height: _deviceHeight * .05,
+                ),
+                Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      SizedBox(
+                        width: 150,
+                        child: buildStudentCheckbox(),
+                      ),
+                      SizedBox(
+                        width: 150,
+                        child: buildParentCheckbox(),
+                      ),
+                    ]),
+                SizedBox(
+                  height: _deviceHeight * .05,
+                ),
+                _registerButton(),
+                SizedBox(
+                  height: _deviceHeight * .05,
+                ),
+              ],
             ),
-            _registerForm(),
-            SizedBox(
-              height: _deviceHeight * .05,
-            ),
-            Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
-              SizedBox(
-                width: 150,
-                child: buildStudentCheckbox(),
-              ),
-              SizedBox(
-                width: 150,
-                child: buildParentCheckbox(),
-              ),
-            ]),
-            SizedBox(
-              height: _deviceHeight * .05,
-            ),
-            _registerButton(),
-            SizedBox(
-              height: _deviceHeight * .05,
-            ),
-          ],
-        ),
-      ),
-    );
+          ),
+        ));
   }
 
   // *Upload image
@@ -152,50 +155,60 @@ class _RegisterPageState extends State<RegisterPage> {
   }
 
   Widget _registerForm() {
-    return SizedBox(
-      height: _deviceHeight * .35,
+    return Container(
+      constraints: const BoxConstraints(maxHeight: 300),
       child: Form(
         key: _registerFormKey,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisSize: MainAxisSize.max,
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
+            Container(
+              margin: const EdgeInsets.symmetric(vertical: 15),
+              width: _deviceWidth * .80,
+              child: CustomTextFormField(
+                onSaved: (_value) {
+                  setState(() {
+                    _name = _value;
+                  });
+                },
+                regularExpression: r'.{8}',
+                hintText: '用户名，长度需大于8位',
+                obscureText: false,
+              ),
+            ),
             // *Name
-            CustomTextFormField(
-              onSaved: (_value) {
-                setState(() {
-                  _name = _value;
-                });
-              },
-              regularExpression: r'.{8}',
-              hintText: '用户名，长度需大于8位',
-              obscureText: false,
-            ),
             // *Email Field
-            CustomTextFormField(
-              onSaved: (_value) {
-                setState(() {
-                  _email = _value;
-                });
-              },
-              regularExpression:
-                  r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+",
-              hintText: '邮箱',
-              obscureText: false,
-            ),
+            Container(
+                margin: const EdgeInsets.symmetric(vertical: 15),
+                width: _deviceWidth * .80,
+                child: CustomTextFormField(
+                  onSaved: (_value) {
+                    setState(() {
+                      _email = _value;
+                    });
+                  },
+                  regularExpression:
+                      r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+",
+                  hintText: '邮箱',
+                  obscureText: false,
+                )),
             // TODO: Add Hide/Show Password toggle
             // *Password Field
-            CustomTextFormField(
-              onSaved: (_value) {
-                setState(() {
-                  _password = _value;
-                });
-              },
-              regularExpression: r".{8,}", //Password longer than 8 char
-              hintText: '密码长度需大于8位',
-              obscureText: true,
-            ),
+            Container(
+              margin: const EdgeInsets.symmetric(vertical: 15),
+              width: _deviceWidth * .80,
+              child:CustomTextFormField(
+                onSaved: (_value) {
+                  setState(() {
+                    _password = _value;
+                  });
+                },
+                regularExpression: r".{8,}", //Password longer than 8 char
+                hintText: '密码长度需大于8位',
+                obscureText: true,
+              ),
+            )
           ],
         ),
       ),
@@ -203,6 +216,7 @@ class _RegisterPageState extends State<RegisterPage> {
   }
 
   bool isChecked = true;
+
   Widget buildStudentCheckbox() => ListTile(
         leading: Checkbox(
           value: isChecked,
@@ -214,7 +228,7 @@ class _RegisterPageState extends State<RegisterPage> {
         ),
         title: Text(
           '学生',
-          style: TextStyle(color: Colors.white),
+          style: TextStyle(color: Colors.black),
         ),
       );
 
@@ -229,9 +243,10 @@ class _RegisterPageState extends State<RegisterPage> {
         ),
         title: Text(
           '家长',
-          style: TextStyle(color: Colors.white),
+          style: TextStyle(color: Colors.black),
         ),
       );
+
 // TODO: Futuramente, mudar o nome de Register => Sign up e colocar texto Sign up em bold
   Widget _registerButton() {
     return RoundedButton(
