@@ -46,28 +46,24 @@ class _HomePageState extends State<HomePage> {
             label: '聊天',
             icon: Icon(
               Icons.chat_bubble_sharp,
-              color: Colors.black,
             ),
           ),
           BottomNavigationBarItem(
             label: '白名单',
             icon: Icon(
               Icons.access_alarm_rounded,
-              color: Colors.black,
             ),
           ),
           BottomNavigationBarItem(
             label: '朋友',
             icon: Icon(
               Icons.escalator_warning,
-              color: Colors.black,
             ),
           ),
           BottomNavigationBarItem(
             label: '用户',
             icon: Icon(
               Icons.account_circle_rounded,
-              color: Colors.black,
             ),
           ),
         ],

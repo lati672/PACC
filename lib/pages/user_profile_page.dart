@@ -28,6 +28,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
   late CloudStorageService _storage;
   late MediaService _media;
   PlatformFile? _ChatImage;
+
   @override
   void initState() {
     super.initState();
@@ -48,14 +49,16 @@ class _UserProfilePageState extends State<UserProfilePage> {
         children: <Widget>[
           SizedBox(height: _deviceHeight * .02),
           HeaderSection(),
+          Container(color: Colors.black12, height: 7),
           TextButton(
               onPressed: () {
                 _auth.logout();
               },
               child: const Text(
                 '退出登录',
-                style: TextStyle(color: Colors.black),
+                style: TextStyle(color: Colors.black,fontSize: 20),
               )),
+          Container(color: Colors.black12, height: 7),
           /*
           AnimatedSwitcher(
             duration: Duration(milliseconds: 750),
@@ -136,7 +139,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
             ),
           ),
           //used as a divider
-          Container(color: Colors.black12, height: _deviceHeight * .02),
+          Container(color: Colors.black12, height: _deviceHeight * .015),
           Container(
             //用户邮箱
             margin: EdgeInsets.only(
@@ -144,7 +147,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
             child: Row(
               children: [
                 const Expanded(
-                  child: Icon(Icons.mail_outline_outlined),
+                  child: Icon(Icons.mail_outline_outlined,color: Colors.orange,),
                   flex: 1,
                 ),
                 const Expanded(
@@ -163,9 +166,10 @@ class _UserProfilePageState extends State<UserProfilePage> {
             ),
           ),
           Divider(
-            indent: _deviceWidth * .1,
-            endIndent: _deviceWidth * .1,
-            thickness: _deviceHeight * .002,
+            indent: _deviceWidth * .05,
+            endIndent: _deviceWidth * .05,
+            thickness: 0.8,
+            height: 1.2,
             color: Colors.black12,
           ),
           Container(
@@ -175,7 +179,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
             child: Row(
               children: [
                 const Expanded(
-                  child: Icon(Icons.person),
+                  child: Icon(Icons.person,color: Colors.green,),
                   flex: 1,
                 ),
                 const Expanded(
