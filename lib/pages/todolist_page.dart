@@ -8,6 +8,8 @@ import '../providers/authentication_provider.dart';
 import '../providers/todolist_provider.dart';
 //pages
 import '../pages/pomodoro.dart';
+import '../pages/addTodolist_page.dart';
+import '../pages/parent_todolist.dart';
 // Services
 import '../services/navigation_service.dart';
 import '../services/database_service.dart';
@@ -66,11 +68,12 @@ class _TodoListState extends State<TodoListPage> {
             mainAxisSize: MainAxisSize.max,
             children: [
               TopBar(
-                'Chats' + (_auth.user.role == 'Student' ? '学生端' : '家长端'),
+                (_auth.user.role == 'Student' ? '我的' : '该学生') + '任务',
                 primaryAction: IconButton(
                   onPressed: () {
                     // * Logout the user if he/she presses the button icon
-                    _navigation.navigateToPage(Pomodoro());
+                    _navigation.navigateToPage(ParentTodolistPage());
+                    // _navigation.navigateToPage(AddTodoListPage());
                   },
                   icon: const Icon(
                     Icons.add,
@@ -103,16 +106,20 @@ class _TodoListState extends State<TodoListPage> {
                     todos[index].todolist_name,
                     style: _biggerFont,
                   ),
-                  trailing: const Icon(
-                    Icons.check_box_outline_blank,
-                  ),
+                  subtitle: Text(todos[index].description),
+                  trailing: FlatButton(
+                      child: const Text("开始"),
+                      onPressed: () {
+                        _navigation.navigateToPage(Pomodoro());
+                      }),
                   onTap: () {
                     // updateTodo(todos[index].id);
                     // todos.removeAt(index);
                     // setState(() {
                     //   todos = todos;
                     // });
-                    // _navigation.navigateToPage(Pomodoro());
+                    _navigation.navigateToPage(AddTodoListPage());
+                    //传入此条todolist的信息
                   },
                 );
               },

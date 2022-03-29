@@ -45,7 +45,7 @@ class TodoListPageProvider extends ChangeNotifier {
           List<TodoListModel> _todos = [];
           _snapshot.docs.forEach((doc) {
             _todos.add(TodoListModel(
-                sent_time: doc['sent_time'],
+                sent_time: doc['sent_time'].toDate(),
                 senderid: doc['senderid'],
                 status: doc['status'],
                 start_time: doc['start_time'].toDate(),

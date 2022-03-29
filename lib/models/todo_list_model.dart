@@ -27,7 +27,7 @@ class TodoListModel {
   });
   factory TodoListModel.fromJson(Map<String, dynamic> _json) {
     return TodoListModel(
-        sent_time: _json['sent_time'],
+        sent_time: _json['sent_time'].toDate(),
         senderid: _json['senderid'],
         start_time: _json['start_time'].toDate(),
         status: _json['status'],
