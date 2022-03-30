@@ -14,15 +14,16 @@ import '../services/database_service.dart';
 // Widgets
 import '../widgets/top_bar.dart';
 
-class AddTodoListPage extends StatefulWidget {
-  // const TodoListPage({Key? key}) : super(key: key);
+class UpdateTodoListPage extends StatefulWidget {
+  const UpdateTodoListPage({Key? key, required this.todo}) : super(key: key);
+  final TodoListModel todo;
   @override
   State<StatefulWidget> createState() {
-    return _AddTodoListState();
+    return _UpdateTodoListState();
   }
 }
 
-class _AddTodoListState extends State<AddTodoListPage> {
+class _UpdateTodoListState extends State<UpdateTodoListPage> {
   DatabaseService _database = GetIt.instance.get<DatabaseService>();
   NavigationService _navigation = GetIt.instance.get<NavigationService>();
   late AuthenticationProvider _auth;
@@ -32,10 +33,6 @@ class _AddTodoListState extends State<AddTodoListPage> {
 
   late TodoListPageProvider _pageProvider;
   final _biggerFont = const TextStyle(fontSize: 18.0);
-  TextEditingController _controller1 = TextEditingController();
-  FocusNode _focusNode1 = FocusNode();
-  TextEditingController _controller2 = TextEditingController();
-  FocusNode _focusNode2 = FocusNode();
 
   @override
   void initState() {
@@ -58,13 +55,24 @@ class _AddTodoListState extends State<AddTodoListPage> {
   }
 
   Widget _buildUI() {
+    TextEditingController _controller1 =
+        TextEditingController(text: widget.todo.todolist_name);
+    FocusNode _focusNode1 = FocusNode();
+    TextEditingController _controller2 =
+        TextEditingController(text: widget.todo.description);
+    FocusNode _focusNode2 = FocusNode();
+    String interval = widget.todo.interval;
+    String recipients = "";
+    widget.todo.recipients.forEach((e) {
+      recipients += e;
+    });
     return Builder(
       builder: (_context) {
         //* Triggers the info in the widgets to render themselves
         _pageProvider = _context.watch<TodoListPageProvider>();
         return Scaffold(
           appBar: AppBar(
-            title: const Text("添加任务"),
+            title: const Text("修改任务"),
             centerTitle: true,
             actions: [
               FlatButton(
@@ -118,7 +126,7 @@ class _AddTodoListState extends State<AddTodoListPage> {
                   },
                 ),
                 ListTile(
-                  title: const Text("任务时间" + "    "),
+                  title: Text("任务时间" + "    " + interval),
                   trailing: IconButton(
                     onPressed: () {
                       // _navigation.navigateToPage(AddTodoListPage());
@@ -130,7 +138,7 @@ class _AddTodoListState extends State<AddTodoListPage> {
                   ),
                 ),
                 ListTile(
-                  title: const Text("发送到" + "   "),
+                  title: Text("发送到" + "   " + recipients),
                   trailing: IconButton(
                     onPressed: () {
                       // _navigation.navigateToPage(AddTodoListPage());
@@ -141,6 +149,12 @@ class _AddTodoListState extends State<AddTodoListPage> {
                     ),
                   ),
                 ),
+                FlatButton(
+                    child: const Text("删除待办"),
+                    color: Colors.red,
+                    onPressed: () {
+                      // _navigation.goBack();
+                    })
               ],
             ),
           )),

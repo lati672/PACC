@@ -1,5 +1,6 @@
 // Packages
 import 'package:chatifyapp/pages/addfriends.dart';
+import 'package:chatifyapp/pages/todolist_page.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:provider/provider.dart';
@@ -86,33 +87,17 @@ class _ParentTodolistPageState extends State<ParentTodolistPage> {
             return ListView.builder(
               itemCount: _todos.length,
               itemBuilder: (BuildContext _context, int _index) {
-                // return _todoTile(
-                //   _todos[_index],
-                // );
-                // return ListTile(
-                //   title: Text(
-                //     _todos[_index].todolist_name,
-                //     // style: _biggerFont,
-                //   ),
-                //   subtitle: Text(_todos[_index].description),
-                //   trailing: FlatButton(
-                //       child: const Text("开始"),
-                //       onPressed: () {
-                //         // _navigation.navigateToPage(Pomodoro());
-                //       }),
-                //   onTap: () {
-                //   },
-                // );
                 return Column(children: [
                   CustomListViewTileWithActivity(
                     height: _deviceHeight * .10,
                     title: _todos[_index].todolist_name,
                     subtitle: "2条待办",
-                    // subtitle: _subtitleText,
                     imagePath: 'assets/images/default-image.jpg',
                     isActive: true,
                     isActivity: true,
-                    onTap: () => print("1111111"),
+                    onTap: () =>
+                        // _navigation.navigateToPage(TodoListPage(todo: _todos)),
+                        _navigation.navigateToPage(TodoListPage()),
                   ),
                   Divider(
                     indent: _deviceWidth * .03,

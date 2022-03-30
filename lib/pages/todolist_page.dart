@@ -9,7 +9,7 @@ import '../providers/todolist_provider.dart';
 //pages
 import '../pages/pomodoro.dart';
 import '../pages/addTodolist_page.dart';
-import '../pages/parent_todolist.dart';
+import '../pages/updateTodolist_page.dart';
 // Services
 import '../services/navigation_service.dart';
 import '../services/database_service.dart';
@@ -17,7 +17,7 @@ import '../services/database_service.dart';
 import '../widgets/top_bar.dart';
 
 class TodoListPage extends StatefulWidget {
-  // const TodoListPage({Key? key}) : super(key: key);
+  // const TodoListPage({Key? key, required this.todo}) : super(key: key);
   @override
   State<StatefulWidget> createState() {
     return _TodoListState();
@@ -60,31 +60,32 @@ class _TodoListState extends State<TodoListPage> {
       builder: (_context) {
         //* Triggers the info in the widgets to render themselves
         _pageProvider = _context.watch<TodoListPageProvider>();
-        return SafeArea(
-            child: Container(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.start,
-            mainAxisSize: MainAxisSize.max,
-            children: [
-              TopBar(
-                (_auth.user.role == 'Student' ? '我的' : '该学生') + '任务',
-                primaryAction: IconButton(
-                  onPressed: () {
-                    // * Logout the user if he/she presses the button icon
-                    _navigation.navigateToPage(ParentTodolistPage());
-                    // _navigation.navigateToPage(AddTodoListPage());
-                  },
-                  icon: const Icon(
-                    Icons.add,
-                    color: Color.fromRGBO(0, 82, 218, 1),
+        return Scaffold(
+          body: SafeArea(
+              child: Container(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.start,
+              mainAxisSize: MainAxisSize.max,
+              children: [
+                TopBar(
+                  (_auth.user.role == 'Student' ? '我的' : '该学生') + '任务',
+                  primaryAction: IconButton(
+                    onPressed: () {
+                      // * Logout the user if he/she presses the button icon
+                      _navigation.navigateToPage(AddTodoListPage());
+                    },
+                    icon: const Icon(
+                      Icons.add,
+                      color: Color.fromRGBO(0, 82, 218, 1),
+                    ),
                   ),
                 ),
-              ),
-              _todosList(),
-            ],
-          ),
-        ));
+                _todosList(),
+              ],
+            ),
+          )),
+        );
       },
     );
   }
@@ -107,18 +108,26 @@ class _TodoListState extends State<TodoListPage> {
                     style: _biggerFont,
                   ),
                   subtitle: Text(todos[index].description),
-                  trailing: FlatButton(
-                      child: const Text("开始"),
-                      onPressed: () {
-                        _navigation.navigateToPage(Pomodoro());
-                      }),
+                  trailing: _auth.user.role == 'Student'
+                      ? FlatButton(
+                          child: const Text("开始"),
+                          onPressed: () {
+                            _navigation.navigateToPage(Pomodoro());
+                          })
+                      : const Text(
+                          '占位空白view，透明',
+                          style: TextStyle(
+                            color: Colors.white,
+                          ),
+                        ),
                   onTap: () {
                     // updateTodo(todos[index].id);
                     // todos.removeAt(index);
                     // setState(() {
                     //   todos = todos;
                     // });
-                    _navigation.navigateToPage(AddTodoListPage());
+                    _navigation
+                        .navigateToPage(UpdateTodoListPage(todo: todos[index]));
                     //传入此条todolist的信息
                   },
                 );

@@ -37,7 +37,7 @@ class TodoListPageProvider extends ChangeNotifier {
     _todosStream.cancel();
   }
 
-//* Getting the chats
+//* Getting the todos
   void listenToTodolists() {
     try {
       _todosStream = _database.getUserTodoList(_auth.user.uid).listen(
