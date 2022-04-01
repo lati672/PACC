@@ -436,12 +436,9 @@ class DatabaseService {
   }
 
   //remove a todo list
-  Future<void> removeTodoList(TodoListModel todolist) async {
+  Future<void> removeTodoList(String todoID) async {
     try {
-      await _dataBase
-          .collection(todolistCollection)
-          .doc(todolist.todolist_name)
-          .delete();
+      await _dataBase.collection(todolistCollection).doc(todoID).delete();
     } catch (error) {
       debugPrint('$error');
     }
@@ -479,18 +476,16 @@ class DatabaseService {
   }
 
   //update a todo list
-  Future<void> updateTodoList(TodoListModel todolist) async {
+  Future<void> updateTodoList(TodoListModel todolist, String todoID) async {
     try {
-      await _dataBase
-          .collection(userCollection)
-          .doc(todolist.todolist_name)
-          .set(
+      await _dataBase.collection(todolistCollection).doc(todoID).set(
         {
           'status': todolist.status,
           'start_time': todolist.start_time,
           'description': todolist.description,
           'interval': todolist.interval,
           'recipients': todolist.recipients,
+          'todolist_name': todolist.todolist_name,
         },
       );
     } catch (error) {

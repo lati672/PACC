@@ -15,8 +15,10 @@ import '../services/database_service.dart';
 import '../widgets/top_bar.dart';
 
 class UpdateTodoListPage extends StatefulWidget {
-  const UpdateTodoListPage({Key? key, required this.todo}) : super(key: key);
+  const UpdateTodoListPage({Key? key, required this.todo, required this.todoID})
+      : super(key: key);
   final TodoListModel todo;
+  final String todoID;
   @override
   State<StatefulWidget> createState() {
     return _UpdateTodoListState();
@@ -33,6 +35,11 @@ class _UpdateTodoListState extends State<UpdateTodoListPage> {
 
   late TodoListPageProvider _pageProvider;
   final _biggerFont = const TextStyle(fontSize: 18.0);
+
+  late TextEditingController _controller1;
+  FocusNode _focusNode1 = FocusNode();
+  late TextEditingController _controller2;
+  FocusNode _focusNode2 = FocusNode();
 
   @override
   void initState() {
@@ -55,12 +62,8 @@ class _UpdateTodoListState extends State<UpdateTodoListPage> {
   }
 
   Widget _buildUI() {
-    TextEditingController _controller1 =
-        TextEditingController(text: widget.todo.todolist_name);
-    FocusNode _focusNode1 = FocusNode();
-    TextEditingController _controller2 =
-        TextEditingController(text: widget.todo.description);
-    FocusNode _focusNode2 = FocusNode();
+    _controller1 = TextEditingController(text: widget.todo.todolist_name);
+    _controller2 = TextEditingController(text: widget.todo.description);
     String interval = widget.todo.interval;
     String recipients = "";
     widget.todo.recipients.forEach((e) {
@@ -78,7 +81,7 @@ class _UpdateTodoListState extends State<UpdateTodoListPage> {
               FlatButton(
                   child: const Text("确定"),
                   onPressed: () {
-                    // _navigation.goBack();
+                    updateTodo(widget.todoID);
                   })
             ],
           ),
@@ -153,7 +156,7 @@ class _UpdateTodoListState extends State<UpdateTodoListPage> {
                     child: const Text("删除待办"),
                     color: Colors.red,
                     onPressed: () {
-                      // _navigation.goBack();
+                      removeTodo(widget.todoID);
                     })
               ],
             ),
@@ -161,5 +164,23 @@ class _UpdateTodoListState extends State<UpdateTodoListPage> {
         );
       },
     );
+  }
+
+  void updateTodo(String uid) async {
+    TodoListModel newTodo = TodoListModel(
+      senderid: _auth.user.uid,
+      start_time: DateTime.now(),
+      status: "0",
+      description: _controller2.text,
+      todolist_name: _controller1.text,
+      interval: "2h",
+      recipients: [_auth.user.uid],
+      sent_time: DateTime.now(),
+    );
+    await _database.updateTodoList(newTodo, uid);
+  }
+
+  void removeTodo(String uid) async {
+    await _database.removeTodoList(uid);
   }
 }

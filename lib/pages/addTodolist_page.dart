@@ -70,7 +70,7 @@ class _AddTodoListState extends State<AddTodoListPage> {
               FlatButton(
                   child: const Text("确定"),
                   onPressed: () {
-                    // _navigation.goBack();
+                    addTodo();
                   })
             ],
           ),
@@ -147,5 +147,19 @@ class _AddTodoListState extends State<AddTodoListPage> {
         );
       },
     );
+  }
+
+  void addTodo() async {
+    TodoListModel newTodo = TodoListModel(
+      senderid: _auth.user.uid,
+      start_time: DateTime.now(),
+      status: "0",
+      description: _controller2.text,
+      todolist_name: _controller1.text,
+      interval: "1:00:00",
+      recipients: [_auth.user.uid],
+      sent_time: DateTime.now(),
+    );
+    await _database.addTodoList(newTodo);
   }
 }

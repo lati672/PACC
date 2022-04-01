@@ -27,6 +27,7 @@ class TodoListPageProvider extends ChangeNotifier {
   late DatabaseService _database;
 
   List<TodoListModel>? todos;
+  List? todosID;
 
   late StreamSubscription _todosStream;
 
@@ -43,6 +44,7 @@ class TodoListPageProvider extends ChangeNotifier {
       _todosStream = _database.getUserTodoList(_auth.user.uid).listen(
         (_snapshot) {
           List<TodoListModel> _todos = [];
+          List? _todosID = [];
           _snapshot.docs.forEach((doc) {
             _todos.add(TodoListModel(
                 sent_time: doc['sent_time'].toDate(),
@@ -53,8 +55,10 @@ class TodoListPageProvider extends ChangeNotifier {
                 todolist_name: doc['todolist_name'],
                 interval: doc['interval'],
                 recipients: List.from(doc['recipients'])));
+            _todosID.add(doc.id);
           });
           todos = _todos;
+          todosID = _todosID;
           notifyListeners();
         },
       );

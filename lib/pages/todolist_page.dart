@@ -28,9 +28,6 @@ class _TodoListState extends State<TodoListPage> {
   DatabaseService _database = GetIt.instance.get<DatabaseService>();
   NavigationService _navigation = GetIt.instance.get<NavigationService>();
   late AuthenticationProvider _auth;
-  // AuthenticationProvider _auth =
-  //     Provider.of<AuthenticationProvider>(getContext);
-  // List<TodoListModel> todos = [];
 
   late TodoListPageProvider _pageProvider;
   final _biggerFont = const TextStyle(fontSize: 18.0);
@@ -93,6 +90,7 @@ class _TodoListState extends State<TodoListPage> {
   // Build UI
   Widget _todosList() {
     List<TodoListModel>? todos = _pageProvider.todos;
+    List? todosID = _pageProvider.todosID;
     return todos == null
         ? Center(child: CircularProgressIndicator())
         : Column(children: [
@@ -126,8 +124,8 @@ class _TodoListState extends State<TodoListPage> {
                     // setState(() {
                     //   todos = todos;
                     // });
-                    _navigation
-                        .navigateToPage(UpdateTodoListPage(todo: todos[index]));
+                    _navigation.navigateToPage(UpdateTodoListPage(
+                        todo: todos[index], todoID: todosID?[index]));
                     //传入此条todolist的信息
                   },
                 );
@@ -144,30 +142,4 @@ class _TodoListState extends State<TodoListPage> {
   //   });
   // }
 
-  // void addTodo() async {
-  //   TodoListModel newTodo = TodoListModel(
-  //     senderid: 'student1',
-  //     start_time: DateTime.now(),
-  //     status: "0",
-  //     description: "add a new todolist",
-  //     todolist_name: "todolist11111",
-  //     interval: "1h",
-  //     recipients: ["student1"],
-  //   );
-  //   await _database.addTodoList(newTodo);
-  // }
-
-  // void updateTodo(String uid) async {
-  //   // todo.status = 2;
-  //   TodoListModel newTodo = TodoListModel(
-  //     senderid: 'student1',
-  //     start_time: DateTime.now(),
-  //     status: "0",
-  //     description: "update a todolist",
-  //     todolist_name: "todolist11111",
-  //     interval: "2h",
-  //     recipients: ["student1"],
-  //   );
-  //   await _database.updateTodoList(newTodo);
-  // }
 }
