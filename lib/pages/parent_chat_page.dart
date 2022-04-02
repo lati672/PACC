@@ -44,6 +44,7 @@ class _ParentChatPageState extends State<ParentChatPage> {
   bool _isComposing = false;
   late String _memberid1, _memberid2;
   bool isfriends = false;
+
   @override
   void initState() {
     super.initState();
@@ -88,69 +89,66 @@ class _ParentChatPageState extends State<ParentChatPage> {
       builder: (_context) {
         _pageProvider = _context.watch<ChatPageProvider>();
         return Scaffold(
-          body: SingleChildScrollView(
-            physics: const BouncingScrollPhysics(),
-            child: Container(
-              padding: EdgeInsets.symmetric(
-                  horizontal: _deviceWidth * .03,
-                  vertical: _deviceHeight * .02),
-              width: _deviceWidth,
-              height: _deviceHeight,
-              child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisSize: MainAxisSize.max,
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    TopBar(
-                      widget.chat.title(),
-                      fontSize: 16,
-                      primaryAction: IconButton(
-                        onPressed: () {
-                          _pageProvider.deleteChat();
-                        },
-                        icon: const Icon(
-                          Icons.delete,
-                          color: Color.fromRGBO(0, 82, 218, 1),
-                        ),
-                      ),
-                      secondaryAction: IconButton(
-                        onPressed: () {
-                          _navigation.navigateToPage(HomePage());
-                        },
-                        icon: const Icon(
-                          Icons.arrow_back_ios,
-                          color: Color.fromRGBO(0, 82, 218, 1),
-                        ),
+          body: SafeArea(
+            child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisSize: MainAxisSize.max,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  TopBar(
+                    widget.chat.title(),
+                    fontSize: 16,
+                    primaryAction: IconButton(
+                      onPressed: () {
+                        _pageProvider.deleteChat();
+                      },
+                      icon: const Icon(
+                        Icons.delete,
+                        color: Color.fromRGBO(0, 82, 218, 1),
                       ),
                     ),
-                    _messagesListView(),
-                    _buildTextComposer(),
-                    Row(
+                    secondaryAction: IconButton(
+                      onPressed: () {
+                        _navigation.navigateToPage(HomePage());
+                      },
+                      icon: const Icon(
+                        Icons.arrow_back_ios,
+                        color: Color.fromRGBO(0, 82, 218, 1),
+                      ),
+                    ),
+                  ),
+                  Expanded(child: _messagesListView()),
+                  _buildTextComposer(),
+                  SizedBox(
+                    height: 35,
+                    child: Row(
                       //mainAxisSize: MainAxisSize.min,
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
                         IconButton(
-                            iconSize: 20.0,
+                            padding: const EdgeInsets.all(.01),
+                            iconSize: 20,
                             onPressed: () {
                               _pageProvider.sendImageMessage();
                             },
                             icon: const Icon(
                               Icons.image_sharp,
-                              color: Colors.white,
+                              color: Colors.black26,
                             )),
                         IconButton(
-                            iconSize: 20.0,
+                            iconSize: 20,
+                            padding: const EdgeInsets.all(.01),
                             onPressed: () async {
                               _showAlert(context);
                             },
                             icon: const Icon(
                               Icons.add_chart,
-                              color: Colors.white,
+                              color: Colors.black26,
                             )),
                       ],
                     ),
-                  ]),
-            ),
+                  )
+                ]),
           ),
         );
       },
@@ -215,32 +213,48 @@ class _ParentChatPageState extends State<ParentChatPage> {
   }
 
   Widget _buildTextComposer() {
+    //发送消息框
     return IconTheme(
         data: IconThemeData(color: Theme.of(context).accentColor),
         child: Container(
-            margin: const EdgeInsets.symmetric(horizontal: 8.0),
-            child: Row(children: <Widget>[
-              Flexible(
-                  child: TextField(
-                controller: _textController,
-                onChanged: (String text) {
-                  setState(() {
-                    _isComposing = text.length > 0;
-                  });
-                },
-                onSubmitted: _handleSubmitted,
-                decoration: const InputDecoration(
-                    filled: true, fillColor: Colors.white, hintText: '发送信息'),
-              )),
-              Container(
-                margin: const EdgeInsets.symmetric(horizontal: 4.0),
-                child: IconButton(
-                    icon: const Icon(Icons.send),
-                    onPressed: _isComposing
-                        ? () => _handleSubmitted(_textController.text)
-                        : null),
-              )
-            ])));
+            margin: const EdgeInsets.symmetric(horizontal: 1.0),
+            child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
+                child: Row(children: <Widget>[
+                  Flexible(
+                      fit: FlexFit.tight,
+                      child: TextField(
+                        controller: _textController,
+                        onChanged: (String text) {
+                          setState(() {
+                            _isComposing = text.isNotEmpty;
+                          });
+                        },
+                        onSubmitted: _handleSubmitted,
+                        decoration: InputDecoration(
+                            isCollapsed: true,
+                            contentPadding: const EdgeInsets.symmetric(
+                                horizontal: 8, vertical: 10),
+                            filled: true,
+                            fillColor: Colors.black12,
+                            hintText: '发送信息',
+                            border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(20.0),
+                                borderSide: BorderSide.none)),
+                      )),
+                  Container(
+                      margin: const EdgeInsets.only(left: 4.0),
+                      child: SizedBox(
+                        width: 25,
+                        height: 25,
+                        child: IconButton(
+                            padding: EdgeInsets.zero,
+                            icon: const Icon(Icons.send),
+                            onPressed: _isComposing
+                                ? () => _handleSubmitted(_textController.text)
+                                : null),
+                      ))
+                ]))));
   }
 
   List<String> decodewhitelist(String whitelist) {
@@ -251,9 +265,9 @@ class _ParentChatPageState extends State<ParentChatPage> {
   Widget _messagesListView() {
     if (_pageProvider.messages != null) {
       if (_pageProvider.messages!.isNotEmpty) {
-        return SizedBox(
-          height: _deviceHeight * .70,
-          //height: _deviceHeight,
+        return Container(
+          padding: EdgeInsets.symmetric(horizontal: _deviceWidth * .02),
+          color: const Color.fromRGBO(240, 240, 240, 1),
           child: ListView.builder(
             itemCount: _pageProvider.messages!.length,
             itemBuilder: (BuildContext _context, int _index) {
@@ -275,7 +289,15 @@ class _ParentChatPageState extends State<ParentChatPage> {
                   }
                 case MessageType.image:
                   {
-                    return Image.network(_message.content);
+                    return CustomChatListViewTile(
+                      width: _deviceWidth * .80,
+                      deviceHeight: _deviceHeight,
+                      isOwnMessage: _isOwnMessage,
+                      message: _message,
+                      sender: widget.chat.members
+                          .where((element) => element.uid == _message.senderID)
+                          .first,
+                    );
                   }
                 case MessageType.whitelist:
                   {

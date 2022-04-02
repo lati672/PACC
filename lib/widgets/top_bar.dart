@@ -37,6 +37,7 @@ class _TopBarState extends State<TopBar> {
       color: Colors.white24,
         child: SizedBox(
       width: _deviceWidth,
+      height: _deviceHeight*.07,
       child: Row(
         mainAxisSize: MainAxisSize.max,
         mainAxisAlignment: MainAxisAlignment.spaceBetween,

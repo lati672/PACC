@@ -110,7 +110,7 @@ class CustomChatListViewTile extends StatelessWidget {
             children: [
               !isOwnMessage
                   ? RoundedImageNetwork(
-                      imagePath: "https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fup.enterdesk.com%2Fedpic%2Ffb%2Fa2%2F69%2Ffba2696b9fa4120d758eba82c04f1aad.jpg&refer=http%3A%2F%2Fup.enterdesk.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=auto?sec=1650375129&t=401f58e617fbfe66648265e8b398de2a",
+                      imagePath: sender.imageUrl,
                       size: width * .1,
                     )
                   : Container(),
@@ -138,7 +138,7 @@ class CustomChatListViewTile extends StatelessWidget {
             children: [
               !isOwnMessage
                   ? RoundedImageNetwork(
-                      imagePath: "https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fup.enterdesk.com%2Fedpic%2Ffb%2Fa2%2F69%2Ffba2696b9fa4120d758eba82c04f1aad.jpg&refer=http%3A%2F%2Fup.enterdesk.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=auto?sec=1650375129&t=401f58e617fbfe66648265e8b398de2a",
+                      imagePath: sender.imageUrl,
                       size: width * .1,
                     )
                   : Container(),

@@ -95,7 +95,7 @@ class _StudentChatPageState extends State<StudentChatPage> {
         _pageProvider = _context.watch<ChatPageProvider>();
 
         return Scaffold(
-            body: Container(
+            body: SizedBox(
           width: _deviceWidth,
           height: _deviceHeight,
           child: SafeArea(
@@ -192,6 +192,7 @@ class _StudentChatPageState extends State<StudentChatPage> {
   }
 
   Widget _buildTextComposer() {
+    //发送消息框
     return IconTheme(
         data: IconThemeData(color: Theme.of(context).accentColor),
         child: Container(
