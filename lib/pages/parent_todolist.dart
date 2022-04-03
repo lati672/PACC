@@ -97,7 +97,8 @@ class _ParentTodolistPageState extends State<ParentTodolistPage> {
                     isActivity: true,
                     onTap: () =>
                         // _navigation.navigateToPage(TodoListPage(todo: _todos)),
-                        _navigation.navigateToPage(TodoListPage()),
+                        _navigation
+                            .navigateToPage(TodoListPage(role: 'Parent')),
                   ),
                   Divider(
                     indent: _deviceWidth * .03,

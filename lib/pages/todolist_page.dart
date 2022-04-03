@@ -17,7 +17,8 @@ import '../services/database_service.dart';
 import '../widgets/top_bar.dart';
 
 class TodoListPage extends StatefulWidget {
-  // const TodoListPage({Key? key, required this.todo}) : super(key: key);
+  const TodoListPage({Key? key, required this.role}) : super(key: key);
+  final String role;
   @override
   State<StatefulWidget> createState() {
     return _TodoListState();

@@ -24,17 +24,17 @@ class _HomePageState extends State<HomePage> {
   int _currentPage = 0;
   late AuthenticationProvider _auth;
   // * Pages to display and navigate
-  final List<Widget> _pages = [
-    const ChatsPage(),
-    // _auth.user.role == 'Student' ? ParentTodolistPage() : TodoListPage(),
-    ParentTodolistPage(),
-    FriendsPage(),
-    UserProfilePage()
-  ];
+  List<Widget> _pages = [];
 
   @override
   Widget build(BuildContext context) {
     _auth = Provider.of<AuthenticationProvider>(context);
+    _pages = [
+      const ChatsPage(),
+      TodoListPage(role: _auth.user.role),
+      FriendsPage(),
+      UserProfilePage()
+    ];
     return _buildUI();
   }
 
