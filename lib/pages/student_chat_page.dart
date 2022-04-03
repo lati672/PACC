@@ -294,6 +294,7 @@ class _StudentChatPageState extends State<StudentChatPage> {
                       sender: widget.chat.members
                           .where((element) => element.uid == _message.senderID)
                           .first,
+                      receiverid: _memberid2,
                     );
                   }
                 case MessageType.image:
@@ -306,38 +307,20 @@ class _StudentChatPageState extends State<StudentChatPage> {
                       sender: widget.chat.members
                           .where((element) => element.uid == _message.senderID)
                           .first,
+                      receiverid: _memberid2,
                     );
                   }
                 case MessageType.whitelist:
                   {
-                    List<String> appList = decodewhitelist(_message.content);
-
-                    String senderid = _message.senderID;
-                    String receiverid =
-                        senderid == _memberid1 ? _memberid2 : _memberid1;
-                    return ElevatedButton.icon(
-                      icon: const Icon(Icons.ac_unit),
-                      label: const Text("学生查看白名单"),
-                      onPressed: () async {
-                        String senderrole =
-                            await _database.getRoleBySenderID(senderid);
-                        String receiverrole =
-                            await _database.getRoleBySenderID(receiverid);
-                        final result = await Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => CheckWhiteListPage(
-                                applist: appList,
-                                sender_role: senderrole,
-                                receiver_role: receiverrole,
-                              ),
-                            ));
-                        //print('result:  $result');
-                        if (result != null) {
-                          _pageProvider.sendWhiteList(result);
-                          //print(_pageProvider.getchatid());
-                        }
-                      },
+                    return CustomChatListViewTile(
+                      width: _deviceWidth * .80,
+                      deviceHeight: _deviceHeight,
+                      isOwnMessage: _isOwnMessage,
+                      message: _message,
+                      sender: widget.chat.members
+                          .where((element) => element.uid == _message.senderID)
+                          .first,
+                      receiverid: _memberid2,
                     );
                   }
                 case MessageType.confirm:

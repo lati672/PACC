@@ -87,12 +87,12 @@ class _LoginPageState extends State<LoginPage> {
             child: Container(
           //用来放置app图标
           height: _deviceHeight * .10,
-          decoration: BoxDecoration(
+          decoration: const BoxDecoration(
               image: DecorationImage(
                   fit: BoxFit.fitHeight,
                   image: AssetImage('assets/images/logo.png'))),
         )),
-        Expanded(
+        const Expanded(
             child: Text(
           'ToDo！',
           style: TextStyle(

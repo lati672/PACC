@@ -2,6 +2,7 @@
 import 'package:chatifyapp/models/chat_message_model.dart';
 import 'package:chatifyapp/models/chat_user_model.dart';
 import 'package:chatifyapp/widgets/image_message_bubbles.dart';
+import 'package:chatifyapp/widgets/whitelist_message_bubbles.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart'; //Custom Animations
 
@@ -80,6 +81,7 @@ class CustomListViewTileWithActivity extends StatelessWidget {
 }
 
 class CustomChatListViewTile extends StatelessWidget {
+  ///* 聊天界面中的每一行消息
   const CustomChatListViewTile({
     Key? key,
     required this.width,
@@ -87,6 +89,7 @@ class CustomChatListViewTile extends StatelessWidget {
     required this.isOwnMessage,
     required this.message,
     required this.sender,
+    required this.receiverid,
   }) : super(key: key);
 
   final double width;
@@ -94,9 +97,11 @@ class CustomChatListViewTile extends StatelessWidget {
   final bool isOwnMessage;
   final ChatMessage message;
   final ChatUserModel sender;
+  final String receiverid;
 
   @override
   Widget build(BuildContext context) {
+    ///* 根据不同的消息类型调用不同的bubble生成消息行
     switch (message.type) {
       case MessageType.text:
         return Container(
@@ -145,7 +150,40 @@ class CustomChatListViewTile extends StatelessWidget {
               SizedBox(
                 width: width * .05,
               ),
-              ImageMessageBubble(isOwnMessage: isOwnMessage, message: message, width: width*.75)
+              ImageMessageBubble(
+                  isOwnMessage: isOwnMessage,
+                  message: message,
+                  width: width * .75)
+            ],
+          ),
+        );
+      case MessageType.whitelist:
+        return Container(
+          padding: const EdgeInsets.only(bottom: 10),
+          width: width,
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.max,
+            mainAxisAlignment:
+                isOwnMessage ? MainAxisAlignment.end : MainAxisAlignment.start,
+            children: [
+              !isOwnMessage
+                  ? RoundedImageNetwork(
+                      imagePath: sender.imageUrl,
+                      size: width * .1,
+                    )
+                  : Container(),
+              SizedBox(
+                width: width * .05,
+              ),
+              WhiteListMessageBubble(
+                isOwnMessage: isOwnMessage,
+                message: message,
+                width: width * .75,
+                height: deviceHeight * .15,
+                senderid: sender.uid,
+                receiverid: receiverid,
+              )
             ],
           ),
         );
