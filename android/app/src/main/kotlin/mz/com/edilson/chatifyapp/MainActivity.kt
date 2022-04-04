@@ -99,7 +99,7 @@ class MainActivity : FlutterActivity() {
     // 跳转其他APP
     private fun launch() {
         Log.i("TAG", "getAppProcessName: "+"1234567891234567");
-        val intent = packageManager.getLaunchIntentForPackage("com.taobao.taobao")
+        //val intent = packageManager.getLaunchIntentForPackage("com.taobao.taobao")
         // val intent = packageManager.getLaunchIntentForPackage("com.example.chatifyapp")
         // 这里如果intent为空，就说名没有安装要跳转的应用嘛
         if (intent != null) {

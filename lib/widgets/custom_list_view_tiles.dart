@@ -1,12 +1,15 @@
 // Packages
 import 'package:chatifyapp/models/chat_message_model.dart';
 import 'package:chatifyapp/models/chat_user_model.dart';
+import 'package:chatifyapp/widgets/confirm_message_bubble.dart';
 import 'package:chatifyapp/widgets/image_message_bubbles.dart';
 import 'package:chatifyapp/widgets/whitelist_message_bubbles.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart'; //Custom Animations
+import 'package:provider/provider.dart';
 
 // Widgets
+import '../providers/chat_page_provider.dart';
 import '../widgets/rounded_image_network.dart';
 import '../widgets/text_message_bubbles.dart';
 
@@ -105,7 +108,7 @@ class CustomChatListViewTile extends StatelessWidget {
     switch (message.type) {
       case MessageType.text:
         return Container(
-          padding: const EdgeInsets.only(bottom: 10),
+          padding: const EdgeInsets.symmetric(vertical: 5),
           width: width,
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -133,7 +136,7 @@ class CustomChatListViewTile extends StatelessWidget {
         );
       case MessageType.image:
         return Container(
-          padding: const EdgeInsets.only(bottom: 10),
+          padding: const EdgeInsets.symmetric(vertical: 5),
           width: width,
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -158,6 +161,85 @@ class CustomChatListViewTile extends StatelessWidget {
           ),
         );
       case MessageType.whitelist:
+        return Container(
+          padding: const EdgeInsets.symmetric(vertical: 5),
+          width: width,
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.max,
+            mainAxisAlignment:
+                isOwnMessage ? MainAxisAlignment.end : MainAxisAlignment.start,
+            children: [
+              !isOwnMessage
+                  ? RoundedImageNetwork(
+                      imagePath: sender.imageUrl,
+                      size: width * .1,
+                    )
+                  : Container(),
+              SizedBox(
+                width: width * .05,
+              ),
+              WhiteListMessageBubble(
+                isOwnMessage: isOwnMessage,
+                message: message,
+                width: width * .75,
+                height: deviceHeight * .15,
+                senderid: sender.uid,
+                receiverid: receiverid,
+              )
+            ],
+          ),
+        );
+      case MessageType.confirm:
+        ChatPageProvider pageProvider = context.watch<ChatPageProvider>();
+        int cnt = pageProvider
+            .countConfirmbefore(message.sentTime); //查询在此之前有多少条confirm信息
+        if (cnt == 0) {
+          if (isOwnMessage) {
+            return Container(
+                margin: const EdgeInsets.symmetric(vertical: 5),
+                child: const Text('您已发送好友请求，请等待回复',
+                    style: TextStyle(fontSize: 14, color: Colors.black26),
+                    textAlign: TextAlign.center));
+          } else {
+            return Container(
+              padding: const EdgeInsets.symmetric(vertical: 5),
+              width: width,
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.max,
+                mainAxisAlignment: isOwnMessage
+                    ? MainAxisAlignment.end
+                    : MainAxisAlignment.start,
+                children: [
+                  !isOwnMessage
+                      ? RoundedImageNetwork(
+                          imagePath: sender.imageUrl,
+                          size: width * .1,
+                        )
+                      : Container(),
+                  SizedBox(
+                    width: width * .05,
+                  ),
+                  ConfirmMessageBubble(
+                    isOwnMessage: isOwnMessage,
+                    message: message,
+                    width: width * .75,
+                    height: deviceHeight * .15,
+                    senderid: sender.uid,
+                    receiverid: receiverid,
+                  )
+                ],
+              ),
+            );
+          }
+        } else {
+          return Container(
+              padding: const EdgeInsets.symmetric(vertical: 5),
+              child: Text(message.content,
+                  style: TextStyle(fontSize: 14, color: Colors.black26),
+                  textAlign: TextAlign.center));
+        }
         return Container(
           padding: const EdgeInsets.only(bottom: 10),
           width: width,

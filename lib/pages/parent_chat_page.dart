@@ -359,35 +359,16 @@ class _ParentChatPageState extends State<ParentChatPage> {
                     );
                   }
                 case MessageType.confirm:
-                  {
-                    String senderid = _message.senderID;
-                    String receiverid =
-                    senderid == _memberid1 ? _memberid2 : _memberid1;
-                    int cnt =
-                    _pageProvider.countConfirmbefore(_message.sentTime);
-                    if (cnt == 0) {
-                      if (senderid == _auth.user.uid) {
-                        return const Text('您已发送好友请求，请等待回复');
-                      } else {
-                        return TextButton(
-                          style: TextButton.styleFrom(
-                            textStyle: const TextStyle(fontSize: 20),
-                          ),
-                          onPressed: () {
-                            if (confirmmessage_count == 2) {
-                              null;
-                            } else {
-                              _confirmrequest(context);
-                            }
-                            //_confirmrequest(context);
-                          },
-                          child: Text(_message.content),
-                        );
-                      }
-                    } else {
-                      return Text(_message.content);
-                    }
-                  }
+                  return CustomChatListViewTile(
+                    width: _deviceWidth * .80,
+                    deviceHeight: _deviceHeight,
+                    isOwnMessage: _isOwnMessage,
+                    message: _message,
+                    sender: widget.chat.members
+                        .where((element) => element.uid == _message.senderID)
+                        .first,
+                    receiverid: _memberid2,
+                  );
                 default:
                   {
                     return Container();
