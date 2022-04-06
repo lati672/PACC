@@ -29,10 +29,11 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     _auth = Provider.of<AuthenticationProvider>(context);
+    final String role = _auth.user.role;
     _pages = [
       const ChatsPage(),
-      TodoListPage(role: _auth.user.role),
-      FriendsPage(),
+      TodoListPage(role: role),
+      FriendsPage(role: role),
       UserProfilePage()
     ];
     return _buildUI();

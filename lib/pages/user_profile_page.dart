@@ -1,15 +1,15 @@
-import 'package:flutter/cupertino.dart';
+import 'package:chatifyapp/pages/test.dart';
 import 'package:flutter/material.dart';
 import '../models/chat_user_model.dart';
 import '../services/database_service.dart';
 import '../providers/authentication_provider.dart';
 import 'package:get_it/get_it.dart';
 import 'package:provider/provider.dart';
-import 'package:chatifyapp/widgets/rounded_image_network.dart';
 import '../services/cloud_storage_service.dart';
 import '../services/media_service.dart';
 import 'package:file_picker/file_picker.dart';
-import '../models/chat_message_model.dart';
+
+import '../services/navigation_service.dart';
 
 class UserProfilePage extends StatefulWidget {
   UserProfilePage({Key? key}) : super(key: key);
@@ -27,6 +27,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
   late CloudStorageService _cloudStorageService;
   late CloudStorageService _storage;
   late MediaService _media;
+  late NavigationService _navigation;
   PlatformFile? _ChatImage;
 
   @override
@@ -39,6 +40,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
     _storage = GetIt.instance.get<CloudStorageService>();
     _auth = Provider.of<AuthenticationProvider>(context);
     _database = GetIt.instance.get<DatabaseService>();
+    _navigation = GetIt.instance.get<NavigationService>();
     _deviceWidth = MediaQuery.of(context).size.width;
     _deviceHeight = MediaQuery.of(context).size.height;
     user = _auth.user;
@@ -56,7 +58,15 @@ class _UserProfilePageState extends State<UserProfilePage> {
               },
               child: const Text(
                 '退出登录',
-                style: TextStyle(color: Colors.black,fontSize: 20),
+                style: TextStyle(color: Colors.black, fontSize: 20),
+              )),
+          TextButton(
+              onPressed: () {
+                _navigation.navigateToPage(TestPage());
+              },
+              child: const Text(
+                '测试界面',
+                style: TextStyle(color: Colors.black, fontSize: 20),
               )),
           Container(color: Colors.black12, height: 7),
           /*
@@ -147,7 +157,10 @@ class _UserProfilePageState extends State<UserProfilePage> {
             child: Row(
               children: [
                 const Expanded(
-                  child: Icon(Icons.mail_outline_outlined,color: Colors.orange,),
+                  child: Icon(
+                    Icons.mail_outline_outlined,
+                    color: Colors.orange,
+                  ),
                   flex: 1,
                 ),
                 const Expanded(
@@ -179,7 +192,10 @@ class _UserProfilePageState extends State<UserProfilePage> {
             child: Row(
               children: [
                 const Expanded(
-                  child: Icon(Icons.person,color: Colors.green,),
+                  child: Icon(
+                    Icons.person,
+                    color: Colors.green,
+                  ),
                   flex: 1,
                 ),
                 const Expanded(

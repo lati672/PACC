@@ -571,6 +571,41 @@ class DatabaseService {
     return students;
   }
 
+  //get parentsname using stream, maybe later return a Chatuser model
+  Stream<String> getParentsnameStream(String student_id) async* {
+    List<String> parents = [];
+    QuerySnapshot qshot = await _dataBase
+        .collection(parentstudentCollection)
+        .where('studentid', isEqualTo: student_id)
+        .get();
+    if (qshot.size > 0) {
+      qshot.docs.forEach((doc) {
+        parents.add(doc['parentid']);
+      });
+      for (var i = 0; i < parents.length; i++) {
+        String name = await getUserName(parents[i]);
+        yield name;
+      }
+    }
+  }
+
+  Stream<String> getStudentsnameStream(String parent_id) async* {
+    List<String> students = [];
+    QuerySnapshot qshot = await _dataBase
+        .collection(parentstudentCollection)
+        .where('parentid', isEqualTo: parent_id)
+        .get();
+    if (qshot.size > 0) {
+      qshot.docs.forEach((doc) {
+        students.add(doc['studentid']);
+      });
+      for (var i = 0; i < students.length; i++) {
+        String name = await getUserName(students[i]);
+        yield name;
+      }
+    }
+  }
+
   Future<bool> checkPSrel(String _user1id, String _user2id) async {
     bool result = false;
     QuerySnapshot docshot =

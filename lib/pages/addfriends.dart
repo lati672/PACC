@@ -25,7 +25,7 @@ class _AddFriendsPageState extends State<AddFriendsPage> {
   final TextEditingController _NametextController = new TextEditingController();
   bool _EmailisComposing = false;
   bool _NameisComposing = false;
-  List<Text> AlertTitle = [
+  final List<Text> AlertTitle = [
     const Text('用户未找到'),
     const Text('不能添加自己'),
     const Text('成功发送请求'),
@@ -35,7 +35,7 @@ class _AddFriendsPageState extends State<AddFriendsPage> {
     const Text('添加错误'),
     const Text('添加错误'),
   ];
-  List<Text> AlertContent = [
+  final List<Text> AlertContent = [
     const Text('请输入正确的邮箱'),
     const Text('请输入正确的邮箱'),
     const Text('成功'),
