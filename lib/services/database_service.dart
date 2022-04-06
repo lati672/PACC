@@ -1,5 +1,8 @@
 // Packages
 //import 'dart:html';
+import 'dart:ffi';
+
+import 'package:chatifyapp/models/chats_model.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/widgets.dart';
@@ -183,6 +186,62 @@ class DatabaseService {
       }
     }
     return false;
+  }
+
+  //query the chat id of two members;
+  Future<String> getChatid(String uid1, String uid2) async {
+    String chatid = "";
+    QuerySnapshot qshot = await _dataBase
+        .collection(chatCollection)
+        .where('members', arrayContains: uid1)
+        .get();
+    if (qshot.size == 0) {
+      print('chat doesnt exist');
+    }
+    qshot.docs.forEach((doc) {
+      List<dynamic> l = doc['members'].toList();
+      if (l.contains(uid2)) {
+        chatid = doc.id;
+      }
+    });
+    return chatid;
+  }
+
+  Future<ChatsModel> getChatsbyChatId(String chatid, String uid1) async {
+    DocumentSnapshot docshot =
+        await _dataBase.collection(chatCollection).doc(chatid).get();
+    final _chatData = docshot.data() as Map<String, dynamic>;
+    // * Get users instance
+    List<ChatUserModel> _members = [];
+    for (var _uid in _chatData['members']) {
+      final _userSnapshot = await getUser(_uid);
+      if (docshot.data() != null) {
+        final _userData = _userSnapshot.data() as Map<String, dynamic>;
+        _userData['uid'] = _userSnapshot.id;
+        _members.add(
+          ChatUserModel.fromJson(
+            _userData,
+          ),
+        );
+      }
+    }
+    List<ChatMessage> _messages = [];
+    final _chatMessage = await getLastMessageFroChat(docshot.id);
+    if (_chatMessage.docs.isNotEmpty) {
+      final _messageData =
+          _chatMessage.docs.first.data()! as Map<String, dynamic>;
+      final _message = ChatMessage.fromJSON(_messageData);
+      final context = _message.content;
+      _messages.add(_message);
+    }
+    return ChatsModel(
+      uid: docshot.id,
+      currentUserUid: uid1,
+      activity: _chatData['is_activity'],
+      group: _chatData['is_group'],
+      members: _members,
+      messages: _messages,
+    );
   }
 
 //* Getting the chats from the users
@@ -571,7 +630,7 @@ class DatabaseService {
     return students;
   }
 
-  //get parentsname using stream, maybe later return a Chatuser model
+  //not used anymore
   Stream<String> getParentsnameStream(String student_id) async* {
     List<String> parents = [];
     QuerySnapshot qshot = await _dataBase
@@ -589,6 +648,7 @@ class DatabaseService {
     }
   }
 
+  //not used anymore
   Stream<String> getStudentsnameStream(String parent_id) async* {
     List<String> students = [];
     QuerySnapshot qshot = await _dataBase
@@ -604,6 +664,126 @@ class DatabaseService {
         yield name;
       }
     }
+  }
+
+  //get parentsChatuser model using stream
+  Stream<ChatUserModel> getParentsModelStream(String student_id) async* {
+    List<String> parentsid = [];
+    List<ChatUserModel> parents = [];
+    QuerySnapshot qshot = await _dataBase
+        .collection(parentstudentCollection)
+        .where('studentid', isEqualTo: student_id)
+        .get();
+    if (qshot.size > 0) {
+      qshot.docs.forEach((doc) {
+        parentsid.add(doc['parentid']);
+      });
+    }
+    for (var i = 0; i < parentsid.length; i++) {
+      DocumentSnapshot usershot =
+          await _dataBase.collection(userCollection).doc(parentsid[i]).get();
+      parents.add(ChatUserModel.fromJson(
+        {
+          'uid': usershot.id,
+          'name': usershot['name'],
+          'email': usershot['email'],
+          'image': usershot['image'],
+          'role': usershot['role'],
+          'last_active': usershot['last_active'],
+        },
+      ));
+    }
+
+    for (var i = 0; i < parents.length; i++) {
+      yield parents[i];
+    }
+  }
+
+  //get students Chatuser model using stream
+  Stream<ChatUserModel> getStudentsModelStream(String parent_id) async* {
+    List<String> studentsid = [];
+    List<ChatUserModel> students = [];
+    QuerySnapshot qshot = await _dataBase
+        .collection(parentstudentCollection)
+        .where('parentid', isEqualTo: parent_id)
+        .get();
+    if (qshot.size > 0) {
+      qshot.docs.forEach((doc) {
+        studentsid.add(doc['studentid']);
+      });
+    }
+    for (var i = 0; i < studentsid.length; i++) {
+      DocumentSnapshot usershot =
+          await _dataBase.collection(userCollection).doc(studentsid[i]).get();
+      students.add(ChatUserModel(
+          uid: usershot.id,
+          name: usershot['name'],
+          email: usershot['email'],
+          imageUrl: usershot['image'],
+          role: usershot['role'],
+          lastActive: usershot['last_active'].toDate()));
+    }
+    for (var i = 0; i < students.length; i++) {
+      print('the i user is ${students[i].name}');
+      yield students[i];
+    }
+  }
+
+  //return the parents Chat user model
+  Future<List<ChatUserModel>> getParentsModel(String student_id) async {
+    List<String> parentsid = [];
+    List<ChatUserModel> parents = [];
+    QuerySnapshot qshot = await _dataBase
+        .collection(parentstudentCollection)
+        .where('studentid', isEqualTo: student_id)
+        .get();
+    if (qshot.size > 0) {
+      qshot.docs.forEach((doc) {
+        parentsid.add(doc['parentid']);
+      });
+    }
+    for (var i = 0; i < parentsid.length; i++) {
+      DocumentSnapshot usershot =
+          await _dataBase.collection(userCollection).doc(parentsid[i]).get();
+      parents.add(ChatUserModel.fromJson(
+        {
+          'uid': usershot.id,
+          'name': usershot['name'],
+          'email': usershot['email'],
+          'image': usershot['image'],
+          'role': usershot['role'],
+          'last_active': usershot['last_active'],
+        },
+      ));
+    }
+    return parents;
+  }
+
+  //get students Chat user model
+  Future<List<ChatUserModel>> getStudentsModel(String parent_id) async {
+    List<String> studentsid = [];
+    List<ChatUserModel> students = [];
+    QuerySnapshot qshot = await _dataBase
+        .collection(parentstudentCollection)
+        .where('parentid', isEqualTo: parent_id)
+        .get();
+    if (qshot.size > 0) {
+      qshot.docs.forEach((doc) {
+        studentsid.add(doc['studentid']);
+      });
+    }
+    for (var i = 0; i < studentsid.length; i++) {
+      DocumentSnapshot usershot =
+          await _dataBase.collection(userCollection).doc(studentsid[i]).get();
+      students.add(ChatUserModel(
+          uid: usershot.id,
+          name: usershot['name'],
+          email: usershot['email'],
+          imageUrl: usershot['image'],
+          role: usershot['role'],
+          lastActive: usershot['last_active'].toDate()));
+    }
+    return students;
   }
 
   Future<bool> checkPSrel(String _user1id, String _user2id) async {
