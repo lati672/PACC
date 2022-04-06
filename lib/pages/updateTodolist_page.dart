@@ -3,11 +3,13 @@ import '../models/todo_list_model.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:provider/provider.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 // Providers
 import '../providers/authentication_provider.dart';
 import '../providers/todolist_provider.dart';
 //pages
 import '../pages/pomodoro.dart';
+import 'package:chatifyapp/pages/todolist_page.dart';
 // Services
 import '../services/navigation_service.dart';
 import '../services/database_service.dart';
@@ -44,7 +46,6 @@ class _UpdateTodoListState extends State<UpdateTodoListPage> {
   @override
   void initState() {
     super.initState();
-    // fetchTodos();
   }
 
   @override
@@ -64,11 +65,12 @@ class _UpdateTodoListState extends State<UpdateTodoListPage> {
   Widget _buildUI() {
     _controller1 = TextEditingController(text: widget.todo.todolist_name);
     _controller2 = TextEditingController(text: widget.todo.description);
-    String interval = widget.todo.interval;
-    String recipients = "";
-    widget.todo.recipients.forEach((e) {
-      recipients += e;
-    });
+    int interval = widget.todo.interval;
+    String dropdownValue = interval.toString() + '个番茄钟';
+    Set<int> selected = Set<int>();
+    List<String> recipients = [];
+    List<String> recipientsName = [];
+
     return Builder(
       builder: (_context) {
         //* Triggers the info in the widgets to render themselves
@@ -129,22 +131,105 @@ class _UpdateTodoListState extends State<UpdateTodoListPage> {
                   },
                 ),
                 ListTile(
-                  title: Text("任务时间" + "    " + interval),
-                  trailing: IconButton(
-                    onPressed: () {
-                      // _navigation.navigateToPage(AddTodoListPage());
+                  title: const Text("任务时间"),
+                  trailing: DropdownButton<String>(
+                    value: dropdownValue,
+                    onChanged: (newValue) {
+                      setState(() {
+                        if (newValue != null) dropdownValue = newValue;
+                      });
                     },
-                    icon: const Icon(
-                      Icons.keyboard_arrow_right,
-                      color: Color.fromRGBO(0, 82, 218, 1),
-                    ),
+                    items: <String>['1个番茄钟', '2个番茄钟', '3个番茄钟', '4个番茄钟']
+                        .map<DropdownMenuItem<String>>((String value) {
+                      return DropdownMenuItem<String>(
+                        value: value,
+                        child: Text(value),
+                      );
+                    }).toList(),
                   ),
                 ),
                 ListTile(
-                  title: Text("发送到" + "   " + recipients),
+                  title: Text(
+                      "发送到" + "   " + widget.todo.recipientsName.join(' , ')),
                   trailing: IconButton(
                     onPressed: () {
-                      // _navigation.navigateToPage(AddTodoListPage());
+                      List<String>? students = _pageProvider.students;
+                      List<String>? studentsName = _pageProvider.studentsName;
+                      (students == null || studentsName == null)
+                          ? const Center(child: CircularProgressIndicator())
+                          : showModalBottomSheet(
+                              backgroundColor: Colors.transparent,
+                              isScrollControlled: true,
+                              context: context,
+                              builder: (BuildContext context) {
+                                return StatefulBuilder(
+                                    builder: (context1, setState1) {
+                                  return Container(
+                                    clipBehavior: Clip.antiAlias,
+                                    decoration: const BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius: BorderRadius.only(
+                                        topLeft: Radius.circular(20.0),
+                                        topRight: Radius.circular(20.0),
+                                      ),
+                                    ),
+                                    height: MediaQuery.of(context).size.height /
+                                        2.0,
+                                    child: Column(children: [
+                                      _getModalSheetHeaderWithConfirm(
+                                        '发送到',
+                                        onCancel: () {
+                                          Navigator.of(context).pop();
+                                        },
+                                        onConfirm: () {
+                                          setState1(() {
+                                            recipients = [];
+                                            recipientsName = [];
+                                            selected.forEach((e) {
+                                              recipients.add(students[e]);
+                                              recipientsName
+                                                  .add(studentsName[e]);
+                                            });
+                                          });
+
+                                          Navigator.of(context)
+                                              .pop(selected.toList());
+                                        },
+                                      ),
+                                      const Divider(height: 1.0),
+                                      Expanded(
+                                        child: ListView.builder(
+                                          itemBuilder: (BuildContext context,
+                                              int index) {
+                                            return ListTile(
+                                              trailing: Icon(
+                                                  selected.contains(index)
+                                                      ? Icons.check_box
+                                                      : Icons
+                                                          .check_box_outline_blank,
+                                                  color: Theme.of(context)
+                                                      .primaryColor),
+                                              title: Text(studentsName[index]),
+                                              onTap: () {
+                                                setState1(() {
+                                                  if (selected
+                                                      .contains(index)) {
+                                                    selected.remove(index);
+                                                  } else {
+                                                    selected.add(index);
+                                                  }
+                                                });
+                                              },
+                                            );
+                                          },
+                                          itemCount: studentsName.length,
+                                        ),
+                                      ),
+                                    ]),
+                                  );
+                                });
+                              },
+                            );
                     },
                     icon: const Icon(
                       Icons.keyboard_arrow_right,
@@ -166,21 +251,87 @@ class _UpdateTodoListState extends State<UpdateTodoListPage> {
     );
   }
 
+  Widget _getModalSheetHeaderWithConfirm(String title, {onCancel, onConfirm}) {
+    return SizedBox(
+      height: 50,
+      child: Row(
+        children: [
+          IconButton(
+            icon: const Icon(Icons.close),
+            onPressed: () {
+              onCancel();
+            },
+          ),
+          Expanded(
+            child: Center(
+              child: Text(
+                title,
+                style: const TextStyle(
+                    fontWeight: FontWeight.bold, fontSize: 16.0),
+              ),
+            ),
+          ),
+          IconButton(
+              icon: const Icon(
+                Icons.check,
+                color: Colors.blue,
+              ),
+              onPressed: () {
+                onConfirm();
+              }),
+        ],
+      ),
+    );
+  }
+
+// showToast
+  void showToast(String msg) {
+    Fluttertoast.showToast(
+        msg: msg,
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.CENTER,
+        timeInSecForIosWeb: 1,
+        backgroundColor: Colors.blueAccent,
+        textColor: Colors.white,
+        fontSize: 14.0);
+  }
+
+  // showToast
+  void showErrorToast(String msg) {
+    Fluttertoast.showToast(
+        msg: msg,
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.CENTER,
+        timeInSecForIosWeb: 1,
+        backgroundColor: Colors.redAccent,
+        textColor: Colors.white,
+        fontSize: 14.0);
+  }
+
   void updateTodo(String uid) async {
+    if (_controller1.text.length == 0) {
+      showErrorToast('标题不能为空！');
+      return;
+    }
     TodoListModel newTodo = TodoListModel(
       senderid: _auth.user.uid,
       start_time: DateTime.now(),
-      status: "0",
+      status: "todo",
       description: _controller2.text,
       todolist_name: _controller1.text,
-      interval: "2h",
+      interval: 2,
       recipients: [_auth.user.uid],
+      recipientsName: [_auth.user.uid],
       sent_time: DateTime.now(),
     );
     await _database.updateTodoList(newTodo, uid);
+    showToast('修改 Todo 成功 (ﾟ▽ﾟ)/');
+    _navigation.navigateToPage(TodoListPage());
   }
 
   void removeTodo(String uid) async {
     await _database.removeTodoList(uid);
+    showToast('删除 Todo 成功 (ﾟ▽ﾟ)/');
+    _navigation.navigateToPage(TodoListPage());
   }
 }

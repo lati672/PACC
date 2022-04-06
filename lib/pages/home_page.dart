@@ -32,7 +32,8 @@ class _HomePageState extends State<HomePage> {
     final String role = _auth.user.role;
     _pages = [
       const ChatsPage(),
-      TodoListPage(role: role),
+      _auth.user.role == 'Student' ? TodoListPage() : ParentTodolistPage(),
+      // TodoListPage(role: role),
       FriendsPage(role: role),
       UserProfilePage()
     ];

@@ -9,20 +9,23 @@ class TodoListModel {
   final DateTime start_time;
   String status;
   final String todolist_name;
-  final String interval;
+  final int interval;
   final DateTime sent_time;
 
   final List<String> recipients;
+  final List<String> recipientsName;
 
   TodoListModel({
     required this.senderid,
     required this.start_time,
     // required this.status,
-    this.status = "0",
-    required this.description,
+    this.status = "todo",
+    // required this.description,
+    this.description = "",
     required this.todolist_name,
     required this.interval,
     required this.recipients,
+    required this.recipientsName,
     required this.sent_time,
   });
   factory TodoListModel.fromJson(Map<String, dynamic> _json) {
@@ -34,7 +37,8 @@ class TodoListModel {
         description: _json['description'],
         todolist_name: _json['todolist_name'],
         interval: _json['interval'],
-        recipients: List.from(_json['recipients']));
+        recipients: List.from(_json['recipients']),
+        recipientsName: List.from(_json['recipientsName']));
   }
   Map<String, dynamic> toMap() {
     return {
@@ -45,7 +49,8 @@ class TodoListModel {
       'description': description,
       'todolist_name': todolist_name,
       'interval': interval,
-      'recipients': recipients
+      'recipients': recipients,
+      'recipientsName': recipientsName
     };
   }
 //

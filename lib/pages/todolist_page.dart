@@ -17,8 +17,7 @@ import '../services/database_service.dart';
 import '../widgets/top_bar.dart';
 
 class TodoListPage extends StatefulWidget {
-  const TodoListPage({Key? key, required this.role}) : super(key: key);
-  final String role;
+  const TodoListPage({Key? key}) : super(key: key);
   @override
   State<StatefulWidget> createState() {
     return _TodoListState();
@@ -71,7 +70,12 @@ class _TodoListState extends State<TodoListPage> {
                   primaryAction: IconButton(
                     onPressed: () {
                       // * Logout the user if he/she presses the button icon
-                      _navigation.navigateToPage(AddTodoListPage());
+                      Navigator.of(context)
+                          .push(
+                            MaterialPageRoute(
+                                builder: (_) => AddTodoListPage()),
+                          )
+                          .then((val) => val ? _getRequests() : null);
                     },
                     icon: const Icon(
                       Icons.add,
@@ -134,6 +138,7 @@ class _TodoListState extends State<TodoListPage> {
             ),
           ]);
   }
+
   // void fetchTodos() async {
   //   // print("start fetchTodos");
   //   // todos = await _database.getTodoList(_auth.user.name);
@@ -142,5 +147,5 @@ class _TodoListState extends State<TodoListPage> {
   //     todos = todos;
   //   });
   // }
-
+  _getRequests() async {}
 }
