@@ -55,14 +55,8 @@ class _ParentChatPageState extends State<ParentChatPage> {
   @override
   Widget build(BuildContext context) {
     // * Initializations
-    _deviceWidth = MediaQuery
-        .of(context)
-        .size
-        .width;
-    _deviceHeight = MediaQuery
-        .of(context)
-        .size
-        .height;
+    _deviceWidth = MediaQuery.of(context).size.width;
+    _deviceHeight = MediaQuery.of(context).size.height;
     _auth = Provider.of<AuthenticationProvider>(context);
     _navigation = GetIt.instance.get<NavigationService>();
     _memberid1 = widget.chat.members[1].uid;
@@ -79,12 +73,11 @@ class _ParentChatPageState extends State<ParentChatPage> {
         child: MultiProvider(
           providers: [
             ChangeNotifierProvider<ChatPageProvider>(
-              create: (_) =>
-                  ChatPageProvider(
-                    widget.chat.uid,
-                    _auth,
-                    _messagesListViewController,
-                  ),
+              create: (_) => ChatPageProvider(
+                widget.chat.uid,
+                _auth,
+                _messagesListViewController,
+              ),
             )
           ],
           child: _buildUI(),
@@ -223,9 +216,7 @@ class _ParentChatPageState extends State<ParentChatPage> {
   Widget _buildTextComposer() {
     //发送消息框
     return IconTheme(
-        data: IconThemeData(color: Theme
-            .of(context)
-            .accentColor),
+        data: IconThemeData(color: Theme.of(context).accentColor),
         child: Container(
             margin: const EdgeInsets.symmetric(horizontal: 1.0),
             child: Container(
@@ -300,7 +291,7 @@ class _ParentChatPageState extends State<ParentChatPage> {
                     );
                   }
                 case MessageType.image:
-                //图片
+                  //图片
                   {
                     return CustomChatListViewTile(
                       width: _deviceWidth * .80,
@@ -313,38 +304,38 @@ class _ParentChatPageState extends State<ParentChatPage> {
                       receiverid: _memberid2,
                     );
                   }
-              // case MessageType.whitelist:
-              //   {
-              //     //白名单
-              //     List<String> appList = decodewhitelist(_message.content);
-              //     String senderid = _message.senderID;
-              //     String receiverid =
-              //         senderid == _memberid1 ? _memberid2 : _memberid1;
-              //     return ElevatedButton.icon(
-              //       icon: const Icon(Icons.ac_unit),
-              //       label: const Text("家长审核白名单"),
-              //       onPressed: () async {
-              //         String senderrole =
-              //             await _database.getRoleBySenderID(senderid);
-              //         String receiverrole =
-              //             await _database.getRoleBySenderID(receiverid);
-              //         final result = await Navigator.push(
-              //             context,
-              //             MaterialPageRoute(
-              //               builder: (context) => CheckWhiteListPage(
-              //                 applist: appList,
-              //                 sender_role: senderrole,
-              //                 receiver_role: receiverrole,
-              //               ),
-              //             ));
-              //         //print('result:  $result');
-              //         if (result != null) {
-              //           _pageProvider.sendWhiteList(result);
-              //           //print(_pageProvider.getchatid());
-              //         }
-              //       },
-              //     );
-              //   }
+                // case MessageType.whitelist:
+                //   {
+                //     //白名单
+                //     List<String> appList = decodewhitelist(_message.content);
+                //     String senderid = _message.senderID;
+                //     String receiverid =
+                //         senderid == _memberid1 ? _memberid2 : _memberid1;
+                //     return ElevatedButton.icon(
+                //       icon: const Icon(Icons.ac_unit),
+                //       label: const Text("家长审核白名单"),
+                //       onPressed: () async {
+                //         String senderrole =
+                //             await _database.getRoleBySenderID(senderid);
+                //         String receiverrole =
+                //             await _database.getRoleBySenderID(receiverid);
+                //         final result = await Navigator.push(
+                //             context,
+                //             MaterialPageRoute(
+                //               builder: (context) => CheckWhiteListPage(
+                //                 applist: appList,
+                //                 sender_role: senderrole,
+                //                 receiver_role: receiverrole,
+                //               ),
+                //             ));
+                //         //print('result:  $result');
+                //         if (result != null) {
+                //           _pageProvider.sendWhiteList(result);
+                //           //print(_pageProvider.getchatid());
+                //         }
+                //       },
+                //     );
+                //   }
                 case MessageType.whitelist:
                   {
                     return CustomChatListViewTile(

@@ -79,26 +79,29 @@ class _ParentTodolistPageState extends State<ParentTodolistPage> {
 
   // Build UI
   Widget _todosList() {
-    List<TodoListModel>? _todos = _pageProvider.todos;
+    List<String>? _students = _pageProvider.students;
+    List<String>? _studentsName = _pageProvider.studentsName;
+    List<int>? _studentsTodo = _pageProvider.studentsTodo;
     return Expanded(
       child: (() {
-        if (_todos != null) {
-          if (_todos.isNotEmpty) {
+        if (_students != null &&
+            _studentsName != null &&
+            _studentsTodo != null) {
+          if (_students.isNotEmpty) {
             return ListView.builder(
-              itemCount: _todos.length,
+              itemCount: _students.length,
               itemBuilder: (BuildContext _context, int _index) {
                 return Column(children: [
                   CustomListViewTileWithActivity(
                     height: _deviceHeight * .10,
-                    title: _todos[_index].todolist_name,
-                    subtitle: "2条待办",
+                    title: _studentsName[_index],
+                    subtitle: _studentsTodo[_index].toString() + "条待办",
                     imagePath: 'assets/images/default-image.jpg',
                     isActive: true,
                     isActivity: true,
                     onTap: () =>
                         // _navigation.navigateToPage(TodoListPage(todo: _todos)),
-                        _navigation
-                            .navigateToPage(TodoListPage(role: 'Parent')),
+                        _navigation.navigateToPage(TodoListPage()),
                   ),
                   Divider(
                     indent: _deviceWidth * .03,
@@ -129,43 +132,4 @@ class _ParentTodolistPageState extends State<ParentTodolistPage> {
       })(),
     );
   }
-
-// //* Render the todo tile
-//   Widget _todoTile(TodoListModel _todo) {
-//     List<TodoListModel> _recepients = _todo.recepients();
-//     bool _isActive = _recepients.any(
-//       (_eachDoc) => _eachDoc.wasRecentlyActive(),
-//     );
-//     var _subtitleText = '';
-//     if (_todo.messages.isNotEmpty) {
-//       _subtitleText = _todo.messages.first.type != MessageType.text
-//           ? 'Media Attachment'
-//           : _todo.messages.first.content;
-//       //print('subtitletest: $_subtitleText');
-//     }
-//     return Column(children: [
-//       CustomListViewTileWithActivity(
-//         height: _deviceHeight * .10,
-//         title: _todo.title(),
-//         subtitle: _subtitleText,
-//         imagePath: _todo.todoImageURL(),
-//         isActive: _isActive,
-//         isActivity: _todo.activity,
-//         onTap: () => _auth.user.role == 'Parent'
-//             ? _navigation.navigateToPage(
-//                 ParentChatPage(todo: _todo),
-//               )
-//             : _navigation.navigateToPage(
-//                 StudentChatPage(todo: _todo),
-//               ),
-//       ),
-//       Divider(
-//         indent: _deviceWidth * .03,
-//         endIndent: _deviceWidth * .03,
-//         height: 0.2,
-//         color: Colors.black12,
-//       )
-//     ]);
-//   }
-
 }

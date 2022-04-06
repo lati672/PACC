@@ -459,7 +459,8 @@ class DatabaseService {
           description: doc['description'],
           todolist_name: doc['todolist_name'],
           interval: doc['interval'],
-          recipients: List.from(doc['recipients'])));
+          recipients: List.from(doc['recipients']),
+          recipientsName: List.from(doc['recipientsName'])));
     });
     return todo;
   }
@@ -468,10 +469,7 @@ class DatabaseService {
     return _dataBase
         .collection(todolistCollection)
         .orderBy('sent_time', descending: false)
-        .where(
-          'recipients',
-          arrayContains: _userid,
-        )
+        .where('recipients', arrayContains: _userid)
         .snapshots();
   }
 
@@ -485,6 +483,7 @@ class DatabaseService {
           'description': todolist.description,
           'interval': todolist.interval,
           'recipients': todolist.recipients,
+          'recipientsName': todolist.recipientsName,
           'todolist_name': todolist.todolist_name,
         },
       );

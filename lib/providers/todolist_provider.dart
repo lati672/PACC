@@ -21,6 +21,7 @@ class TodoListPageProvider extends ChangeNotifier {
     _database = GetIt.I.get<DatabaseService>();
     //getTodos();
     listenToTodolists();
+    getStudents();
   }
   final AuthenticationProvider _auth;
 
@@ -28,6 +29,9 @@ class TodoListPageProvider extends ChangeNotifier {
 
   List<TodoListModel>? todos;
   List? todosID;
+  List<String>? students;
+  List<String>? studentsName;
+  List<int>? studentsTodo;
 
   late StreamSubscription _todosStream;
 
@@ -54,7 +58,8 @@ class TodoListPageProvider extends ChangeNotifier {
                 description: doc['description'],
                 todolist_name: doc['todolist_name'],
                 interval: doc['interval'],
-                recipients: List.from(doc['recipients'])));
+                recipients: List.from(doc['recipients']),
+                recipientsName: List.from(doc['recipientsName'])));
             _todosID.add(doc.id);
           });
           todos = _todos;
@@ -65,14 +70,22 @@ class TodoListPageProvider extends ChangeNotifier {
     } catch (error) {
       debugPrint('$error');
     }
-  }
+  } //* Getting the todos
 
-  void getTodos() async {
-    try {
-      todos = await _database.getTodoList(_auth.user.name);
-    } catch (error) {
-      debugPrint('Error getting chats.');
-      debugPrint('$error');
+  void getStudents() async {
+    List<String> _studentsName = [];
+    List<int> _studentsTodo = [];
+    List<String> _students = await _database.getStudents(_auth.user.uid);
+    for (int i = 0; i < _students.length; i++) {
+      List<TodoListModel> todo = await _database.getTodoList(_students[i]);
+      _studentsTodo.add(todo.length);
     }
+    studentsTodo = _studentsTodo;
+    for (int i = 0; i < _students.length; i++) {
+      String name = await _database.getUserName(_students[i]);
+      _studentsName.add(name);
+    }
+    studentsName = _studentsName;
+    students = _students;
   }
 }
