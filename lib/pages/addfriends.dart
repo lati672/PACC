@@ -75,7 +75,7 @@ class _AddFriendsPageState extends State<AddFriendsPage> {
           child: Column(
             children: [
               TopBar(
-                'Chats',
+                '添加好友',
                 primaryAction: IconButton(
                   onPressed: () {
                     _navigation.goBack();
@@ -183,8 +183,8 @@ class _AddFriendsPageState extends State<AddFriendsPage> {
       _showAlert(context, 5);
       return;
     }
-    String user1role = await _database.getRoleBySenderID(userid);
-    String user2role = await _database.getRoleBySenderID(friendid);
+    String user1role = await _database.getRoleByID(userid);
+    String user2role = await _database.getRoleByID(friendid);
     //Parent cannot add another parent
     if (user1role == 'Parent' && user2role == 'Parent') {
       _showAlert(context, 6);

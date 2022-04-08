@@ -74,17 +74,7 @@ class _ChatsPageState extends State<ChatsPage> {
             mainAxisSize: MainAxisSize.max,
             children: [
               TopBar(
-                'Chats' + (_auth.user.role == 'Student' ? '学生端' : '家长端'),
-                primaryAction: IconButton(
-                  onPressed: () {
-                    // * Logout the user if he/she presses the button icon
-                    _navigation.navigateToPage(AddFriendsPage());
-                  },
-                  icon: const Icon(
-                    Icons.add,
-                    color: Color.fromRGBO(0, 82, 218, 1),
-                  ),
-                ),
+                '番茄钟' + (_auth.user.role == 'Student' ? '学生端' : '家长端'),
               ),
               _chatsList(),
             ],

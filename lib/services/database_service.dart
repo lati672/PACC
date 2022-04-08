@@ -1,7 +1,4 @@
 // Packages
-//import 'dart:html';
-import 'dart:ffi';
-
 import 'package:chatifyapp/models/chats_model.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -10,8 +7,6 @@ import 'package:flutter/widgets.dart';
 // Models
 import '../models/chat_message_model.dart';
 import '../models/todo_list_model.dart';
-import '../models/parent-student_model.dart';
-import 'package:chatifyapp/models/friend_model.dart';
 import 'package:chatifyapp/models/chat_user_model.dart';
 
 const String userCollection = 'Users';
@@ -71,21 +66,21 @@ class DatabaseService {
   }
 
   // Getting user by email
-  Future<QuerySnapshot> getUserbyEmail(String email) async {
+  Future<QuerySnapshot> getUserbyEmail(String _email) async {
     //print('getting users by email');
     QuerySnapshot qshot = await _dataBase
         .collection(userCollection)
-        .where('email', isEqualTo: email)
+        .where('email', isEqualTo: _email)
         .get();
     return qshot;
   }
 
   //Getting user by name
-  Future<QuerySnapshot> getUserbyName(String name) async {
+  Future<QuerySnapshot> getUserbyName(String _name) async {
     print('getting users by name');
     QuerySnapshot qshot = await _dataBase
         .collection(userCollection)
-        .where('name', isEqualTo: name)
+        .where('name', isEqualTo: _name)
         .get();
     return qshot;
   }
@@ -117,10 +112,10 @@ class DatabaseService {
   }
 
   //literally the function name
-  Future<String> getRoleBySenderID(String senderid) async {
+  Future<String> getRoleByID(String _uid) async {
     try {
       DocumentSnapshot qshot =
-          await _dataBase.collection(userCollection).doc(senderid).get();
+          await _dataBase.collection(userCollection).doc(_uid).get();
       return qshot['role'];
     } catch (error) {
       debugPrint('$error');
@@ -174,14 +169,14 @@ class DatabaseService {
   }
 
   // query the result of whether the chat exist or not
-  Future<bool> checkChatexist(String uid1, String uid2) async {
+  Future<bool> checkChatexist(String _uid1, String _uid2) async {
     QuerySnapshot qshot = await _dataBase
         .collection(chatCollection)
-        .where('members', arrayContains: uid1)
+        .where('members', arrayContains: _uid1)
         .get();
     List<dynamic> l = qshot.docs.map((e) => e.get('members')).toList();
     for (var i = 0; i < l.length; i++) {
-      if (l[i].contains(uid2)) {
+      if (l[i].contains(_uid2)) {
         return true;
       }
     }
@@ -189,27 +184,28 @@ class DatabaseService {
   }
 
   //query the chat id of two members;
-  Future<String> getChatid(String uid1, String uid2) async {
+  Future<String> getChatid(String _uid1, String _uid2) async {
     String chatid = "";
     QuerySnapshot qshot = await _dataBase
         .collection(chatCollection)
-        .where('members', arrayContains: uid1)
+        .where('members', arrayContains: _uid1)
         .get();
     if (qshot.size == 0) {
       print('chat doesnt exist');
     }
     qshot.docs.forEach((doc) {
       List<dynamic> l = doc['members'].toList();
-      if (l.contains(uid2)) {
+      if (l.contains(_uid2)) {
         chatid = doc.id;
       }
     });
     return chatid;
   }
 
-  Future<ChatsModel> getChatsbyChatId(String chatid, String uid1) async {
+  //Get all the chats by the chat id and the user id
+  Future<ChatsModel> getChatsbyChatId(String _chatid, String _uid1) async {
     DocumentSnapshot docshot =
-        await _dataBase.collection(chatCollection).doc(chatid).get();
+        await _dataBase.collection(chatCollection).doc(_chatid).get();
     final _chatData = docshot.data() as Map<String, dynamic>;
     // * Get users instance
     List<ChatUserModel> _members = [];
@@ -236,7 +232,7 @@ class DatabaseService {
     }
     return ChatsModel(
       uid: docshot.id,
-      currentUserUid: uid1,
+      currentUserUid: _uid1,
       activity: _chatData['is_activity'],
       group: _chatData['is_group'],
       members: _members,
@@ -331,30 +327,30 @@ class DatabaseService {
   }
 
   Future<String> getlatestWhitelistfromAlluser(String _uid) async {
-    QuerySnapshot qshot;
-    List<String> docid = <String>[];
-    List<ChatMessage> allwhitelists = [];
-    List<ChatMessage> parentwhitelist = [];
+    QuerySnapshot _qshot;
+    List<String> _docid = <String>[];
+    List<ChatMessage> _allwhitelists = [];
+    List<ChatMessage> _parentwhitelist = [];
     //Get all the chat collections
-    qshot = await _dataBase.collection(chatCollection).get();
+    _qshot = await _dataBase.collection(chatCollection).get();
     //Select those chat contains the user
-    qshot.docs.forEach((doc) {
+    _qshot.docs.forEach((doc) {
       if (doc['members'].contains(_uid)) {
-        docid.add(doc.id);
+        _docid.add(doc.id);
       }
     });
     //Select those messages where type is equal to whitelist and order by sent time
-    for (var i = 0; i < docid.length; i++) {
+    for (var i = 0; i < _docid.length; i++) {
       QuerySnapshot q = await _dataBase
           .collection(chatCollection)
-          .doc(docid[i])
+          .doc(_docid[i])
           .collection(messagesCollection)
           .orderBy('sent_time', descending: true)
           .where('type', isEqualTo: 'whitelist')
           .get();
       // convert to ChatMessage class
       q.docs.forEach((doc) {
-        allwhitelists.add(ChatMessage(
+        _allwhitelists.add(ChatMessage(
             senderID: doc['sender_id'],
             type: convert(doc['type']),
             content: doc['content'],
@@ -362,16 +358,16 @@ class DatabaseService {
       });
     }
     //Select those were sent by parent
-    for (var i = 0; i < allwhitelists.length; i++) {
-      String role = await getRoleBySenderID(allwhitelists[i].senderID);
+    for (var i = 0; i < _allwhitelists.length; i++) {
+      String role = await getRoleByID(_allwhitelists[i].senderID);
       if (role == 'Parent') {
-        parentwhitelist.add(allwhitelists[i]);
+        _parentwhitelist.add(_allwhitelists[i]);
       }
     }
     //Sorted by time
-    parentwhitelist.sort(((a, b) => a.sentTime.compareTo(b.sentTime)));
+    _parentwhitelist.sort(((a, b) => a.sentTime.compareTo(b.sentTime)));
 
-    return parentwhitelist.last.content;
+    return _parentwhitelist.last.content;
   }
 
   //#Message
@@ -440,7 +436,7 @@ class DatabaseService {
   Future<void> sendFriendRequest(String _chatId, String currentuserid) async {
     try {
       String name = await getUserName(currentuserid);
-      String role = await getRoleBySenderID(currentuserid);
+      String role = await getRoleByID(currentuserid);
       final _message = ChatMessage(
           senderID: currentuserid,
           content:
@@ -484,10 +480,10 @@ class DatabaseService {
 
   //#Todolist
   //add a todo list
-  Future<void> addTodoList(TodoListModel todolist) async {
+  Future<void> addTodoList(TodoListModel _todolist) async {
     try {
       await _dataBase.collection(todolistCollection).add(
-            todolist.toMap(),
+            _todolist.toMap(),
           );
     } catch (error) {
       debugPrint('$error');
@@ -495,22 +491,22 @@ class DatabaseService {
   }
 
   //remove a todo list
-  Future<void> removeTodoList(String todoID) async {
+  Future<void> removeTodoList(String _todoID) async {
     try {
-      await _dataBase.collection(todolistCollection).doc(todoID).delete();
+      await _dataBase.collection(todolistCollection).doc(_todoID).delete();
     } catch (error) {
       debugPrint('$error');
     }
   }
 
-  Future<List<TodoListModel>> getTodoList(String userid) async {
-    List<TodoListModel> todo = [];
+  Future<List<TodoListModel>> getTodoList(String _userid) async {
+    List<TodoListModel> _todo = [];
     QuerySnapshot qshot = await _dataBase
         .collection(todolistCollection)
-        .where('recipients', arrayContains: userid)
+        .where('recipients', arrayContains: _userid)
         .get();
     qshot.docs.forEach((doc) {
-      todo.add(TodoListModel(
+      _todo.add(TodoListModel(
           sent_time: doc['sent_time'].toDate(),
           senderid: doc['senderid'],
           status: doc['status'],
@@ -521,7 +517,7 @@ class DatabaseService {
           recipients: List.from(doc['recipients']),
           recipientsName: List.from(doc['recipientsName'])));
     });
-    return todo;
+    return _todo;
   }
 
   Stream<QuerySnapshot> getUserTodoList(String _userid) {
@@ -533,17 +529,17 @@ class DatabaseService {
   }
 
   //update a todo list
-  Future<void> updateTodoList(TodoListModel todolist, String todoID) async {
+  Future<void> updateTodoList(TodoListModel _todolist, String _todoID) async {
     try {
-      await _dataBase.collection(todolistCollection).doc(todoID).set(
+      await _dataBase.collection(todolistCollection).doc(_todoID).set(
         {
-          'status': todolist.status,
-          'start_time': todolist.start_time,
-          'description': todolist.description,
-          'interval': todolist.interval,
-          'recipients': todolist.recipients,
-          'recipientsName': todolist.recipientsName,
-          'todolist_name': todolist.todolist_name,
+          'status': _todolist.status,
+          'start_time': _todolist.start_time,
+          'description': _todolist.description,
+          'interval': _todolist.interval,
+          'recipients': _todolist.recipients,
+          'recipientsName': _todolist.recipientsName,
+          'todolist_name': _todolist.todolist_name,
         },
       );
     } catch (error) {
@@ -582,8 +578,8 @@ class DatabaseService {
       List<String> members = List.from(docshot['members']);
       String user1id = members[0];
       String user2id = members[1];
-      String user1role = await getRoleBySenderID(user1id);
-      String user2role = await getRoleBySenderID(user2id);
+      String user1role = await getRoleByID(user1id);
+      String user2role = await getRoleByID(user2id);
       if (user1role == 'Parent' && user2role == 'Student') {
         await _dataBase
             .collection(parentstudentCollection)
@@ -600,14 +596,14 @@ class DatabaseService {
   }
 
   //Get parents' id by student id
-  Future<List<String>> getParents(String student_id) async {
+  Future<List<String>> getParents(String _student_id) async {
     List<String> parents = [];
     QuerySnapshot qshot =
         await _dataBase.collection(parentstudentCollection).get();
     qshot.docs.forEach((doc) {
       String parentid = doc['parentid'];
       String studentid = doc['studentid'];
-      if (student_id == studentid) {
+      if (_student_id == studentid) {
         parents.add(parentid);
       }
     });
@@ -615,14 +611,14 @@ class DatabaseService {
   }
 
   //Get students' id by parent id
-  Future<List<String>> getStudents(String parent_id) async {
+  Future<List<String>> getStudents(String _parent_id) async {
     List<String> students = [];
     QuerySnapshot qshot =
         await _dataBase.collection(parentstudentCollection).get();
     qshot.docs.forEach((doc) {
       String parentid = doc['parentid'];
       String studentid = doc['studentid'];
-      if (parent_id == parentid) {
+      if (_parent_id == parentid) {
         students.add(studentid);
       }
     });
@@ -630,11 +626,11 @@ class DatabaseService {
   }
 
   //not used anymore
-  Stream<String> getParentsnameStream(String student_id) async* {
+  Stream<String> getParentsnameStream(String _student_id) async* {
     List<String> parents = [];
     QuerySnapshot qshot = await _dataBase
         .collection(parentstudentCollection)
-        .where('studentid', isEqualTo: student_id)
+        .where('studentid', isEqualTo: _student_id)
         .get();
     if (qshot.size > 0) {
       qshot.docs.forEach((doc) {
@@ -648,11 +644,11 @@ class DatabaseService {
   }
 
   //not used anymore
-  Stream<String> getStudentsnameStream(String parent_id) async* {
+  Stream<String> getStudentsnameStream(String _parent_id) async* {
     List<String> students = [];
     QuerySnapshot qshot = await _dataBase
         .collection(parentstudentCollection)
-        .where('parentid', isEqualTo: parent_id)
+        .where('parentid', isEqualTo: _parent_id)
         .get();
     if (qshot.size > 0) {
       qshot.docs.forEach((doc) {
@@ -666,12 +662,12 @@ class DatabaseService {
   }
 
   //get parentsChatuser model using stream
-  Stream<ChatUserModel> getParentsModelStream(String student_id) async* {
+  Stream<ChatUserModel> getParentsModelStream(String _student_id) async* {
     List<String> parentsid = [];
     List<ChatUserModel> parents = [];
     QuerySnapshot qshot = await _dataBase
         .collection(parentstudentCollection)
-        .where('studentid', isEqualTo: student_id)
+        .where('studentid', isEqualTo: _student_id)
         .get();
     if (qshot.size > 0) {
       qshot.docs.forEach((doc) {
@@ -699,12 +695,12 @@ class DatabaseService {
   }
 
   //get students Chatuser model using stream
-  Stream<ChatUserModel> getStudentsModelStream(String parent_id) async* {
+  Stream<ChatUserModel> getStudentsModelStream(String _parent_id) async* {
     List<String> studentsid = [];
     List<ChatUserModel> students = [];
     QuerySnapshot qshot = await _dataBase
         .collection(parentstudentCollection)
-        .where('parentid', isEqualTo: parent_id)
+        .where('parentid', isEqualTo: _parent_id)
         .get();
     if (qshot.size > 0) {
       qshot.docs.forEach((doc) {
@@ -729,12 +725,12 @@ class DatabaseService {
   }
 
   //return the parents Chat user model
-  Future<List<ChatUserModel>> getParentsModel(String student_id) async {
+  Future<List<ChatUserModel>> getParentsModel(String _student_id) async {
     List<String> parentsid = [];
     List<ChatUserModel> parents = [];
     QuerySnapshot qshot = await _dataBase
         .collection(parentstudentCollection)
-        .where('studentid', isEqualTo: student_id)
+        .where('studentid', isEqualTo: _student_id)
         .get();
     if (qshot.size > 0) {
       qshot.docs.forEach((doc) {
@@ -759,12 +755,12 @@ class DatabaseService {
   }
 
   //get students Chat user model
-  Future<List<ChatUserModel>> getStudentsModel(String parent_id) async {
+  Future<List<ChatUserModel>> getStudentsModel(String _parent_id) async {
     List<String> studentsid = [];
     List<ChatUserModel> students = [];
     QuerySnapshot qshot = await _dataBase
         .collection(parentstudentCollection)
-        .where('parentid', isEqualTo: parent_id)
+        .where('parentid', isEqualTo: _parent_id)
         .get();
     if (qshot.size > 0) {
       qshot.docs.forEach((doc) {
@@ -785,6 +781,7 @@ class DatabaseService {
     return students;
   }
 
+  //Check whether two users are parent and student
   Future<bool> checkPSrel(String _user1id, String _user2id) async {
     bool result = false;
     QuerySnapshot docshot =

@@ -1,12 +1,9 @@
 // Packages
-import 'package:chatifyapp/pages/checkwhitelist_page.dart';
-import 'package:chatifyapp/pages/countdown_timer.dart';
 import 'package:chatifyapp/pages/home_page.dart';
 import 'package:chatifyapp/pages/whitelist_page.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:provider/provider.dart';
-import 'package:file_picker/file_picker.dart';
 
 // Widgets
 import '../widgets/top_bar.dart';
@@ -154,9 +151,9 @@ class _StudentChatPageState extends State<StudentChatPage> {
                                     ? _memberid2
                                     : _memberid1;
                                 String senderrole =
-                                    await _database.getRoleBySenderID(senderid);
-                                String receiverrole = await _database
-                                    .getRoleBySenderID(receiverid);
+                                    await _database.getRoleByID(senderid);
+                                String receiverrole =
+                                    await _database.getRoleByID(receiverid);
                                 final result = await Navigator.push(
                                     context,
                                     MaterialPageRoute(

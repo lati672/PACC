@@ -1,13 +1,25 @@
-import 'package:chatifyapp/models/chat_user_model.dart';
-import 'package:chatifyapp/models/chats_model.dart';
-import 'package:chatifyapp/pages/parent_chat_page.dart';
+// Packages
+import 'package:chatifyapp/pages/addfriends.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import '../providers/authentication_provider.dart';
-import 'package:provider/provider.dart';
 import 'package:get_it/get_it.dart';
+import 'package:provider/provider.dart';
+
+// Providers
+import '../providers/authentication_provider.dart';
+
+// Services
 import '../services/database_service.dart';
 import '../services/navigation_service.dart';
+
+// Pages
+import 'package:chatifyapp/pages/parent_chat_page.dart';
+
+//Widget
+import '../widgets/top_bar.dart';
+// Models
+import 'package:chatifyapp/models/chat_user_model.dart';
+import 'package:chatifyapp/models/chats_model.dart';
 
 class FriendsPage extends StatefulWidget {
   const FriendsPage({Key? key, required this.role}) : super(key: key);
@@ -21,90 +33,147 @@ class _FriendsState extends State<FriendsPage> {
   late NavigationService _navigation;
   late AuthenticationProvider _auth;
   late DatabaseService _database;
+  late double _deviceWidth;
+  late double _deviceHeight;
   late String role;
   late String id;
   Widget Parentbuilder() {
-    String userid = _auth.user.uid;
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text("您的孩子"),
-        centerTitle: true,
-      ),
-      body: FutureBuilder<List<ChatUserModel>>(
-        future: _database.getStudentsModel(_auth.user.uid),
-        builder: (context, users) {
-          if (!users.hasData) {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
-          } else {
-            List<ChatUserModel> _users = List.from(users.data!);
-            return ListView.builder(
-              itemCount: _users.length,
-              itemBuilder: (context, index) {
-                return TextButton(
-                    onPressed: () async {
-                      String chatid = await _database.getChatid(
-                          _auth.user.uid, _users[index].uid);
-                      ChatsModel _chat = await _database.getChatsbyChatId(
-                          chatid, _auth.user.uid);
-                      _navigation.navigateToPage(ParentChatPage(chat: _chat));
-                    },
-                    child: Text(
-                      _users[index].name,
-                      style: const TextStyle(
-                          color: Color.fromARGB(255, 15, 11, 11), fontSize: 20),
-                    ));
-              },
-            );
-          }
-        },
-      ),
+    return Builder(
+      builder: (_context) {
+        //* Triggers the info in the widgets to render themselves
+        return SafeArea(
+            child: Container(
+          width: _deviceWidth,
+          height: _deviceHeight,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.start,
+            mainAxisSize: MainAxisSize.max,
+            children: [
+              TopBar(
+                "您的孩子",
+                primaryAction: IconButton(
+                  onPressed: () {
+                    // * Logout the user if he/she presses the button icon
+                    _navigation.navigateToPage(AddFriendsPage());
+                  },
+                  icon: const Icon(
+                    Icons.add,
+                    color: Color.fromRGBO(0, 82, 218, 1),
+                  ),
+                ),
+              ),
+              Expanded(
+                  child: FutureBuilder<List<ChatUserModel>>(
+                future: _database.getStudentsModel(_auth.user.uid),
+                builder: (context, users) {
+                  if (!users.hasData) {
+                    return const Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  } else {
+                    List<ChatUserModel> _users = List.from(users.data!);
+
+                    return ListView.builder(
+                      itemCount: _users.length,
+                      itemBuilder: (context, index) {
+                        return TextButton(
+                            onPressed: () async {
+                              String chatid = await _database.getChatid(
+                                  _auth.user.uid, _users[index].uid);
+                              ChatsModel _chat = await _database
+                                  .getChatsbyChatId(chatid, _auth.user.uid);
+                              _navigation
+                                  .navigateToPage(ParentChatPage(chat: _chat));
+                            },
+                            child: Text(
+                              _users[index].name,
+                              style: const TextStyle(
+                                  color: Color.fromARGB(255, 15, 11, 11),
+                                  fontSize: 20),
+                            ));
+                      },
+                    );
+                  }
+                },
+              )),
+            ],
+          ),
+        ));
+      },
     );
   }
 
   Widget StudentBuilder() {
-    String userid = _auth.user.uid;
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text("您的家长"),
-        centerTitle: true,
-      ),
-      body: FutureBuilder<List<ChatUserModel>>(
-        future: _database.getParentsModel(_auth.user.uid),
-        builder: (context, users) {
-          if (!users.hasData) {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
-          } else {
-            List<ChatUserModel> _users = List.from(users.data!);
-            return ListView.builder(
-              itemCount: _users.length,
-              itemBuilder: (context, index) {
-                return TextButton(
-                    onPressed: () async {
-                      String chatid = await _database.getChatid(
-                          _auth.user.uid, _users[index].uid);
-                      ChatsModel _chat = await _database.getChatsbyChatId(
-                          chatid, _auth.user.uid);
-                      _navigation.navigateToPage(ParentChatPage(chat: _chat));
-                    },
-                    child: Text(
-                      _users[index].name,
-                      style: const TextStyle(color: Colors.black, fontSize: 20),
-                    ));
-              },
-            );
-          }
-        },
-      ),
+    return Builder(
+      builder: (_context) {
+        //* Triggers the info in the widgets to render themselves
+        return SafeArea(
+            child: Container(
+          width: _deviceWidth,
+          height: _deviceHeight,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.start,
+            mainAxisSize: MainAxisSize.max,
+            children: [
+              TopBar(
+                "您的家长",
+                primaryAction: IconButton(
+                  onPressed: () {
+                    // * Logout the user if he/she presses the button icon
+                    _navigation.navigateToPage(AddFriendsPage());
+                  },
+                  icon: const Icon(
+                    Icons.add,
+                    color: Color.fromRGBO(0, 82, 218, 1),
+                  ),
+                ),
+              ),
+              Expanded(
+                  child: FutureBuilder<List<ChatUserModel>>(
+                future: _database.getParentsModel(_auth.user.uid),
+                builder: (context, users) {
+                  if (!users.hasData) {
+                    return const Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  } else {
+                    List<ChatUserModel> _users = List.from(users.data!);
+                    return ListView.builder(
+                      itemCount: _users.length,
+                      itemBuilder: (context, index) {
+                        return TextButton(
+                            onPressed: () async {
+                              String chatid = await _database.getChatid(
+                                  _auth.user.uid, _users[index].uid);
+                              ChatsModel _chat = await _database
+                                  .getChatsbyChatId(chatid, _auth.user.uid);
+                              _navigation
+                                  .navigateToPage(ParentChatPage(chat: _chat));
+                            },
+                            child: Text(
+                              _users[index].name,
+                              style: const TextStyle(
+                                  color: Colors.black, fontSize: 20),
+                            ));
+                      },
+                    );
+                  }
+                },
+              )),
+            ],
+          ),
+        ));
+      },
     );
   }
 
   @override
   Widget build(BuildContext context) {
     role = widget.role;
+    _deviceWidth = MediaQuery.of(context).size.width;
+    _deviceHeight = MediaQuery.of(context).size.height;
     _navigation = GetIt.instance.get<NavigationService>();
     _auth = Provider.of<AuthenticationProvider>(context);
     _database = GetIt.instance.get<DatabaseService>();

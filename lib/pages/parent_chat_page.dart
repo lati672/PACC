@@ -1,10 +1,8 @@
 // Packages
-import 'package:chatifyapp/pages/checkwhitelist_page.dart';
 import 'package:chatifyapp/pages/home_page.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:provider/provider.dart';
-import 'package:file_picker/file_picker.dart';
 
 // Widgets
 import '../widgets/top_bar.dart';

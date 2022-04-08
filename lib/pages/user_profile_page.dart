@@ -1,15 +1,23 @@
-import 'package:chatifyapp/pages/test.dart';
+// Packages
 import 'package:flutter/material.dart';
-import '../models/chat_user_model.dart';
-import '../services/database_service.dart';
-import '../providers/authentication_provider.dart';
 import 'package:get_it/get_it.dart';
 import 'package:provider/provider.dart';
-import '../services/cloud_storage_service.dart';
-import '../services/media_service.dart';
 import 'package:file_picker/file_picker.dart';
 
+// Providers
+import '../providers/authentication_provider.dart';
+
+// Services
+import '../services/database_service.dart';
+import '../services/media_service.dart';
+import '../services/cloud_storage_service.dart';
 import '../services/navigation_service.dart';
+
+// Pages
+import 'package:chatifyapp/pages/test.dart';
+
+// Models
+import '../models/chat_user_model.dart';
 
 class UserProfilePage extends StatefulWidget {
   UserProfilePage({Key? key}) : super(key: key);

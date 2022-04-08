@@ -14,23 +14,23 @@ import '../models/chat_user_model.dart';
 import '../pages/checkwhitelist_page.dart';
 
 class WhiteListMessageBubble extends StatelessWidget {
+  WhiteListMessageBubble(
+      {
 
-  WhiteListMessageBubble({
-
-    ///* 构造函数
-    ///@param isOwnMessage 是否是自己的消息
-    ///@param message 消息
-    ///@param width 气泡的长度
-    ///@param height 气泡的高度
-    ///@param senderid 发送者id
-    ///@param receiverid 接受者id
-    Key? key,
-    required this.isOwnMessage,
-    required this.message,
-    required this.width,
-    required this.height,
-    required this.senderid,
-    required this.receiverid})
+      ///* 构造函数
+      ///@param isOwnMessage 是否是自己的消息
+      ///@param message 消息
+      ///@param width 气泡的长度
+      ///@param height 气泡的高度
+      ///@param senderid 发送者id
+      ///@param receiverid 接受者id
+      Key? key,
+      required this.isOwnMessage,
+      required this.message,
+      required this.width,
+      required this.height,
+      required this.senderid,
+      required this.receiverid})
       : super(key: key);
 
   final bool isOwnMessage;
@@ -50,7 +50,7 @@ class WhiteListMessageBubble extends StatelessWidget {
 
   Future<void> getRole() async {
     ///* 异步加载两者的职责
-    senderrole = await _database.getRoleBySenderID(senderid);
+    senderrole = await _database.getRoleByID(senderid);
   }
 
   String convertToAgo(DateTime input) {
@@ -88,8 +88,13 @@ class WhiteListMessageBubble extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           mainAxisSize: MainAxisSize.max,
           children: [
-            Text((user.role=="Parent"&&isOwnMessage)||(user.role=="Student"&&(!isOwnMessage))? "白名单审核":"白名单申请"),
-            const SizedBox(height: 5,),
+            Text((user.role == "Parent" && isOwnMessage) ||
+                    (user.role == "Student" && (!isOwnMessage))
+                ? "白名单审核"
+                : "白名单申请"),
+            const SizedBox(
+              height: 5,
+            ),
             Container(
                 height: 120,
                 decoration: ShapeDecoration(
@@ -110,17 +115,16 @@ class WhiteListMessageBubble extends StatelessWidget {
         ),
       ),
       onTap: () async {
-        String senderrole = await _database.getRoleBySenderID(senderid);
-        String receiverrole = await _database.getRoleBySenderID(receiverid);
+        String senderrole = await _database.getRoleByID(senderid);
+        String receiverrole = await _database.getRoleByID(receiverid);
         final result = await Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) =>
-                  CheckWhiteListPage(
-                    applist: appList,
-                    sender_role: senderrole,
-                    receiver_role: receiverrole,
-                  ),
+              builder: (context) => CheckWhiteListPage(
+                applist: appList,
+                sender_role: senderrole,
+                receiver_role: receiverrole,
+              ),
             ));
         //print('result:  $result');
         if (result != null) {
