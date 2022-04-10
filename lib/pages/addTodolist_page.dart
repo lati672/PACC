@@ -13,13 +13,14 @@ import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import '../providers/authentication_provider.dart';
 import '../providers/todolist_provider.dart';
 //pages
-import '../pages/pomodoro.dart';
 import 'package:chatifyapp/pages/todolist_page.dart';
 // Services
 import '../services/navigation_service.dart';
 import '../services/database_service.dart';
 // Widgets
 import '../widgets/top_bar.dart';
+//Utils
+import '../utils/showToast.dart';
 
 class AddTodoListPage extends StatefulWidget {
   // const TodoListPage({Key? key}) : super(key: key);
@@ -274,30 +275,6 @@ class _AddTodoListState extends State<AddTodoListPage> {
         ],
       ),
     );
-  }
-
-// showToast
-  void showToast(String msg) {
-    Fluttertoast.showToast(
-        msg: msg,
-        toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.CENTER,
-        timeInSecForIosWeb: 1,
-        backgroundColor: Colors.blueAccent,
-        textColor: Colors.white,
-        fontSize: 14.0);
-  }
-
-  // showToast
-  void showErrorToast(String msg) {
-    Fluttertoast.showToast(
-        msg: msg,
-        toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.CENTER,
-        timeInSecForIosWeb: 1,
-        backgroundColor: Colors.redAccent,
-        textColor: Colors.white,
-        fontSize: 14.0);
   }
 
   void addTodo() async {

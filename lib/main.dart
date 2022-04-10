@@ -44,12 +44,11 @@ class MainApp extends StatelessWidget {
           backgroundColor: const Color.fromRGBO(255, 255, 255, 1),
           scaffoldBackgroundColor: const Color.fromRGBO(255, 255, 255, 1),
           bottomNavigationBarTheme: const BottomNavigationBarThemeData(
-            backgroundColor: Color.fromRGBO(240, 240, 240, 0.8),
-            selectedIconTheme: IconThemeData(color: Colors.lightBlue),
-            showSelectedLabels: true,
-            unselectedLabelStyle: TextStyle(color: Colors.black),
-            type: BottomNavigationBarType.fixed
-          ),
+              backgroundColor: Color.fromRGBO(240, 240, 240, 0.8),
+              selectedIconTheme: IconThemeData(color: Colors.lightBlue),
+              showSelectedLabels: true,
+              unselectedLabelStyle: TextStyle(color: Colors.black),
+              type: BottomNavigationBarType.fixed),
         ),
         navigatorKey: NavigationService.navigatorKey,
         initialRoute: '/login',
