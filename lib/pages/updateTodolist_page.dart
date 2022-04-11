@@ -3,18 +3,18 @@ import '../models/todo_list_model.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:provider/provider.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 // Providers
 import '../providers/authentication_provider.dart';
 import '../providers/todolist_provider.dart';
 //pages
-import '../pages/pomodoro.dart';
 import 'package:chatifyapp/pages/todolist_page.dart';
 // Services
 import '../services/navigation_service.dart';
 import '../services/database_service.dart';
 // Widgets
 import '../widgets/top_bar.dart';
+//Utils
+import '../utils/showToast.dart';
 
 class UpdateTodoListPage extends StatefulWidget {
   const UpdateTodoListPage({Key? key, required this.todo, required this.todoID})
@@ -284,30 +284,6 @@ class _UpdateTodoListState extends State<UpdateTodoListPage> {
     );
   }
 
-// showToast
-  void showToast(String msg) {
-    Fluttertoast.showToast(
-        msg: msg,
-        toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.CENTER,
-        timeInSecForIosWeb: 1,
-        backgroundColor: Colors.blueAccent,
-        textColor: Colors.white,
-        fontSize: 14.0);
-  }
-
-  // showToast
-  void showErrorToast(String msg) {
-    Fluttertoast.showToast(
-        msg: msg,
-        toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.CENTER,
-        timeInSecForIosWeb: 1,
-        backgroundColor: Colors.redAccent,
-        textColor: Colors.white,
-        fontSize: 14.0);
-  }
-
   void updateTodo(String uid) async {
     if (_controller1.text.length == 0) {
       showErrorToast('标题不能为空！');
@@ -326,12 +302,14 @@ class _UpdateTodoListState extends State<UpdateTodoListPage> {
     );
     await _database.updateTodoList(newTodo, uid);
     showToast('修改 Todo 成功 (ﾟ▽ﾟ)/');
-    _navigation.navigateToPage(TodoListPage());
+    // _navigation.navigateToPage(TodoListPage());
+    Navigator.pop(context, true);
   }
 
   void removeTodo(String uid) async {
     await _database.removeTodoList(uid);
     showToast('删除 Todo 成功 (ﾟ▽ﾟ)/');
-    _navigation.navigateToPage(TodoListPage());
+    // _navigation.navigateToPage(TodoListPage());
+    Navigator.pop(context, true);
   }
 }

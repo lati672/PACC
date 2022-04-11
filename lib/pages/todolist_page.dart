@@ -7,7 +7,7 @@ import 'package:provider/provider.dart';
 import '../providers/authentication_provider.dart';
 import '../providers/todolist_provider.dart';
 //pages
-import '../pages/pomodoro.dart';
+import '../pages/pomodoro_page.dart';
 import '../pages/addTodolist_page.dart';
 import '../pages/updateTodolist_page.dart';
 // Services
@@ -115,7 +115,8 @@ class _TodoListState extends State<TodoListPage> {
                       ? FlatButton(
                           child: const Text("开始"),
                           onPressed: () {
-                            _navigation.navigateToPage(Pomodoro());
+                            _navigation.navigateToPage(PomodoroPage(
+                                todo: todos[index], todoID: todosID?[index]));
                           })
                       : const Text(
                           '占位空白view，透明',
