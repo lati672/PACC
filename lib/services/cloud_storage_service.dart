@@ -36,6 +36,7 @@ class CloudStorageService {
   Future<String?> uploadUserImageProfileToStorage(
       String _uid, PlatformFile _file) async {
     try {
+      //print(_file.path);
       final _reference =
           _firebaseStorage.ref('images/users/$_uid/profile.${_file.extension}');
       await _reference.delete();
