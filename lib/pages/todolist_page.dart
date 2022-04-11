@@ -115,7 +115,8 @@ class _TodoListState extends State<TodoListPage> {
                       ? FlatButton(
                           child: const Text("开始"),
                           onPressed: () {
-                            _navigation.navigateToPage(PomodoroPage());
+                            _navigation.navigateToPage(PomodoroPage(
+                                todo: todos[index], todoID: todosID?[index]));
                           })
                       : const Text(
                           '占位空白view，透明',

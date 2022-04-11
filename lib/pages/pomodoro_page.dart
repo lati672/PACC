@@ -1,30 +1,48 @@
 //packages
+import 'package:chatifyapp/pages/todolist_page.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
+import 'package:provider/provider.dart';
 import 'package:circular_countdown_timer/circular_countdown_timer.dart';
+import 'dart:io';
+import 'dart:convert';
+//Models
+import '../models/todo_list_model.dart';
+// Providers
+import '../providers/authentication_provider.dart';
+import '../providers/todolist_provider.dart';
 // Widget
 import '../pages/whitelist_page.dart';
 // Services
 import '../services/navigation_service.dart';
+import '../services/database_service.dart';
 
 class PomodoroPage extends StatefulWidget {
+  const PomodoroPage({Key? key, required this.todo, required this.todoID})
+      : super(key: key);
+  final TodoListModel todo;
+  final String todoID;
   @override
   _PomodoroPageState createState() => _PomodoroPageState();
 }
 
+Icon kPlayClockButton = const Icon(Icons.play_arrow_sharp);
+Icon kPauseClockButton = const Icon(Icons.pause_sharp);
+
 class _PomodoroPageState extends State<PomodoroPage> {
 // Icon Constants
-  Icon kPlayClockButton = const Icon(Icons.play_arrow_sharp);
-  Icon kPauseClockButton = const Icon(Icons.pause_sharp);
+  int isStart = 1; //第一次开始番茄钟
 
 // Time constants
   int kWorkDuration = 1;
   final CountDownController _clockController = CountDownController();
-  Icon _clockButton = const Icon(Icons.play_arrow_sharp); // Initial value
+  Icon _clockButton = kPlayClockButton; // Initial value
   bool _isClockStarted = false; // Conditional flag
   // bool _isScreenLight = false;
 
-  late NavigationService _navigation;
+  NavigationService _navigation = GetIt.instance.get<NavigationService>();
+  DatabaseService _database = GetIt.instance.get<DatabaseService>();
+  late AuthenticationProvider _auth;
 
   // Change Clock button icon and controller
   void switchClockActionButton() {
@@ -48,7 +66,7 @@ class _PomodoroPageState extends State<PomodoroPage> {
 
   @override
   Widget build(BuildContext context) {
-    _navigation = GetIt.instance.get<NavigationService>();
+    _auth = Provider.of<AuthenticationProvider>(context);
     // Half Screen Dimensions
     final double height = MediaQuery.of(context).size.height / 1.3;
     final double width = MediaQuery.of(context).size.width / 1.5;
@@ -60,17 +78,18 @@ class _PomodoroPageState extends State<PomodoroPage> {
       height: height,
       width: width,
       autoStart: false,
-      duration: kWorkDuration * 160,
+      duration: kWorkDuration * 15,
       isReverse: true,
       textStyle: const TextStyle(color: Colors.blue, fontSize: 40.0),
       fillColor: Theme.of(context).primaryColor,
       backgroundColor: Colors.white12,
       strokeCap: StrokeCap.round,
       onComplete: () {
+        finishTodo();
         /*这里要延时加载  否则会抱The widget on which setState() or markNeedsBuild() was called was:错误*/
         Future.delayed(Duration(milliseconds: 200)).then((e) {
           setState(() async {
-            // _navigation.goBack();
+            _navigation.goBack();
             _showAlert(context);
           });
         });
@@ -101,6 +120,10 @@ class _PomodoroPageState extends State<PomodoroPage> {
                             setState(() {
                               switchClockActionButton();
                             });
+                            if (isStart == 1) {
+                              isStart = 0;
+                              startTodo();
+                            }
                           },
                           child: _clockButton,
                         ),
@@ -118,6 +141,10 @@ class _PomodoroPageState extends State<PomodoroPage> {
                         ),
                         IconButton(
                           onPressed: () {
+                            setState(() {
+                              switchClockActionButton();
+                            });
+                            stopTodo();
                             _showAlertStop(context);
                           },
                           icon: const Icon(Icons.stop),
@@ -130,6 +157,51 @@ class _PomodoroPageState extends State<PomodoroPage> {
         ),
       ),
     );
+  }
+
+  void startTodo() async {
+    TodoListModel newTodo = TodoListModel(
+      senderid: widget.todo.senderid,
+      start_time: DateTime.now(),
+      status: "doing",
+      description: widget.todo.description,
+      todolist_name: widget.todo.todolist_name,
+      interval: widget.todo.interval,
+      recipients: widget.todo.recipients,
+      recipientsName: widget.todo.recipientsName,
+      sent_time: widget.todo.sent_time,
+    );
+    await _database.updateTodoList(newTodo, widget.todoID);
+  }
+
+  finishTodo() async {
+    TodoListModel newTodo = TodoListModel(
+      senderid: widget.todo.senderid,
+      start_time: widget.todo.start_time,
+      status: "done",
+      description: widget.todo.description,
+      todolist_name: widget.todo.todolist_name,
+      interval: widget.todo.interval,
+      recipients: widget.todo.recipients,
+      recipientsName: widget.todo.recipientsName,
+      sent_time: widget.todo.sent_time,
+    );
+    await _database.updateTodoList(newTodo, widget.todoID);
+  }
+
+  stopTodo() async {
+    TodoListModel newTodo = TodoListModel(
+      senderid: widget.todo.senderid,
+      start_time: DateTime.now(),
+      status: "todo",
+      description: widget.todo.description,
+      todolist_name: widget.todo.todolist_name,
+      interval: widget.todo.interval,
+      recipients: widget.todo.recipients,
+      recipientsName: widget.todo.recipientsName,
+      sent_time: widget.todo.sent_time,
+    );
+    await _database.updateTodoList(newTodo, widget.todoID);
   }
 
 //Show Alert based on alert type
@@ -168,9 +240,10 @@ class _PomodoroPageState extends State<PomodoroPage> {
         FlatButton(
           child: const Text("确认"),
           onPressed: () {
-            _navigation.goBack();
-            //先判断此时status为done还是doing
-            //发送网络请求，status变化 doing->todo
+            int count = 0;
+            Navigator.popUntil(context, (route) {
+              return count++ == 2;
+            });
           },
         ),
       ],

@@ -533,7 +533,9 @@ class DatabaseService {
     try {
       await _dataBase.collection(todolistCollection).doc(_todoID).set(
         {
+          'senderid': _todolist.senderid,
           'status': _todolist.status,
+          'sent_time': _todolist.sent_time,
           'start_time': _todolist.start_time,
           'description': _todolist.description,
           'interval': _todolist.interval,
