@@ -49,6 +49,7 @@ dependencies:
   ssh2: ^2.2.3 
   flutter_datetime_picker: ^1.5.1
   fluttertoast: ^8.0.9
+  path_provider: ^2.0.9
 
 dependency_overrides:
   firebase_messaging_platform_interface: 3.1.6
