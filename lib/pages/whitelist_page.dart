@@ -1,6 +1,4 @@
 // Packages
-import 'package:chatifyapp/pages/home_page.dart';
-import 'package:chatifyapp/pages/whitelist_page.dart';
 import 'package:chatifyapp/providers/chat_page_provider.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
@@ -43,27 +41,12 @@ class _WhiteListPageState extends State<WhiteListPage> {
   late ScrollController _messagesListViewController;
   String str = "";
 
-  int _count = 0;
-  void myTimer() {
-    // 定义一个函数，将定时器包裹起来
-    Timer _timer = Timer.periodic(Duration(milliseconds: 3000), (t) {
-      // print("111111");
-      _count++;
-      if (_count == 15) {
-        t.cancel(); // 定时器内部触发销毁
-      }
-      _getAppList();
-      // _initBlueTooth();
-    });
-  }
-
   Set<int> selected = Set<int>();
   @override
   void initState() {
-    // _initBlueTooth();
     super.initState();
     checkState = true;
-    myTimer();
+    _getAppList();
   }
 
   void _getAppList() async {
@@ -75,44 +58,6 @@ class _WhiteListPageState extends State<WhiteListPage> {
       String str = await platform.invokeMethod('getAppList');
       // 打印执行的结果
       // print(str);
-      // _appList = str;
-      var strList = str.split('/n');
-      for (var i = 0; i < strList.length - 1; i++) {
-        appList.add(strList[i]);
-      }
-    } on PlatformException catch (e) {
-      print(e.toString());
-    }
-  }
-
-  void _launch() async {
-    const platform = const MethodChannel('samples.flutter.dev');
-    // Future future = platform.invokeMethod('initBlueTooth');
-    try {
-      // 通过渠道，调用原生代码代码的方法
-      //Future future = channel.invokeMethod("your_method_name", {"msg": msg} );
-      String str = await platform.invokeMethod('launch');
-      // 打印执行的结果
-      print(str);
-      // _appList = str;
-      var strList = str.split('/n');
-      for (var i = 0; i < strList.length - 1; i++) {
-        appList.add(strList[i]);
-      }
-    } on PlatformException catch (e) {
-      print(e.toString());
-    }
-  }
-
-  void _appLock() async {
-    const platform = const MethodChannel('samples.flutter.dev');
-    // Future future = platform.invokeMethod('initBlueTooth');
-    try {
-      // 通过渠道，调用原生代码代码的方法
-      //Future future = channel.invokeMethod("your_method_name", {"msg": msg} );
-      String str = await platform.invokeMethod('appLock');
-      // 打印执行的结果
-      print(str);
       // _appList = str;
       var strList = str.split('/n');
       for (var i = 0; i < strList.length - 1; i++) {
