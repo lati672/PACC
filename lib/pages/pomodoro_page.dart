@@ -6,6 +6,8 @@ import 'package:provider/provider.dart';
 import 'package:circular_countdown_timer/circular_countdown_timer.dart';
 import 'dart:io';
 import 'dart:convert';
+import 'package:image_picker/image_picker.dart';
+import 'package:video_player/video_player.dart';
 //Models
 import '../models/todo_list_model.dart';
 // Providers
@@ -136,6 +138,7 @@ class _PomodoroPageState extends State<PomodoroPage> {
                         IconButton(
                           onPressed: () {
                             //接深度学习图像检测模块
+                            _testRecordTheScreen();
                           },
                           icon: const Icon(Icons.photo_camera),
                         ),
@@ -255,5 +258,33 @@ class _PomodoroPageState extends State<PomodoroPage> {
         return alert;
       },
     );
+  }
+
+  /// 录屏
+  Future _testRecordTheScreen() async {
+    /// 打开摄像头录制视频，并限制时长5min
+    PickedFile? image = await ImagePicker().getVideo(
+        source: ImageSource.camera, maxDuration: Duration(minutes: 5));
+    late VideoPlayerController _controller;
+    if (image != null) {
+      /// 视频绝对路径地址
+      String path = image.path;
+      File f = File(path);
+
+      /// 文件大小，单位：B
+      int fileSize = 0;
+
+      /// 视频时长，单位：秒
+      int seconds = 0;
+      _controller = VideoPlayerController.file(f);
+      _controller.initialize().then((value) {
+        _controller.setLooping(true);
+        seconds = _controller.value.duration.inSeconds;
+        fileSize = f.lengthSync();
+      });
+
+      /// 视频名称
+      var name = path.substring(path.lastIndexOf("/") + 1, path.length);
+    }
   }
 }
