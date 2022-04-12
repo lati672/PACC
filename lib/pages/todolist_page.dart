@@ -59,33 +59,30 @@ class _TodoListState extends State<TodoListPage> {
         _pageProvider = _context.watch<TodoListPageProvider>();
         return Scaffold(
           body: SafeArea(
-              child: Container(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.start,
-              mainAxisSize: MainAxisSize.max,
-              children: [
-                TopBar(
-                  (_auth.user.role == 'Student' ? '我的' : '该学生') + '任务',
-                  primaryAction: IconButton(
-                    onPressed: () {
-                      // * Logout the user if he/she presses the button icon
-                      Navigator.of(context)
-                          .push(
-                            MaterialPageRoute(
-                                builder: (_) => AddTodoListPage()),
-                          )
-                          .then((val) => val ? _getRequests() : null);
-                    },
-                    icon: const Icon(
-                      Icons.add,
-                      color: Color.fromRGBO(0, 82, 218, 1),
-                    ),
+              child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.start,
+            mainAxisSize: MainAxisSize.max,
+            children: [
+              TopBar(
+                (_auth.user.role == 'Student' ? '我的' : '该学生') + '任务',
+                primaryAction: IconButton(
+                  onPressed: () {
+                    // * Logout the user if he/she presses the button icon
+                    Navigator.of(context)
+                        .push(
+                          MaterialPageRoute(builder: (_) => AddTodoListPage()),
+                        )
+                        .then((val) => val ? _getRequests() : null);
+                  },
+                  icon: const Icon(
+                    Icons.add,
+                    color: Color.fromRGBO(0, 82, 218, 1),
                   ),
                 ),
-                _todosList(),
-              ],
-            ),
+              ),
+              Expanded(child: _todosList()),
+            ],
           )),
         );
       },
@@ -98,22 +95,36 @@ class _TodoListState extends State<TodoListPage> {
     List? todosID = _pageProvider.todosID;
     return todos == null
         ? Center(child: CircularProgressIndicator())
-        : Column(children: [
-            ListView.builder(
-              scrollDirection: Axis.vertical,
-              shrinkWrap: true,
-              padding: const EdgeInsets.all(16.0),
-              itemCount: todos.length,
-              itemBuilder: (BuildContext context, int index) {
-                return ListTile(
+        // : Container(
+        //     child:
+        : ListView.builder(
+            scrollDirection: Axis.vertical,
+            shrinkWrap: true,
+            padding: const EdgeInsets.all(16.0),
+            itemCount: todos.length,
+            itemBuilder: (BuildContext context, int index) {
+              return Container(
+                  child: Column(children: <Widget>[
+                ListTile(
+                  tileColor: Colors.lightBlue,
+                  textColor: Colors.white,
                   title: Text(
                     todos[index].todolist_name,
                     style: _biggerFont,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
-                  subtitle: Text(todos[index].description),
+                  subtitle: Text(
+                    todos[index].description,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
                   trailing: _auth.user.role == 'Student'
                       ? FlatButton(
-                          child: const Text("开始"),
+                          child: const Text(
+                            "开始",
+                            style: TextStyle(color: Colors.white),
+                          ),
                           onPressed: () {
                             _navigation.navigateToPage(PomodoroPage(
                                 todo: todos[index], todoID: todosID?[index]));
@@ -125,19 +136,20 @@ class _TodoListState extends State<TodoListPage> {
                           ),
                         ),
                   onTap: () {
-                    // updateTodo(todos[index].id);
-                    // todos.removeAt(index);
-                    // setState(() {
-                    //   todos = todos;
-                    // });
                     _navigation.navigateToPage(UpdateTodoListPage(
                         todo: todos[index], todoID: todosID?[index]));
-                    //传入此条todolist的信息
                   },
-                );
-              },
-            ),
-          ]);
+                ),
+                const Divider(
+                  height: 7.0,
+                  indent: 0.0,
+                  color: Colors.white,
+                )
+              ]));
+            },
+          );
+    // );
+    // ]);
   }
 
   // void fetchTodos() async {
