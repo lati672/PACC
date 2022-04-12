@@ -104,18 +104,21 @@ class ConfirmMessageBubble extends StatelessWidget {
         mainAxisSize: MainAxisSize.max,
         children: [
           Container(
-            child: Text(message.content,style: TextStyle(color: Colors.black54, fontWeight: FontWeight.w600),),
-            padding: const EdgeInsets.all(3.0),
+            child: Text(
+              message.content,
+              style:
+                  const TextStyle(fontSize:16,color: Colors.black54, fontWeight: FontWeight.w600),
+            ),
+            padding: const EdgeInsets.all(5.0),
           ),
           const Divider(color: Colors.black26, height: 2.0),
-          SizedBox(
-              height: height * .3,
-              child: Row(
-                children: [
-                  Expanded(
-                    //确认按钮
-                    flex: 1,
-                      child: TextButton(
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Expanded(
+                  //确认按钮
+                  flex: 1,
+                  child: TextButton(
                     onPressed: () {
                       if (confirmmessage_count == 2) {
                         null;
@@ -124,20 +127,23 @@ class ConfirmMessageBubble extends StatelessWidget {
                       }
                       //_confirmrequest(context);
                     },
-                    child: const Text("接受", style: TextStyle(color: Colors.green),),
+                    child: const Text(
+                      "接受",
+                      style: TextStyle(color: Colors.green),
+                    ),
                   )),
-                  const VerticalDivider(color: Colors.black26, width: 2.0),
-                  Expanded(
-                    //确认按钮
-                      flex: 1,
-                      child: TextButton(
-                        onPressed: () {
-                          null;
-                        },
-                        child: const Text("拒绝",style: TextStyle(color: Colors.redAccent)),
-                      )),
-                ],
-              ))
+              Expanded(
+                  //确认按钮
+                  flex: 1,
+                  child: TextButton(
+                    onPressed: () {
+                      null;
+                    },
+                    child: const Text("拒绝",
+                        style: TextStyle(color: Colors.redAccent)),
+                  )),
+            ],
+          )
         ],
       ),
     );
