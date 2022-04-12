@@ -8,7 +8,8 @@ import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:provider/provider.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
+import 'package:flutter_picker/flutter_picker.dart';
+import 'dart:convert';
 // Providers
 import '../providers/authentication_provider.dart';
 import '../providers/todolist_provider.dart';
@@ -49,6 +50,35 @@ class _AddTodoListState extends State<AddTodoListPage> {
   List<String> recipients = [];
   List<String> recipientsName = [];
   String dropdownValue = '1个番茄钟';
+  String _intervalStr = "0min";
+  int _interval = 0;
+  static const PickerData2 = '''
+[
+    [
+        "1h",
+        "2h",
+        "3h",
+        "4h",
+        "5h",
+        "6h",
+        "7h"
+    ],
+    [
+        "0min",
+        "5min",
+        "10min",
+        "15min",
+        "20min",
+        "25min",
+        "30min",
+        "35min",
+        "40min",
+        "45min",
+        "50min",
+        "55min"
+    ]
+]
+    ''';
 
   @override
   void initState() {
@@ -131,21 +161,15 @@ class _AddTodoListState extends State<AddTodoListPage> {
                   },
                 ),
                 ListTile(
-                  title: const Text("任务时间"),
-                  trailing: DropdownButton<String>(
-                    value: dropdownValue,
-                    onChanged: (newValue) {
-                      setState(() {
-                        if (newValue != null) dropdownValue = newValue;
-                      });
+                  title: Text("任务时间    " + _intervalStr),
+                  trailing: IconButton(
+                    onPressed: () {
+                      showPickerArray(context);
                     },
-                    items: <String>['1个番茄钟', '2个番茄钟', '3个番茄钟', '4个番茄钟']
-                        .map<DropdownMenuItem<String>>((String value) {
-                      return DropdownMenuItem<String>(
-                        value: value,
-                        child: Text(value),
-                      );
-                    }).toList(),
+                    icon: const Icon(
+                      Icons.keyboard_arrow_right,
+                      color: Color.fromRGBO(0, 82, 218, 1),
+                    ),
                   ),
                 ),
                 ListTile(
@@ -244,6 +268,23 @@ class _AddTodoListState extends State<AddTodoListPage> {
     );
   }
 
+  showPickerArray(BuildContext context) {
+    Picker(
+        adapter: PickerDataAdapter<String>(
+            pickerdata: new JsonDecoder().convert(PickerData2), isArray: true),
+        hideHeader: true,
+        title: const Text("任务时间"),
+        onConfirm: (Picker picker, List value) {
+          List arr = picker.getSelectedValues();
+          int h = int.parse(arr[0][0]);
+          int m = int.parse(arr[1].split('min')[0]);
+          setState(() {
+            _interval = h * 60 + m;
+            _intervalStr = arr.join(' ');
+          });
+        }).showDialog(context);
+  }
+
   Widget _getModalSheetHeaderWithConfirm(String title, {onCancel, onConfirm}) {
     return SizedBox(
       height: 50,
@@ -288,7 +329,8 @@ class _AddTodoListState extends State<AddTodoListPage> {
       status: "todo",
       description: _controller2.text,
       todolist_name: _controller1.text,
-      interval: int.parse(dropdownValue[0]),
+      // interval: int.parse(dropdownValue[0]),
+      interval: _interval,
       recipients: [_auth.user.uid],
       // recipients: recipients,
       recipientsName: recipientsName,
