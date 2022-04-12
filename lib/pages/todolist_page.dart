@@ -125,7 +125,10 @@ class _TodoListState extends State<TodoListPage> {
                   ),
                   trailing: _auth.user.role == 'Student'
                       ? FlatButton(
-                          child: const Text("开始"),
+                          child: const Text(
+                            "开始",
+                            style: TextStyle(color: Colors.white),
+                          ),
                           onPressed: () {
                             _navigation.navigateToPage(PomodoroPage(
                                 todo: todos[index], todoID: todosID?[index]));

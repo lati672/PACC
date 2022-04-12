@@ -105,7 +105,7 @@ class _UpdateTodoListState extends State<UpdateTodoListPage> {
     int interval = widget.todo.interval;
     String intervalStr = (interval / 60).truncate().toString() +
         "h " +
-        (_interval % 60).toString() +
+        (interval % 60).toString() +
         "min";
 
     return Builder(
@@ -168,7 +168,7 @@ class _UpdateTodoListState extends State<UpdateTodoListPage> {
                   },
                 ),
                 ListTile(
-                  title: Text("任务时间    " + intervalStr),
+                  title: Text("任务时间    " + _intervalStr),
                   trailing: IconButton(
                     onPressed: () {
                       showPickerArray(context);
@@ -299,6 +299,8 @@ class _UpdateTodoListState extends State<UpdateTodoListPage> {
           List arr = picker.getSelectedValues();
           int h = int.parse(arr[0][0]);
           int m = int.parse(arr[1].split('min')[0]);
+          print("1111111111111111");
+          print(arr.join(' '));
           setState(() {
             _interval = h * 60 + m;
             _intervalStr = arr.join(' ');
