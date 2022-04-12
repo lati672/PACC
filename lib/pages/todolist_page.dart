@@ -3,26 +3,21 @@ import '../models/todo_list_model.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:provider/provider.dart';
-
 // Providers
 import '../providers/authentication_provider.dart';
 import '../providers/todolist_provider.dart';
-
 //pages
 import '../pages/pomodoro_page.dart';
 import '../pages/addTodolist_page.dart';
 import '../pages/updateTodolist_page.dart';
-
 // Services
 import '../services/navigation_service.dart';
 import '../services/database_service.dart';
-
 // Widgets
 import '../widgets/top_bar.dart';
 
 class TodoListPage extends StatefulWidget {
   const TodoListPage({Key? key}) : super(key: key);
-
   @override
   State<StatefulWidget> createState() {
     return _TodoListState();
@@ -64,32 +59,34 @@ class _TodoListState extends State<TodoListPage> {
         _pageProvider = _context.watch<TodoListPageProvider>();
         return Scaffold(
           body: SafeArea(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.start,
-                mainAxisSize: MainAxisSize.max,
-                children: [
-                  TopBar(
-                    (_auth.user.role == 'Student' ? '我的' : '该学生') + '任务',
-                    primaryAction: IconButton(
-                      onPressed: () {
-                        // * Logout the user if he/she presses the button icon
-                        Navigator.of(context)
-                            .push(
-                              MaterialPageRoute(
-                                  builder: (_) => AddTodoListPage()),
-                            )
-                            .then((val) => val ? _getRequests() : null);
-                      },
-                      icon: const Icon(
-                        Icons.add,
-                        color: Color.fromRGBO(0, 82, 218, 1),
-                      ),
+              child: Container(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.start,
+              mainAxisSize: MainAxisSize.max,
+              children: [
+                TopBar(
+                  (_auth.user.role == 'Student' ? '我的' : '该学生') + '任务',
+                  primaryAction: IconButton(
+                    onPressed: () {
+                      // * Logout the user if he/she presses the button icon
+                      Navigator.of(context)
+                          .push(
+                            MaterialPageRoute(
+                                builder: (_) => AddTodoListPage()),
+                          )
+                          .then((val) => val ? _getRequests() : null);
+                    },
+                    icon: const Icon(
+                      Icons.add,
+                      color: Color.fromRGBO(0, 82, 218, 1),
                     ),
                   ),
-                  Expanded(child: _todosList()),
-                ],
-              )),
+                ),
+                _todosList(),
+              ],
+            ),
+          )),
         );
       },
     );
@@ -101,7 +98,7 @@ class _TodoListState extends State<TodoListPage> {
     List? todosID = _pageProvider.todosID;
     return todos == null
         ? Center(child: CircularProgressIndicator())
-        :
+        : Column(children: [
             ListView.builder(
               scrollDirection: Axis.vertical,
               shrinkWrap: true,
@@ -139,8 +136,8 @@ class _TodoListState extends State<TodoListPage> {
                   },
                 );
               },
-            );
-
+            ),
+          ]);
   }
 
   // void fetchTodos() async {
