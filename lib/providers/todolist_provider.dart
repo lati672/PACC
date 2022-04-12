@@ -87,5 +87,6 @@ class TodoListPageProvider extends ChangeNotifier {
     }
     studentsName = _studentsName;
     students = _students;
+    notifyListeners();
   }
 }

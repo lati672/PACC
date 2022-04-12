@@ -3,21 +3,26 @@ import '../models/todo_list_model.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:provider/provider.dart';
+
 // Providers
 import '../providers/authentication_provider.dart';
 import '../providers/todolist_provider.dart';
+
 //pages
 import '../pages/pomodoro_page.dart';
 import '../pages/addTodolist_page.dart';
 import '../pages/updateTodolist_page.dart';
+
 // Services
 import '../services/navigation_service.dart';
 import '../services/database_service.dart';
+
 // Widgets
 import '../widgets/top_bar.dart';
 
 class TodoListPage extends StatefulWidget {
   const TodoListPage({Key? key}) : super(key: key);
+
   @override
   State<StatefulWidget> createState() {
     return _TodoListState();
@@ -81,7 +86,9 @@ class _TodoListState extends State<TodoListPage> {
                   ),
                 ),
               ),
+              // _todosList(),
               Expanded(child: _todosList()),
+              // _todosList(),
             ],
           )),
         );
@@ -94,19 +101,16 @@ class _TodoListState extends State<TodoListPage> {
     List<TodoListModel>? todos = _pageProvider.todos;
     List? todosID = _pageProvider.todosID;
     return todos == null
-        ? Center(child: CircularProgressIndicator())
-        // : Container(
-        //     child:
+        ? const Center(child: CircularProgressIndicator())
         : ListView.builder(
             scrollDirection: Axis.vertical,
             shrinkWrap: true,
             padding: const EdgeInsets.all(16.0),
             itemCount: todos.length,
             itemBuilder: (BuildContext context, int index) {
-              return Container(
-                  child: Column(children: <Widget>[
+              return Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
                 ListTile(
-                  tileColor: Colors.lightBlue,
+                  tileColor: Colors.lightBlueAccent,
                   textColor: Colors.white,
                   title: Text(
                     todos[index].todolist_name,
@@ -121,10 +125,7 @@ class _TodoListState extends State<TodoListPage> {
                   ),
                   trailing: _auth.user.role == 'Student'
                       ? FlatButton(
-                          child: const Text(
-                            "开始",
-                            style: TextStyle(color: Colors.white),
-                          ),
+                          child: const Text("开始"),
                           onPressed: () {
                             _navigation.navigateToPage(PomodoroPage(
                                 todo: todos[index], todoID: todosID?[index]));
@@ -132,7 +133,7 @@ class _TodoListState extends State<TodoListPage> {
                       : const Text(
                           '占位空白view，透明',
                           style: TextStyle(
-                            color: Colors.white,
+                            color: Colors.lightBlueAccent,
                           ),
                         ),
                   onTap: () {
@@ -145,20 +146,12 @@ class _TodoListState extends State<TodoListPage> {
                   indent: 0.0,
                   color: Colors.white,
                 )
-              ]));
+              ]
+                  // )
+                  );
             },
           );
-    // );
-    // ]);
   }
 
-  // void fetchTodos() async {
-  //   // print("start fetchTodos");
-  //   // todos = await _database.getTodoList(_auth.user.name);
-  //   todos = await _database.getTodoList("liwanting");
-  //   setState(() {
-  //     todos = todos;
-  //   });
-  // }
   _getRequests() async {}
 }
