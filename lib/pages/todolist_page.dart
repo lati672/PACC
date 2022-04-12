@@ -106,30 +106,50 @@ class _TodoListState extends State<TodoListPage> {
                 padding: const EdgeInsets.all(16.0),
                 itemCount: todos.length,
                 itemBuilder: (BuildContext context, int index) {
-                  return ListTile(
-                    title: Text(
-                      todos[index].todolist_name,
-                      style: _biggerFont,
-                    ),
-                    subtitle: Text(todos[index].description),
-                    trailing: _auth.user.role == 'Student'
-                        ? FlatButton(
-                            child: const Text("开始"),
-                            onPressed: () {
-                              _navigation.navigateToPage(PomodoroPage(
-                                  todo: todos[index], todoID: todosID?[index]));
-                            })
-                        : const Text(
-                            '占位空白view，透明',
-                            style: TextStyle(
-                              color: Colors.white,
+                  return Container(
+                      child: Column(children: <Widget>[
+                    ListTile(
+                      tileColor: Colors.lightBlue,
+                      textColor: Colors.white,
+                      title: Text(
+                        todos[index].todolist_name,
+                        style: _biggerFont,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      subtitle: Text(
+                        todos[index].description,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      trailing: _auth.user.role == 'Student'
+                          ? FlatButton(
+                              child: const Text(
+                                "开始",
+                                style: TextStyle(color: Colors.white),
+                              ),
+                              onPressed: () {
+                                _navigation.navigateToPage(PomodoroPage(
+                                    todo: todos[index],
+                                    todoID: todosID?[index]));
+                              })
+                          : const Text(
+                              '占位空白view，透明',
+                              style: TextStyle(
+                                color: Colors.white,
+                              ),
                             ),
-                          ),
-                    onTap: () {
-                      _navigation.navigateToPage(UpdateTodoListPage(
-                          todo: todos[index], todoID: todosID?[index]));
-                    },
-                  );
+                      onTap: () {
+                        _navigation.navigateToPage(UpdateTodoListPage(
+                            todo: todos[index], todoID: todosID?[index]));
+                      },
+                    ),
+                    const Divider(
+                      height: 7.0,
+                      indent: 0.0,
+                      color: Colors.white,
+                    )
+                  ]));
                 },
               ),
             )

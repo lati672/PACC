@@ -49,7 +49,6 @@ class _AddTodoListState extends State<AddTodoListPage> {
   Set<int> selected = Set<int>();
   List<String> recipients = [];
   List<String> recipientsName = [];
-  String dropdownValue = '1个番茄钟';
   String _intervalStr = "0min";
   int _interval = 0;
   static const PickerData2 = '''
@@ -172,94 +171,97 @@ class _AddTodoListState extends State<AddTodoListPage> {
                     ),
                   ),
                 ),
-                ListTile(
-                  title: Text("发送到" + "   " + recipientsName.join(' , ')),
-                  trailing: IconButton(
-                    onPressed: () {
-                      List<String>? students = _pageProvider.students;
-                      List<String>? studentsName = _pageProvider.studentsName;
-                      (students == null || studentsName == null)
-                          ? const Center(child: CircularProgressIndicator())
-                          : showModalBottomSheet(
-                              backgroundColor: Colors.transparent,
-                              isScrollControlled: true,
-                              context: context,
-                              builder: (BuildContext context) {
-                                return StatefulBuilder(
-                                    builder: (context1, setState1) {
-                                  return Container(
-                                    clipBehavior: Clip.antiAlias,
-                                    decoration: const BoxDecoration(
-                                      color: Colors.white,
-                                      borderRadius: BorderRadius.only(
-                                        topLeft: Radius.circular(20.0),
-                                        topRight: Radius.circular(20.0),
-                                      ),
-                                    ),
-                                    height: MediaQuery.of(context).size.height /
-                                        2.0,
-                                    child: Column(children: [
-                                      _getModalSheetHeaderWithConfirm(
-                                        '发送到',
-                                        onCancel: () {
-                                          Navigator.of(context).pop();
-                                        },
-                                        onConfirm: () {
-                                          setState1(() {
-                                            recipients = [];
-                                            recipientsName = [];
-                                            selected.forEach((e) {
-                                              recipients.add(students[e]);
-                                              recipientsName
-                                                  .add(studentsName[e]);
-                                            });
-                                          });
-
-                                          Navigator.of(context)
-                                              .pop(selected.toList());
-                                        },
-                                      ),
-                                      const Divider(height: 1.0),
-                                      Expanded(
-                                        child: ListView.builder(
-                                          itemBuilder: (BuildContext context,
-                                              int index) {
-                                            return ListTile(
-                                              trailing: Icon(
-                                                  selected.contains(index)
-                                                      ? Icons.check_box
-                                                      : Icons
-                                                          .check_box_outline_blank,
-                                                  color: Theme.of(context)
-                                                      .primaryColor),
-                                              title: Text(studentsName[index]),
-                                              onTap: () {
-                                                setState1(() {
-                                                  if (selected
-                                                      .contains(index)) {
-                                                    selected.remove(index);
-                                                  } else {
-                                                    selected.add(index);
-                                                  }
-                                                });
-                                              },
-                                            );
-                                          },
-                                          itemCount: studentsName.length,
+                if (_auth.user.role == 'parent')
+                  ListTile(
+                    title: Text("发送到" + "   " + recipientsName.join(' , ')),
+                    trailing: IconButton(
+                      onPressed: () {
+                        List<String>? students = _pageProvider.students;
+                        List<String>? studentsName = _pageProvider.studentsName;
+                        (students == null || studentsName == null)
+                            ? const Center(child: CircularProgressIndicator())
+                            : showModalBottomSheet(
+                                backgroundColor: Colors.transparent,
+                                isScrollControlled: true,
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return StatefulBuilder(
+                                      builder: (context1, setState1) {
+                                    return Container(
+                                      clipBehavior: Clip.antiAlias,
+                                      decoration: const BoxDecoration(
+                                        color: Colors.white,
+                                        borderRadius: BorderRadius.only(
+                                          topLeft: Radius.circular(20.0),
+                                          topRight: Radius.circular(20.0),
                                         ),
                                       ),
-                                    ]),
-                                  );
-                                });
-                              },
-                            );
-                    },
-                    icon: const Icon(
-                      Icons.keyboard_arrow_right,
-                      color: Color.fromRGBO(0, 82, 218, 1),
+                                      height:
+                                          MediaQuery.of(context).size.height /
+                                              2.0,
+                                      child: Column(children: [
+                                        _getModalSheetHeaderWithConfirm(
+                                          '发送到',
+                                          onCancel: () {
+                                            Navigator.of(context).pop();
+                                          },
+                                          onConfirm: () {
+                                            setState1(() {
+                                              recipients = [];
+                                              recipientsName = [];
+                                              selected.forEach((e) {
+                                                recipients.add(students[e]);
+                                                recipientsName
+                                                    .add(studentsName[e]);
+                                              });
+                                            });
+
+                                            Navigator.of(context)
+                                                .pop(selected.toList());
+                                          },
+                                        ),
+                                        const Divider(height: 1.0),
+                                        Expanded(
+                                          child: ListView.builder(
+                                            itemBuilder: (BuildContext context,
+                                                int index) {
+                                              return ListTile(
+                                                trailing: Icon(
+                                                    selected.contains(index)
+                                                        ? Icons.check_box
+                                                        : Icons
+                                                            .check_box_outline_blank,
+                                                    color: Theme.of(context)
+                                                        .primaryColor),
+                                                title:
+                                                    Text(studentsName[index]),
+                                                onTap: () {
+                                                  setState1(() {
+                                                    if (selected
+                                                        .contains(index)) {
+                                                      selected.remove(index);
+                                                    } else {
+                                                      selected.add(index);
+                                                    }
+                                                  });
+                                                },
+                                              );
+                                            },
+                                            itemCount: studentsName.length,
+                                          ),
+                                        ),
+                                      ]),
+                                    );
+                                  });
+                                },
+                              );
+                      },
+                      icon: const Icon(
+                        Icons.keyboard_arrow_right,
+                        color: Color.fromRGBO(0, 82, 218, 1),
+                      ),
                     ),
                   ),
-                ),
               ],
             ),
           )),
@@ -329,7 +331,6 @@ class _AddTodoListState extends State<AddTodoListPage> {
       status: "todo",
       description: _controller2.text,
       todolist_name: _controller1.text,
-      // interval: int.parse(dropdownValue[0]),
       interval: _interval,
       recipients: [_auth.user.uid],
       // recipients: recipients,
