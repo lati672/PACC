@@ -1,5 +1,6 @@
 // Packages
 import 'package:chatifyapp/pages/ssh.dart';
+import 'package:chatifyapp/pages/stats.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:provider/provider.dart';
@@ -75,6 +76,14 @@ class _UserProfilePageState extends State<UserProfilePage> {
               },
               child: const Text(
                 '测试界面',
+                style: TextStyle(color: Colors.black, fontSize: 20),
+              )),
+          TextButton(
+              onPressed: () {
+                _navigation.navigateToPage(StatsPage());
+              },
+              child: const Text(
+                '图表',
                 style: TextStyle(color: Colors.black, fontSize: 20),
               )),
           Container(color: Colors.black12, height: 7),

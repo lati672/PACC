@@ -4,7 +4,7 @@ import 'package:chatifyapp/pages/whitelist_page.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:provider/provider.dart';
-
+import 'package:fl_chart/fl_chart.dart';
 // Widgets
 import '../widgets/top_bar.dart';
 import '../widgets/custom_list_view_tiles.dart';
@@ -51,29 +51,48 @@ class _StatsPageState extends State<StatsPage> {
   }
 
   Widget _buildUI() {
-    return Builder(
-      builder: (_context) {
-        _pageProvider = _context.watch<ChatPageProvider>();
-
-        return Scaffold(
-            body: SizedBox(
-          width: _deviceWidth,
-          height: _deviceHeight,
-          child: SafeArea(
-            child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.start,
-                mainAxisSize: MainAxisSize.max,
-                children: [
-                  const TopBar(
-                    'Stats',
-                    fontSize: 16,
-                  ),
-                  //Expanded(child: _messagesListView()),
-                ]),
-          ),
-        ));
-      },
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('KindaCode.com'),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(30),
+        child: BarChart(BarChartData(
+            borderData: FlBorderData(
+                border: const Border(
+              top: BorderSide.none,
+              right: BorderSide.none,
+              left: BorderSide(width: 1),
+              bottom: BorderSide(width: 1),
+            )),
+            groupsSpace: 10,
+            barGroups: [
+              BarChartGroupData(x: 1, barRods: [
+                BarChartRodData(toY: 10, width: 15, color: Colors.amber),
+              ]),
+              BarChartGroupData(x: 2, barRods: [
+                BarChartRodData(toY: 9, width: 15, color: Colors.amber),
+              ]),
+              BarChartGroupData(x: 3, barRods: [
+                BarChartRodData(toY: 4, width: 15, color: Colors.amber),
+              ]),
+              BarChartGroupData(x: 4, barRods: [
+                BarChartRodData(toY: 2, width: 15, color: Colors.amber),
+              ]),
+              BarChartGroupData(x: 5, barRods: [
+                BarChartRodData(toY: 13, width: 15, color: Colors.amber),
+              ]),
+              BarChartGroupData(x: 6, barRods: [
+                BarChartRodData(toY: 17, width: 15, color: Colors.amber),
+              ]),
+              BarChartGroupData(x: 7, barRods: [
+                BarChartRodData(toY: 19, width: 15, color: Colors.amber),
+              ]),
+              BarChartGroupData(x: 8, barRods: [
+                BarChartRodData(toY: 21, width: 15, color: Colors.amber),
+              ]),
+            ])),
+      ),
     );
   }
 }
