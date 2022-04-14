@@ -171,7 +171,7 @@ class _AddTodoListState extends State<AddTodoListPage> {
                     ),
                   ),
                 ),
-                if (_auth.user.role == 'parent')
+                if (_auth.user.role == 'Parent')
                   ListTile(
                     title: Text("发送到" + "   " + recipientsName.join(' , ')),
                     trailing: IconButton(

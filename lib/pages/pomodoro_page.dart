@@ -54,7 +54,6 @@ class _PomodoroPageState extends State<PomodoroPage> {
   DatabaseService _database = GetIt.instance.get<DatabaseService>();
   late AuthenticationProvider _auth;
 
-  Set<int> selected = Set<int>();
   String str = "";
   List<String> appList = [];
   bool isOpenUsageAccess = false;
@@ -85,6 +84,8 @@ class _PomodoroPageState extends State<PomodoroPage> {
     // Half Screen Dimensions
     final double height = MediaQuery.of(context).size.height / 1.3;
     final double width = MediaQuery.of(context).size.width / 1.5;
+
+    _getWhitelist(); //初始化，获取白名单应用
 
     CircularCountDownTimer clock = CircularCountDownTimer(
       controller: _clockController,
@@ -156,7 +157,6 @@ class _PomodoroPageState extends State<PomodoroPage> {
                         ),
                         IconButton(
                           onPressed: () {
-                            _getWhitelist();
                             showModalBottomSheet(
                               backgroundColor: Colors.transparent,
                               isScrollControlled: true,
@@ -169,8 +169,8 @@ class _PomodoroPageState extends State<PomodoroPage> {
                                     decoration: const BoxDecoration(
                                       color: Colors.white,
                                       borderRadius: BorderRadius.only(
-                                        topLeft: const Radius.circular(20.0),
-                                        topRight: const Radius.circular(20.0),
+                                        topLeft: Radius.circular(20.0),
+                                        topRight: Radius.circular(20.0),
                                       ),
                                     ),
                                     height: MediaQuery.of(context).size.height /
@@ -181,11 +181,7 @@ class _PomodoroPageState extends State<PomodoroPage> {
                                         onCancel: () {
                                           Navigator.of(context).pop();
                                         },
-                                        onConfirm: () {
-                                          // Navigator.of(context)
-                                          //     .pop(selected.toList());
-                                          Navigator.pop(context, str);
-                                        },
+                                        onConfirm: () {},
                                       ),
                                       const Divider(height: 1.0),
                                       Expanded(
@@ -193,23 +189,9 @@ class _PomodoroPageState extends State<PomodoroPage> {
                                           itemBuilder: (BuildContext context,
                                               int index) {
                                             return ListTile(
-                                              trailing: Icon(
-                                                  selected.contains(index)
-                                                      ? Icons.check_box
-                                                      : Icons
-                                                          .check_box_outline_blank,
-                                                  color: Theme.of(context)
-                                                      .primaryColor),
                                               title: Text(appList[index]),
                                               onTap: () {
-                                                setState(() {
-                                                  if (selected
-                                                      .contains(index)) {
-                                                    selected.remove(index);
-                                                  } else {
-                                                    selected.add(index);
-                                                  }
-                                                });
+                                                //launch()；安卓方法：跳转其他app
                                               },
                                             );
                                           },
@@ -255,10 +237,6 @@ class _PomodoroPageState extends State<PomodoroPage> {
 
   void _getWhitelist() async {
     String list = await _database.getlatestWhitelistfromAlluser(_auth.user.uid);
-
-    // String list = await _database.getLatestWhitelist(_auth.user.uid);
-
-    // List<String> arr = [];
     appList = list.split(',');
   }
 
@@ -482,7 +460,7 @@ Widget _getModalSheetHeaderWithConfirm(String title, {onCancel, onConfirm}) {
         IconButton(
             icon: const Icon(
               Icons.check,
-              color: Colors.blue,
+              color: Colors.white, //透明，占位
             ),
             onPressed: () {
               onConfirm();

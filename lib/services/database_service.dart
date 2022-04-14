@@ -366,8 +366,10 @@ class DatabaseService {
     }
     //Sorted by time
     _parentwhitelist.sort(((a, b) => a.sentTime.compareTo(b.sentTime)));
-
-    return _parentwhitelist.last.content;
+    //若为空则返回空字符串
+    return _parentwhitelist.isEmpty
+        ? "联系人,时钟,备忘录,信息,日历,计算器" //默认白名单，待改
+        : _parentwhitelist.last.content;
   }
 
   //#Message
