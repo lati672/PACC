@@ -1,7 +1,7 @@
 package mz.com.edilson.chatifyapp
+import android.app.ActivityManager
 import android.app.AppOpsManager
 import android.app.usage.UsageStatsManager
-import android.bluetooth.BluetoothAdapter
 import android.content.Context
 import android.content.Intent
 import android.graphics.drawable.Drawable
@@ -26,34 +26,26 @@ class MainActivity : FlutterActivity() {
             .setMethodCallHandler { call: MethodCall, result: MethodChannel.Result ->
                 //与Flutter Client invokeMethod调用字符串标识符匹配
                 if (call.method == "getAppList") {
-                    // 当前不是番茄钟应用，则跳转番茄钟应用
-                    val list = btn1Click()
-                    // if(getTopApp(this.getActivity()) != "com.example.chatifyapp")
-                    // getTopApp(this.getActivity())
-                        launch()
+                    val list = getAppName()
                     result.success(list)
                 } 
-                else if (call.method == "launch") {
-                    launch()
+                else if (call.method == "isOpenUsageAccess") {
+                    result.success(hasPermission())
+                }
+                else if (call.method == "openUsageAccess") {
+                    openUsageAccess()
                 }
                 else if (call.method == "appLock") {
-                    // launch()
+                    // 当前不是番茄钟应用，则跳转番茄钟应用
+                    // if(getTopApp(this.getActivity()) != "com.example.chatifyapp")
+                    // {
+                    //     launch()
+                    // }
                 }
                 else {
                     result.notImplemented()
                 }
             }
-    }
-
-    // 开启蓝牙
-    private fun initBlueTooth(): Boolean {
-        val mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter() ?: return false
-        if (!mBluetoothAdapter.isEnabled) {
-            val intent = Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE)
-            startActivityForResult(intent, REQUEST_ENABLE_BT)
-            return false
-        }
-        return true
     }
 
     // 获取应用程序包名
@@ -76,7 +68,7 @@ class MainActivity : FlutterActivity() {
         }
 
     // 获取已安装的应用的真实名称
-    fun btn1Click(): String {
+    fun getAppName(): String {
 //        String list = new LinkedList<>();
         var list = ""
         val appIcon: Drawable? = null
@@ -99,9 +91,9 @@ class MainActivity : FlutterActivity() {
     // 跳转其他APP
     private fun launch() {
         Log.i("TAG", "getAppProcessName: "+"1234567891234567");
-        //val intent = packageManager.getLaunchIntentForPackage("com.taobao.taobao")
+        val intent = packageManager.getLaunchIntentForPackage("com.taobao.taobao")
         // val intent = packageManager.getLaunchIntentForPackage("com.example.chatifyapp")
-        // 这里如果intent为空，就说名没有安装要跳转的应用嘛
+        // 这里如果intent为空，就说明没有安装要跳转的应用
         if (intent != null) {
             Log.i("TAG", "getAppProcessName: "+"123456789123456789123456789123456789123456789123456789");
             // 这里跟Activity传递参数一样的嘛，不要担心怎么传递参数，还有接收参数也是跟Activity和Activity传参数一样
@@ -126,30 +118,21 @@ class MainActivity : FlutterActivity() {
         }
         return mode == AppOpsManager.MODE_ALLOWED
     }
-    // @RequiresApi(api = Build.VERSION_CODES.KITKAT)
-    // public override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-    //     super.onActivityResult(requestCode, resultCode, data);
-    //     if (requestCode == MY_PERMISSIONS_REQUEST_PACKAGE_USAGE_STATS) {
-    //         Log.i("TAG", "top running app is : " + hasPermission())
-    //         if (!hasPermission()) {
-    //             //若用户未开启权限，则引导用户开启“Apps with usage access”权限
-    //             startActivityForResult(
-    //                 Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS),
-    //                 MY_PERMISSIONS_REQUEST_PACKAGE_USAGE_STATS
-    //             )
-    //         }
-    //     }
-    // }
-
-    private fun getTopApp(context: Context):String {
-        var topActivity = ""
+    
+    //若用户未开启权限，则引导用户开启“Apps with usage access”权限
+    private fun openUsageAccess() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            //若用户未开启权限，则引导用户开启“Apps with usage access”权限
             if (!hasPermission()) {
                 startActivityForResult(
                         Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS),
                         MY_PERMISSIONS_REQUEST_PACKAGE_USAGE_STATS);
             }
+        }
+    }
+
+    private fun getTopApp(context: Context):String {
+        var topActivity = ""
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             val m = context.getSystemService(USAGE_STATS_SERVICE) as UsageStatsManager
             if (m != null) {
                 val now = System.currentTimeMillis()
