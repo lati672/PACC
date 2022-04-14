@@ -36,6 +36,9 @@ class _UpdateTodoListState extends State<UpdateTodoListPage> {
   // AuthenticationProvider _auth =
   //     Provider.of<AuthenticationProvider>(getContext);
   // List<TodoListModel> todos = [];
+  Set<int> selected = Set<int>();
+  List<String> recipients = [];
+  List<String> recipientsName = [];
 
   late TodoListPageProvider _pageProvider;
   final _biggerFont = const TextStyle(fontSize: 18.0);
@@ -98,10 +101,6 @@ class _UpdateTodoListState extends State<UpdateTodoListPage> {
     _controller1 = TextEditingController(text: widget.todo.todolist_name);
     _controller2 = TextEditingController(text: widget.todo.description);
 
-    Set<int> selected = Set<int>();
-    List<String> recipients = [];
-    List<String> recipientsName = [];
-
     int interval = widget.todo.interval;
     String intervalStr = (interval / 60).truncate().toString() +
         "h " +
@@ -136,9 +135,9 @@ class _UpdateTodoListState extends State<UpdateTodoListPage> {
                   controller: _controller1,
                   focusNode: _focusNode1,
                   maxLength: 20,
-                  decoration: InputDecoration(
+                  decoration: const InputDecoration(
                     hintText: "标题",
-                    contentPadding: const EdgeInsets.symmetric(vertical: 10.0),
+                    contentPadding: EdgeInsets.symmetric(vertical: 10.0),
                   ),
                   onSubmitted: (str) {
                     print('_TextFieldViewState.buildView--$str');
@@ -183,7 +182,7 @@ class _UpdateTodoListState extends State<UpdateTodoListPage> {
                     ),
                   ),
                 ),
-                if (_auth.user.role == 'parent')
+                if (_auth.user.role == 'Parent')
                   ListTile(
                     title: Text(
                         "发送到" + "   " + widget.todo.recipientsName.join(' , ')),
@@ -268,6 +267,13 @@ class _UpdateTodoListState extends State<UpdateTodoListPage> {
                                   });
                                 },
                               );
+                        print("1111111111111111111");
+                        print(recipients);
+                        print(recipientsName);
+                        setState(() {
+                          recipients = recipients;
+                          recipientsName = recipientsName;
+                        });
                       },
                       icon: const Icon(
                         Icons.keyboard_arrow_right,
@@ -299,8 +305,6 @@ class _UpdateTodoListState extends State<UpdateTodoListPage> {
           List arr = picker.getSelectedValues();
           int h = int.parse(arr[0][0]);
           int m = int.parse(arr[1].split('min')[0]);
-          print("1111111111111111");
-          print(arr.join(' '));
           setState(() {
             _interval = h * 60 + m;
             _intervalStr = arr.join(' ');
@@ -353,8 +357,8 @@ class _UpdateTodoListState extends State<UpdateTodoListPage> {
       description: _controller2.text,
       todolist_name: _controller1.text,
       interval: _interval,
-      recipients: [_auth.user.uid],
-      recipientsName: [_auth.user.uid],
+      recipients: recipients,
+      recipientsName: recipientsName,
       sent_time: widget.todo.sent_time,
     );
     await _database.updateTodoList(newTodo, uid);

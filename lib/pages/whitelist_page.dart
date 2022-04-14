@@ -8,10 +8,6 @@ import 'dart:async';
 
 // Widgets
 import '../widgets/top_bar.dart';
-import '../widgets/custom_list_view_tiles.dart';
-
-// Models
-import '../models/chats_model.dart';
 
 // Providers
 import '../providers/authentication_provider.dart';
@@ -215,54 +211,6 @@ class _WhiteListPageState extends State<WhiteListPage> {
                   );
                 },
                 child: const Text("白名单选择"),
-              ),
-              RaisedButton(
-                onPressed: () {
-                  showModalBottomSheet(
-                    backgroundColor: Colors.transparent,
-                    isScrollControlled: true,
-                    context: context,
-                    builder: (BuildContext context) {
-                      return StatefulBuilder(builder: (context1, setState) {
-                        return Container(
-                          clipBehavior: Clip.antiAlias,
-                          decoration: const BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.only(
-                              topLeft: const Radius.circular(20.0),
-                              topRight: const Radius.circular(20.0),
-                            ),
-                          ),
-                          height: MediaQuery.of(context).size.height / 2.0,
-                          child: Column(children: [
-                            _getModalSheetHeaderWithConfirm(
-                              '打开其他APP',
-                              onCancel: () {
-                                Navigator.of(context).pop();
-                              },
-                              onConfirm: () {
-                                Navigator.of(context).pop(selected.toList());
-                              },
-                            ),
-                            const Divider(height: 1.0),
-                            Expanded(
-                              child: ListView.builder(
-                                itemBuilder: (BuildContext context, int index) {
-                                  return ListTile(
-                                    title: Text(appList[index]),
-                                    onTap: () {},
-                                  );
-                                },
-                                itemCount: appList.length,
-                              ),
-                            ),
-                          ]),
-                        );
-                      });
-                    },
-                  );
-                },
-                child: const Text("打开其他APP"),
               ),
             ],
           ),
