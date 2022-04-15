@@ -41,7 +41,13 @@ class _StatsPageState extends State<StatsPage> {
   late AuthenticationProvider _auth;
   late ChatPageProvider _pageProvider;
   late NavigationService _navigation;
-  List<charts.Series<StatsModel, String>> _seriesBarData = [];
+  int startmonth = 0;
+  int endmonth = 11;
+  int cnt = 0;
+  int focustime = 0;
+  int hour = 0;
+  int min = 0;
+  List<charts.Series<StatsModel, int>> _seriesBarData = [];
   List<StatsModel> statsdata = [];
   List<StatsModel> generate_statsdata(List<TodoListModel> todos) {
     List months = [
@@ -58,15 +64,37 @@ class _StatsPageState extends State<StatsPage> {
       '11月',
       '12月'
     ];
+    cnt = 0;
+    focustime = 0;
     List<StatsModel> stats = List.generate(
-        12, (index) => StatsModel(focustime: 0, month: months[index]));
+        12,
+        (index) => StatsModel(
+            focustime: 0, nummonth: index + 1, month: months[index]));
 
     for (var i = 0; i < todos.length; i++) {
       int m = todos[i].start_time.month;
       if (todos[i].status == 'done') {
         stats[m - 1].focustime += todos[i].interval;
+        cnt++;
+        focustime += todos[i].interval;
       }
     }
+    startmonth = 0;
+    endmonth = 11;
+    while (stats[startmonth].focustime == 0) {
+      startmonth++;
+    }
+    while (stats[endmonth].focustime == 0) {
+      endmonth--;
+    }
+    if (startmonth == 11 && endmonth == 0) {
+      startmonth = endmonth = DateTime.now().month;
+    }
+
+    endmonth += 1;
+    startmonth += 1;
+    hour = focustime ~/ 60;
+    min = focustime % 60;
     return stats;
   }
 
@@ -74,9 +102,9 @@ class _StatsPageState extends State<StatsPage> {
     //_seriesBarData = List<charts.Series<Sales, String>> [];
     _seriesBarData.add(
       charts.Series(
-        domainFn: (StatsModel stats, _) => stats.month,
+        domainFn: (StatsModel stats, _) => stats.nummonth,
         measureFn: (StatsModel stats, _) => stats.focustime,
-        id: 'Sales',
+        id: 'month',
         data: mydata,
         labelAccessorFn: (StatsModel row, _) => "${row.month}",
       ),
@@ -92,69 +120,144 @@ class _StatsPageState extends State<StatsPage> {
     _deviceHeight = MediaQuery.of(context).size.height;
     _auth = Provider.of<AuthenticationProvider>(context);
     _navigation = GetIt.instance.get<NavigationService>();
-
     return Scaffold(
-      appBar: AppBar(title: Text('Stats')),
-      body: _buildBody(context),
-    );
+        body: SafeArea(
+            child: Container(
+      width: _deviceWidth,
+      height: _deviceHeight,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.start,
+        mainAxisSize: MainAxisSize.max,
+        children: [
+          TopBar(
+            '数据统计',
+            primaryAction: IconButton(
+              onPressed: () {
+                _navigation.goBack();
+              },
+              icon: const Icon(
+                Icons.arrow_back_ios,
+                color: Color.fromRGBO(0, 82, 218, 1),
+              ),
+            ),
+          ),
+          _buildBody(context),
+        ],
+      ),
+    )));
   }
 
   Widget _buildBody(BuildContext context) {
-    return StreamBuilder<QuerySnapshot>(
-        stream: _database.getUserTodoList(_auth.user.uid),
-        builder: (context, snapshot) {
-          if (!snapshot.hasData) {
-            return LinearProgressIndicator();
-          } else {
-            List<TodoListModel> todos = [];
-            snapshot.data!.docs.forEach((doc) {
-              todos.add(TodoListModel(
-                  sent_time: doc['sent_time'].toDate(),
-                  senderid: doc['senderid'],
-                  start_time: doc['start_time'].toDate(),
-                  status: doc['status'],
-                  description: doc['description'],
-                  todolist_name: doc['todolist_name'],
-                  interval: doc['interval'],
-                  recipients: List.from(doc['recipients']),
-                  recipientsName: List.from(doc['recipientsName'])));
-            });
-
-            return _buildChart(context, todos);
-          }
-        });
+    return Expanded(
+        child: StreamBuilder<QuerySnapshot>(
+            stream: _database.getUserTodoList(_auth.user.uid),
+            builder: (context, snapshot) {
+              if (!snapshot.hasData) {
+                return const LinearProgressIndicator();
+              } else {
+                List<TodoListModel> todos = [];
+                snapshot.data!.docs.forEach((doc) {
+                  todos.add(TodoListModel(
+                      sent_time: doc['sent_time'].toDate(),
+                      senderid: doc['senderid'],
+                      start_time: doc['start_time'].toDate(),
+                      status: doc['status'],
+                      description: doc['description'],
+                      todolist_name: doc['todolist_name'],
+                      interval: doc['interval'],
+                      recipients: List.from(doc['recipients']),
+                      recipientsName: List.from(doc['recipientsName'])));
+                });
+                statsdata = generate_statsdata(todos);
+                _generateData(statsdata);
+                return Column(
+                  children: [
+                    _buildCard(),
+                    /*SizedBox(
+                      height: _deviceHeight * 0.025,
+                    ),*/
+                    Text('data'),
+                    _buildChart(context)
+                  ],
+                );
+              }
+            }));
   }
 
-  Widget _buildChart(BuildContext context, List<TodoListModel> todos) {
-    statsdata = generate_statsdata(todos);
-    _generateData(statsdata);
+  Widget _buildCard() {
+    return SizedBox(
+      height: _deviceHeight * 0.2,
+      width: _deviceHeight * 0.9,
+      child: Column(children: [
+        const Text('累计专注'),
+        Column(
+          children: [
+            Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: const [Text('次数'), Text('时长')]),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [Text('$cnt'), Text('$hour小时$min分钟')],
+            )
+          ],
+        )
+      ]),
+    );
+  }
+
+  Widget _buildChart(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.all(8.0),
+      padding: const EdgeInsets.all(8.0),
       child: Container(
+        height: _deviceHeight * 0.6,
+        width: _deviceWidth,
         child: Center(
           child: Column(
             children: <Widget>[
-              Text(
-                '数据统计',
-                style: TextStyle(fontSize: 24.0, fontWeight: FontWeight.bold),
-              ),
-              SizedBox(
+              const SizedBox(
                 height: 10.0,
               ),
               Expanded(
-                child: charts.BarChart(
-                  _seriesBarData,
-                  animate: true,
-                  animationDuration: Duration(seconds: 5),
-                  behaviors: [
-                    new charts.DatumLegend(
-                      entryTextStyle: charts.TextStyleSpec(
-                          color: charts.MaterialPalette.purple.shadeDefault,
-                          fontFamily: 'Georgia',
-                          fontSize: 18),
-                    )
-                  ],
-                ),
+                child: charts.LineChart(_seriesBarData,
+                    animate: true,
+                    animationDuration: const Duration(seconds: 2),
+                    defaultRenderer: charts.LineRendererConfig(
+                      includePoints: true,
+                    ),
+                    behaviors: [
+                      charts.ChartTitle('专注时常分布',
+                          behaviorPosition: charts.BehaviorPosition.top,
+                          titleOutsideJustification:
+                              charts.OutsideJustification.start,
+                          innerPadding: 18),
+                      charts.LinePointHighlighter(
+                          showHorizontalFollowLine:
+                              charts.LinePointHighlighterFollowLineType.nearest,
+                          showVerticalFollowLine:
+                              charts.LinePointHighlighterFollowLineType.none),
+                      charts.SelectNearest(
+                          eventTrigger: charts.SelectionTrigger.tapAndDrag)
+                    ],
+                    primaryMeasureAxis: const charts.NumericAxisSpec(
+                        renderSpec: charts.GridlineRendererSpec(
+                      // Display the measure axis labels below the gridline.
+                      //
+                      // 'Before' & 'after' follow the axis value direction.
+                      // Vertical axes draw 'before' below & 'after' above the tick.
+                      // Horizontal axes draw 'before' left & 'after' right the tick.
+                      labelAnchor: charts.TickLabelAnchor.before,
+
+                      // Left justify the text in the axis.
+                      //
+                      // Note: outside means that the secondary measure axis would right
+                      // justify.
+                      labelJustification: charts.TickLabelJustification.outside,
+                    )),
+                    domainAxis: charts.NumericAxisSpec(
+                        viewport: charts.NumericExtents(startmonth, endmonth),
+                        tickFormatterSpec: charts.BasicNumericTickFormatterSpec(
+                            (num? value) => '${value!.toInt()}月'))),
               ),
             ],
           ),

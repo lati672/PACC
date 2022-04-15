@@ -94,8 +94,7 @@ class _CheckWhiteListPageState extends State<CheckWhiteListPage> {
     _deviceWidth = MediaQuery.of(context).size.width;
     _deviceHeight = MediaQuery.of(context).size.height;
     _navigation = GetIt.instance.get<NavigationService>();
-    print(
-        'the sender role is ${widget.sender_role} and the receiver role is ${widget.receiver_role}');
+
     return Scaffold(
       body: SingleChildScrollView(
         physics: const BouncingScrollPhysics(),
