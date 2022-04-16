@@ -83,7 +83,10 @@ class _RegisterPageState extends State<RegisterPage> {
                 SizedBox(
                   height: _deviceHeight * .05,
                 ),
-                _registerForm(),
+                SizedBox(
+                  height: _deviceHeight*.35,
+                  child: _registerForm(),
+                ),
                 SizedBox(
                   height: _deviceHeight * .05,
                 ),
@@ -103,9 +106,6 @@ class _RegisterPageState extends State<RegisterPage> {
                   height: _deviceHeight * .05,
                 ),
                 _registerButton(),
-                SizedBox(
-                  height: _deviceHeight * .05,
-                ),
               ],
             ),
           ),
@@ -118,12 +118,13 @@ class _RegisterPageState extends State<RegisterPage> {
       onTap: () =>
           GetIt.instance.get<MediaService>().pickImageFromLibrary().then(
         (_file) {
-          if (_file != null)
+          if (_file != null) {
             setState(
               () {
                 _profileImage = _file;
               },
             );
+          }
         },
       ),
       child: () {
@@ -226,7 +227,7 @@ class _RegisterPageState extends State<RegisterPage> {
             });
           },
         ),
-        title: Text(
+        title: const Text(
           '学生',
           style: TextStyle(color: Colors.black),
         ),
@@ -241,7 +242,7 @@ class _RegisterPageState extends State<RegisterPage> {
             });
           },
         ),
-        title: Text(
+        title: const Text(
           '家长',
           style: TextStyle(color: Colors.black),
         ),
@@ -265,7 +266,7 @@ class _RegisterPageState extends State<RegisterPage> {
           );
           //print('regist completed');
           //* Upload the user image to the Firebase Storage
-          final _imageUrl;
+          final String? _imageUrl;
           if (_profileImage != null) {
             _imageUrl =
                 await _cloudStorageService.saveUserImageProfileToStorage(
@@ -282,7 +283,7 @@ class _RegisterPageState extends State<RegisterPage> {
             _uid,
             _email!,
             _name!,
-            _imageUrl,
+            _imageUrl!,
             isChecked ? 'Student' : 'Parent',
           );
           //print('user created');
