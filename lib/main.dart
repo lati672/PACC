@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:camera/camera.dart';
 
 // Packages
 import 'package:provider/provider.dart';
@@ -15,7 +16,15 @@ import './pages/login_page.dart';
 import './pages/register_page.dart';
 import './pages/home_page.dart';
 
-void main() {
+List<CameraDescription> cameras = [];
+
+Future<Null> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  try {
+    cameras = await availableCameras();
+  } on CameraException catch (e) {
+    print('Error: $e.code\nError Message: $e.message');
+  }
   runApp(
     SplashPage(
       key: UniqueKey(),
@@ -55,7 +64,7 @@ class MainApp extends StatelessWidget {
         routes: {
           '/login': (BuildContext _context) => const LoginPage(),
           '/register': (BuildContext _context) => const RegisterPage(),
-          '/home': (BuildContext _context) => const HomePage(),
+          '/home': (BuildContext _context) => HomePage(cameras: cameras),
         },
       ),
     );

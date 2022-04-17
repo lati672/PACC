@@ -4,6 +4,7 @@ import 'package:chatifyapp/pages/todolist_page.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:provider/provider.dart';
+import 'package:camera/camera.dart';
 
 // Providers
 import '../providers/authentication_provider.dart';
@@ -20,7 +21,9 @@ import '../widgets/custom_list_view_tiles.dart';
 import '../models/todo_list_model.dart';
 
 class ParentTodolistPage extends StatefulWidget {
-  const ParentTodolistPage({Key? key}) : super(key: key);
+  final List<CameraDescription> cameras;
+
+  const ParentTodolistPage({Key? key, required this.cameras}) : super(key: key);
 
   @override
   _ParentTodolistPageState createState() => _ParentTodolistPageState();
@@ -101,7 +104,8 @@ class _ParentTodolistPageState extends State<ParentTodolistPage> {
                     isActivity: true,
                     onTap: () =>
                         // _navigation.navigateToPage(TodoListPage(todo: _todos)),
-                        _navigation.navigateToPage(TodoListPage()),
+                        _navigation.navigateToPage(
+                            TodoListPage(cameras: widget.cameras)),
                   ),
                   Divider(
                     indent: _deviceWidth * .03,

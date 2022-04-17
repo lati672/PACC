@@ -6,17 +6,17 @@ import 'package:provider/provider.dart';
 import 'package:circular_countdown_timer/circular_countdown_timer.dart';
 import 'package:flutter/services.dart';
 import 'dart:async';
+import 'package:camera/camera.dart';
+import 'dart:io';
+import 'dart:convert';
 
 // Widgets
 import '../widgets/top_bar.dart';
 import '../widgets/custom_list_view_tiles.dart';
+import '../pages/takeVideo.dart';
 
 // Models
 import '../models/chats_model.dart';
-// import 'dart:io';
-// import 'dart:convert';
-// import 'package:image_picker/image_picker.dart';
-// import 'package:video_player/video_player.dart';
 //Models
 import '../models/todo_list_model.dart';
 // Providers
@@ -29,10 +29,15 @@ import '../services/navigation_service.dart';
 import '../services/database_service.dart';
 
 class PomodoroPage extends StatefulWidget {
-  const PomodoroPage({Key? key, required this.todo, required this.todoID})
+  const PomodoroPage(
+      {Key? key,
+      required this.todo,
+      required this.todoID,
+      required this.cameras})
       : super(key: key);
   final TodoListModel todo;
   final String todoID;
+  final List<CameraDescription> cameras;
   @override
   _PomodoroPageState createState() => _PomodoroPageState();
 }
@@ -41,8 +46,8 @@ Icon kPlayClockButton = const Icon(Icons.play_arrow_sharp);
 Icon kPauseClockButton = const Icon(Icons.pause_sharp);
 
 class _PomodoroPageState extends State<PomodoroPage> {
-// Icon Constants
-  int isStart = 0; //第一次开始番茄钟
+  bool isStart = false; //第一次开始番茄钟
+  bool isVideoOpen = false;
 
 // Time constants
   int kWorkDuration = 1;
@@ -57,6 +62,9 @@ class _PomodoroPageState extends State<PomodoroPage> {
   String str = "";
   List<String> appList = [];
   bool isOpenUsageAccess = false;
+  late Timer _appLockTimer;
+  late Timer _takeVideoTimer;
+  bool isVideoVisible = false;
 
   // Change Clock button icon and controller
   void switchClockActionButton() {
@@ -71,10 +79,23 @@ class _PomodoroPageState extends State<PomodoroPage> {
         // Processed on play
         _clockController.resume();
       }
+      //开启视频录制
+      setState(() {
+        isVideoOpen = true;
+      });
+      // appLockTimer();
+      takeVideoTimer();
     } else {
       // Processed on pause
       _clockButton = kPlayClockButton;
       _clockController.pause();
+      //停止视频录制
+      setState(() {
+        isVideoOpen = false;
+      });
+      //
+      // appLockTimer();
+      _takeVideoTimer.cancel();
     }
   }
 
@@ -82,7 +103,7 @@ class _PomodoroPageState extends State<PomodoroPage> {
   Widget build(BuildContext context) {
     _auth = Provider.of<AuthenticationProvider>(context);
     // Half Screen Dimensions
-    final double height = MediaQuery.of(context).size.height / 1.3;
+    final double height = MediaQuery.of(context).size.height / 3;
     final double width = MediaQuery.of(context).size.width / 1.5;
 
     _getWhitelist(); //初始化，获取白名单应用
@@ -118,11 +139,21 @@ class _PomodoroPageState extends State<PomodoroPage> {
           padding: const EdgeInsets.all(20.0),
           child: Column(
             children: <Widget>[
+              Opacity(
+                  opacity: isVideoVisible ? 1.0 : 0.0,
+                  child: Align(
+                    alignment: Alignment.topRight,
+                    child: TakeVideoScreen(
+                        cameras: widget.cameras,
+                        isVideoOpen: isVideoOpen,
+                        setIsVideoOpen: (_isVideoOpen) =>
+                            setIsVideoOpen(_isVideoOpen)),
+                  )),
               Center(
                 child: clock,
               ),
               Padding(
-                padding: const EdgeInsets.symmetric(vertical: 20.0),
+                padding: const EdgeInsets.symmetric(vertical: 80.0),
                 child: Container(
                     decoration: BoxDecoration(
                       color: Theme.of(context).primaryColor,
@@ -144,10 +175,9 @@ class _PomodoroPageState extends State<PomodoroPage> {
                                   setState(() {
                                     switchClockActionButton();
                                   });
-                                  if (isStart == 0) {
-                                    isStart = 1;
+                                  if (!isStart) {
+                                    isStart = true;
                                     startTodo();
-                                    myTimer();
                                   }
                                 }
                               });
@@ -208,14 +238,15 @@ class _PomodoroPageState extends State<PomodoroPage> {
                         ),
                         IconButton(
                           onPressed: () {
-                            //接深度学习图像检测模块
-                            // _testRecordTheScreen();
+                            setState(() {
+                              isVideoVisible = !isVideoVisible;
+                            });
                           },
                           icon: const Icon(Icons.photo_camera),
                         ),
                         IconButton(
                           onPressed: () {
-                            if (isStart == 1) {
+                            if (isStart) {
                               setState(() {
                                 switchClockActionButton();
                               });
@@ -274,14 +305,29 @@ class _PomodoroPageState extends State<PomodoroPage> {
   }
 
   int _count = 0;
-  void myTimer() {
+  void appLockTimer() {
     // 定义一个函数，将定时器包裹起来
-    Timer _timer = Timer.periodic(Duration(milliseconds: 5000), (t) {
+    _appLockTimer = Timer.periodic(Duration(milliseconds: 5000), (t) {
       _count++;
       if (_count == 15) {
         t.cancel(); // 定时器内部触发销毁
       }
       _appLock();
+    });
+  }
+
+  void takeVideoTimer() {
+    // 定义一个函数，将定时器包裹起来
+    _takeVideoTimer = Timer.periodic(Duration(milliseconds: 3000), (t) {
+      setState(() {
+        isVideoOpen = false;
+      });
+    });
+  }
+
+  setIsVideoOpen(_isVideoOpen) {
+    setState(() {
+      isVideoOpen = _isVideoOpen;
     });
   }
 
@@ -411,30 +457,6 @@ class _PomodoroPageState extends State<PomodoroPage> {
       },
     );
   }
-  // /// 录屏
-  // Future _testRecordTheScreen() async {
-  //   /// 打开摄像头录制视频，并限制时长5min
-  //   PickedFile? image = await ImagePicker().getVideo(
-  //       source: ImageSource.camera, maxDuration: Duration(minutes: 5));
-  //   late VideoPlayerController _controller;
-  //   if (image != null) {
-  //     /// 视频绝对路径地址
-  //     String path = image.path;
-  //     File f = File(path);
-  //     /// 文件大小，单位：B
-  //     int fileSize = 0;
-  //     /// 视频时长，单位：秒
-  //     int seconds = 0;
-  //     _controller = VideoPlayerController.file(f);
-  //     _controller.initialize().then((value) {
-  //       _controller.setLooping(true);
-  //       seconds = _controller.value.duration.inSeconds;
-  //       fileSize = f.lengthSync();
-  //     });
-  //     /// 视频名称
-  //     var name = path.substring(path.lastIndexOf("/") + 1, path.length);
-  //   }
-  // }
 }
 
 Widget _getModalSheetHeaderWithConfirm(String title, {onCancel, onConfirm}) {

@@ -3,6 +3,7 @@ import 'package:chatifyapp/pages/friends.dart';
 import 'package:chatifyapp/pages/user_profile_page.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:camera/camera.dart';
 
 // Pages
 import '../pages/chats_page.dart';
@@ -13,8 +14,9 @@ import '../pages/parent_todolist.dart';
 import '../providers/authentication_provider.dart';
 
 class HomePage extends StatefulWidget {
-  const HomePage({Key? key}) : super(key: key);
+  final List<CameraDescription> cameras;
 
+  const HomePage({Key? key, required this.cameras}) : super(key: key);
   @override
   _HomePageState createState() => _HomePageState();
 }
@@ -32,10 +34,12 @@ class _HomePageState extends State<HomePage> {
     final String role = _auth.user.role;
     _pages = [
       const ChatsPage(),
-      _auth.user.role == 'Student' ? TodoListPage() : ParentTodolistPage(),
+      _auth.user.role == 'Student'
+          ? TodoListPage(cameras: widget.cameras)
+          : ParentTodolistPage(cameras: widget.cameras),
       // TodoListPage(role: role),
       FriendsPage(role: role),
-      UserProfilePage()
+      UserProfilePage(),
     ];
     return _buildUI();
   }

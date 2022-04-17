@@ -3,6 +3,7 @@ import '../models/todo_list_model.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:provider/provider.dart';
+import 'package:camera/camera.dart';
 
 // Providers
 import '../providers/authentication_provider.dart';
@@ -21,7 +22,9 @@ import '../services/database_service.dart';
 import '../widgets/top_bar.dart';
 
 class TodoListPage extends StatefulWidget {
-  const TodoListPage({Key? key}) : super(key: key);
+  final List<CameraDescription> cameras;
+
+  const TodoListPage({Key? key, required this.cameras}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() {
@@ -131,7 +134,9 @@ class _TodoListState extends State<TodoListPage> {
                           ),
                           onPressed: () {
                             _navigation.navigateToPage(PomodoroPage(
-                                todo: todos[index], todoID: todosID?[index]));
+                                todo: todos[index],
+                                todoID: todosID?[index],
+                                cameras: widget.cameras));
                           })
                       : const Text(
                           '占位空白view，透明',

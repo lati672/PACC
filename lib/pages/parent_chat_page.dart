@@ -107,7 +107,7 @@ class _ParentChatPageState extends State<ParentChatPage> {
                     ),
                     secondaryAction: IconButton(
                       onPressed: () {
-                        _navigation.navigateToPage(HomePage());
+                        _navigation.goBack();
                       },
                       icon: const Icon(
                         Icons.arrow_back_ios,
