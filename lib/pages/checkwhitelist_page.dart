@@ -104,101 +104,47 @@ class _CheckWhiteListPageState extends State<CheckWhiteListPage> {
           width: _deviceWidth,
           height: _deviceHeight,
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisSize: MainAxisSize.max,
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: <Widget>[
-              TopBar(
-                (_auth.user.role + "审核白名单"),
-                //widget.chat.title(),
-                fontSize: 16,
-                primaryAction: IconButton(
-                  onPressed: () {
-                    //print('back');
-                    _navigation.goBack();
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisSize: MainAxisSize.max,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                _getModalSheetHeaderWithConfirm(
+                  '审批白名单',
+                  onCancel: () {
+                    Navigator.of(context).pop();
                   },
-                  icon: const Icon(
-                    Icons.arrow_back_ios,
-                    color: Color.fromRGBO(0, 82, 218, 1),
+                  onConfirm: () {
+                    List<String> tmp = generateAppList(selected.toList());
+                    str = generateMessage(tmp);
+                    Navigator.pop(context, str);
+                  },
+                ),
+                const Divider(height: 1.0),
+                Expanded(
+                  child: ListView.builder(
+                    itemBuilder: (BuildContext context, int index) {
+                      return ListTile(
+                        trailing: Icon(
+                            selected.contains(index)
+                                ? Icons.check_box
+                                : Icons.check_box_outline_blank,
+                            color: Theme.of(context).primaryColor),
+                        title: Text(widget.applist[index]),
+                        onTap: () {
+                          setState(() {
+                            if (selected.contains(index)) {
+                              selected.remove(index);
+                            } else {
+                              selected.add(index);
+                            }
+                          });
+                        },
+                      );
+                    },
+                    itemCount: widget.applist.length,
                   ),
                 ),
-              ),
-              RaisedButton(
-                onPressed: () {
-                  showModalBottomSheet(
-                    backgroundColor: Colors.transparent,
-                    isScrollControlled: true,
-                    context: context,
-                    builder: (BuildContext context) {
-                      return StatefulBuilder(builder: (context1, setState) {
-                        return Container(
-                          clipBehavior: Clip.antiAlias,
-                          decoration: const BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.only(
-                              topLeft: Radius.circular(20.0),
-                              topRight: Radius.circular(20.0),
-                            ),
-                          ),
-                          height: MediaQuery.of(context).size.height / 2.0,
-                          child: Column(children: [
-                            _getModalSheetHeaderWithConfirm(
-                              '白名单选择',
-                              onCancel: () {
-                                Navigator.of(context).pop();
-                              },
-                              onConfirm: () {
-                                Navigator.of(context).pop(selected.toList());
-
-                                List<String> tmp =
-                                    generateAppList(selected.toList());
-                                str = generateMessage(tmp);
-                                if (widget.sender_role == 'Parent') {
-                                  //show alert you cannot modify the whitelist
-                                  Navigator.pop(context);
-                                } else {
-                                  Navigator.pop(context, str);
-                                }
-
-                                //showAlertDialog(context);
-                              },
-                            ),
-                            const Divider(height: 1.0),
-                            Expanded(
-                              child: ListView.builder(
-                                itemBuilder: (BuildContext context, int index) {
-                                  return ListTile(
-                                    trailing: Icon(
-                                        selected.contains(index)
-                                            ? Icons.check_box
-                                            : Icons.check_box_outline_blank,
-                                        color: Theme.of(context).primaryColor),
-                                    title: Text(widget.applist[index]),
-                                    onTap: () {
-                                      setState(() {
-                                        if (selected.contains(index)) {
-                                          selected.remove(index);
-                                        } else {
-                                          selected.add(index);
-                                        }
-                                        //print('currently selected$selected');
-                                      });
-                                    },
-                                  );
-                                },
-                                itemCount: widget.applist.length,
-                              ),
-                            ),
-                          ]),
-                        );
-                      });
-                    },
-                  );
-                },
-                child: const Text("白名单选择"),
-              ),
-            ],
-          ),
+              ]),
         ),
       ),
     );

@@ -1,5 +1,4 @@
 // Packages
-import 'package:chatifyapp/providers/chat_page_provider.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
@@ -11,7 +10,7 @@ import '../widgets/top_bar.dart';
 
 // Providers
 import '../providers/authentication_provider.dart';
-import '../providers/chat_page_provider.dart';
+import '../providers/whitelist_provider.dart';
 
 import '../services/navigation_service.dart';
 
@@ -29,39 +28,19 @@ class _WhiteListPageState extends State<WhiteListPage> {
   late double _deviceHeight;
   bool is_sent = false;
   bool checkState = false;
-  List<String> appList = [];
   late AuthenticationProvider _auth;
-  late ChatPageProvider _pageProvider;
+  late WhitelistPageProvider _pageProvider;
   late NavigationService _navigation;
   late GlobalKey<FormState> _messageFormState;
   late ScrollController _messagesListViewController;
   String str = "";
+  List<String> appList = [];
 
   Set<int> selected = Set<int>();
   @override
   void initState() {
     super.initState();
     checkState = true;
-    _getAppList();
-  }
-
-  void _getAppList() async {
-    const platform = const MethodChannel('samples.flutter.dev');
-    // Future future = platform.invokeMethod('initBlueTooth');
-    try {
-      // 通过渠道，调用原生代码代码的方法
-      //Future future = channel.invokeMethod("your_method_name", {"msg": msg} );
-      String str = await platform.invokeMethod('getAppList');
-      // 打印执行的结果
-      // print(str);
-      // _appList = str;
-      var strList = str.split('/n');
-      for (var i = 0; i < strList.length - 1; i++) {
-        appList.add(strList[i]);
-      }
-    } on PlatformException catch (e) {
-      print(e.toString());
-    }
   }
 
   List<String> generateAppList(List<int> numseq) {
@@ -119,103 +98,79 @@ class _WhiteListPageState extends State<WhiteListPage> {
     _auth = Provider.of<AuthenticationProvider>(context);
     _navigation = GetIt.instance.get<NavigationService>();
 
-    return Scaffold(
-      body: SingleChildScrollView(
-        physics: const BouncingScrollPhysics(),
-        child: Container(
-          padding: EdgeInsets.symmetric(
-              horizontal: _deviceWidth * .03, vertical: _deviceHeight * .02),
-          width: _deviceWidth,
-          height: _deviceHeight,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisSize: MainAxisSize.max,
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: <Widget>[
-              TopBar(
-                "白名单",
-                //widget.chat.title(),
-                fontSize: 16,
-                primaryAction: IconButton(
-                  onPressed: () {
-                    //print('back');
-                    _navigation.goBack();
-                  },
-                  icon: const Icon(
-                    Icons.arrow_back_ios,
-                    color: Color.fromRGBO(0, 82, 218, 1),
-                  ),
-                ),
-              ),
-              RaisedButton(
-                onPressed: () {
-                  showModalBottomSheet(
-                    backgroundColor: Colors.transparent,
-                    isScrollControlled: true,
-                    context: context,
-                    builder: (BuildContext context) {
-                      return StatefulBuilder(builder: (context1, setState) {
-                        return Container(
-                          clipBehavior: Clip.antiAlias,
-                          decoration: const BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.only(
-                              topLeft: const Radius.circular(20.0),
-                              topRight: const Radius.circular(20.0),
-                            ),
-                          ),
-                          height: MediaQuery.of(context).size.height / 2.0,
-                          child: Column(children: [
-                            _getModalSheetHeaderWithConfirm(
-                              '白名单选择',
-                              onCancel: () {
-                                Navigator.of(context).pop();
-                              },
-                              onConfirm: () {
-                                Navigator.of(context).pop(selected.toList());
-                                List<String> tmp =
-                                    generateAppList(selected.toList());
-                                str = generateMessage(tmp);
-                                Navigator.pop(context, str);
-                              },
-                            ),
-                            const Divider(height: 1.0),
-                            Expanded(
-                              child: ListView.builder(
-                                itemBuilder: (BuildContext context, int index) {
-                                  return ListTile(
-                                    trailing: Icon(
-                                        selected.contains(index)
-                                            ? Icons.check_box
-                                            : Icons.check_box_outline_blank,
-                                        color: Theme.of(context).primaryColor),
-                                    title: Text(appList[index]),
-                                    onTap: () {
-                                      setState(() {
-                                        if (selected.contains(index)) {
-                                          selected.remove(index);
-                                        } else {
-                                          selected.add(index);
-                                        }
-                                      });
-                                    },
-                                  );
-                                },
-                                itemCount: appList.length,
-                              ),
-                            ),
-                          ]),
-                        );
-                      });
-                    },
-                  );
-                },
-                child: const Text("白名单选择"),
-              ),
-            ],
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider<WhitelistPageProvider>(
+          create: (_) => WhitelistPageProvider(_auth),
+        )
+      ],
+      child: _buildUI(),
+    );
+  }
+
+  Widget _buildUI() {
+    return Builder(
+      builder: (_context) {
+        //* Triggers the info in the widgets to render themselves
+        _pageProvider = _context.watch<WhitelistPageProvider>();
+        List<String>? _appList = _pageProvider.appList;
+        if (_appList != null) {
+          appList = _appList;
+        }
+        return Scaffold(
+          body: SingleChildScrollView(
+            physics: const BouncingScrollPhysics(),
+            child: Container(
+              padding: EdgeInsets.symmetric(
+                  horizontal: _deviceWidth * .03,
+                  vertical: _deviceHeight * .02),
+              width: _deviceWidth,
+              height: _deviceHeight,
+              child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisSize: MainAxisSize.max,
+                  children: [
+                    _getModalSheetHeaderWithConfirm(
+                      '白名单选择',
+                      onCancel: () {
+                        Navigator.of(context).pop();
+                      },
+                      onConfirm: () {
+                        List<String> tmp = generateAppList(selected.toList());
+                        str = generateMessage(tmp);
+                        Navigator.pop(context, str);
+                      },
+                    ),
+                    const Divider(height: 1.0),
+                    Expanded(
+                      child: ListView.builder(
+                        itemBuilder: (BuildContext context, int index) {
+                          return ListTile(
+                            trailing: Icon(
+                                selected.contains(index)
+                                    ? Icons.check_box
+                                    : Icons.check_box_outline_blank,
+                                color: Theme.of(context).primaryColor),
+                            title: Text(appList[index]),
+                            onTap: () {
+                              setState(() {
+                                if (selected.contains(index)) {
+                                  selected.remove(index);
+                                } else {
+                                  selected.add(index);
+                                }
+                              });
+                            },
+                          );
+                        },
+                        itemCount: appList.length,
+                      ),
+                    ),
+                  ]),
+            ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 }
