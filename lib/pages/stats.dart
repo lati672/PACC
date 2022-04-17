@@ -27,8 +27,8 @@ import '../services/navigation_service.dart';
 import '../services/database_service.dart';
 
 class StatsPage extends StatefulWidget {
-  const StatsPage({Key? key}) : super(key: key);
-
+  const StatsPage({Key? key, required this.uid}) : super(key: key);
+  final String uid;
   @override
   _StatsPageState createState() => _StatsPageState();
 }
@@ -81,16 +81,16 @@ class _StatsPageState extends State<StatsPage> {
     }
     startmonth = 0;
     endmonth = 11;
-    while (stats[startmonth].focustime == 0) {
+    while (startmonth < 11 && stats[startmonth].focustime == 0) {
       startmonth++;
     }
-    while (stats[endmonth].focustime == 0) {
+    while (endmonth > 0 && stats[endmonth].focustime == 0) {
       endmonth--;
     }
     if (startmonth == 11 && endmonth == 0) {
-      startmonth = endmonth = DateTime.now().month;
+      startmonth = DateTime.now().month - 1;
+      endmonth = DateTime.now().month;
     }
-
     endmonth += 1;
     startmonth += 1;
     hour = focustime ~/ 60;
@@ -142,6 +142,9 @@ class _StatsPageState extends State<StatsPage> {
               ),
             ),
           ),
+          SizedBox(
+            height: _deviceHeight * 0.025,
+          ),
           _buildBody(context),
         ],
       ),
@@ -151,7 +154,7 @@ class _StatsPageState extends State<StatsPage> {
   Widget _buildBody(BuildContext context) {
     return Expanded(
         child: StreamBuilder<QuerySnapshot>(
-            stream: _database.getUserTodoList(_auth.user.uid),
+            stream: _database.getUserTodoList(widget.uid),
             builder: (context, snapshot) {
               if (!snapshot.hasData) {
                 return const LinearProgressIndicator();
@@ -174,10 +177,9 @@ class _StatsPageState extends State<StatsPage> {
                 return Column(
                   children: [
                     _buildCard(),
-                    /*SizedBox(
+                    SizedBox(
                       height: _deviceHeight * 0.025,
-                    ),*/
-                    Text('data'),
+                    ),
                     _buildChart(context)
                   ],
                 );
@@ -186,23 +188,45 @@ class _StatsPageState extends State<StatsPage> {
   }
 
   Widget _buildCard() {
-    return SizedBox(
-      height: _deviceHeight * 0.2,
-      width: _deviceHeight * 0.9,
-      child: Column(children: [
-        const Text('累计专注'),
-        Column(
-          children: [
-            Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: const [Text('次数'), Text('时长')]),
-            Row(
+    const bigerstyle = TextStyle(color: Colors.lightBlue, fontSize: 30);
+    const smallerstyle = TextStyle(color: Colors.lightBlue, fontSize: 20);
+    return Container(
+      decoration: BoxDecoration(
+          border: Border.all(color: Colors.blueGrey),
+          borderRadius: const BorderRadius.all(Radius.circular(20))),
+      child: SizedBox(
+        height: _deviceHeight * 0.2,
+        width: _deviceWidth * 0.9,
+        child:
+            Column(mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
+          const Text(
+            '累计专注',
+            style: bigerstyle,
+          ),
+          Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [Text('$cnt'), Text('$hour小时$min分钟')],
-            )
-          ],
-        )
-      ]),
+              children: const [
+                Text('次数', style: smallerstyle),
+                Text(
+                  '时长',
+                  style: smallerstyle,
+                )
+              ]),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              Text(
+                '$cnt',
+                style: smallerstyle,
+              ),
+              Text(
+                '$hour小时$min分钟',
+                style: smallerstyle,
+              )
+            ],
+          )
+        ]),
+      ),
     );
   }
 
@@ -211,7 +235,10 @@ class _StatsPageState extends State<StatsPage> {
       padding: const EdgeInsets.all(8.0),
       child: Container(
         height: _deviceHeight * 0.6,
-        width: _deviceWidth,
+        width: _deviceWidth * 0.9,
+        decoration: BoxDecoration(
+            border: Border.all(color: Colors.blueGrey),
+            borderRadius: const BorderRadius.all(Radius.circular(20))),
         child: Center(
           child: Column(
             children: <Widget>[
@@ -227,6 +254,8 @@ class _StatsPageState extends State<StatsPage> {
                     ),
                     behaviors: [
                       charts.ChartTitle('专注时常分布',
+                          titleStyleSpec:
+                              const charts.TextStyleSpec(fontSize: 25),
                           behaviorPosition: charts.BehaviorPosition.top,
                           titleOutsideJustification:
                               charts.OutsideJustification.start,
@@ -239,21 +268,6 @@ class _StatsPageState extends State<StatsPage> {
                       charts.SelectNearest(
                           eventTrigger: charts.SelectionTrigger.tapAndDrag)
                     ],
-                    primaryMeasureAxis: const charts.NumericAxisSpec(
-                        renderSpec: charts.GridlineRendererSpec(
-                      // Display the measure axis labels below the gridline.
-                      //
-                      // 'Before' & 'after' follow the axis value direction.
-                      // Vertical axes draw 'before' below & 'after' above the tick.
-                      // Horizontal axes draw 'before' left & 'after' right the tick.
-                      labelAnchor: charts.TickLabelAnchor.before,
-
-                      // Left justify the text in the axis.
-                      //
-                      // Note: outside means that the secondary measure axis would right
-                      // justify.
-                      labelJustification: charts.TickLabelJustification.outside,
-                    )),
                     domainAxis: charts.NumericAxisSpec(
                         viewport: charts.NumericExtents(startmonth, endmonth),
                         tickFormatterSpec: charts.BasicNumericTickFormatterSpec(

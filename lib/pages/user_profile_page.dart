@@ -70,20 +70,20 @@ class _UserProfilePageState extends State<UserProfilePage> {
                 '退出登录',
                 style: TextStyle(color: Colors.black, fontSize: 20),
               )),
-          TextButton(
+          /*TextButton(
               onPressed: () {
                 _navigation.navigateToPage(TestPage());
               },
               child: const Text(
                 '测试界面',
                 style: TextStyle(color: Colors.black, fontSize: 20),
-              )),
+              )),*/
           TextButton(
               onPressed: () {
-                _navigation.navigateToPage(StatsPage());
+                _navigation.navigateToPage(StatsPage(uid: _auth.user.uid));
               },
               child: const Text(
-                '图表',
+                '数据统计',
                 style: TextStyle(color: Colors.black, fontSize: 20),
               )),
           Container(color: Colors.black12, height: 7),

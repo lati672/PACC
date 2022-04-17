@@ -73,9 +73,7 @@ class _ChatsPageState extends State<ChatsPage> {
             mainAxisAlignment: MainAxisAlignment.start,
             mainAxisSize: MainAxisSize.max,
             children: [
-              TopBar(
-                '番茄钟' + (_auth.user.role == 'Student' ? '学生端' : '家长端'),
-              ),
+              const TopBar('聊天'),
               _chatsList(),
             ],
           ),
@@ -133,9 +131,25 @@ class _ChatsPageState extends State<ChatsPage> {
       //The chat may not have any messages when created
       // final content = _chat.messages.first.content;
       //print('messages content: $content');
-      _subtitleText = _chat.messages.first.type != MessageType.text
+      switch (_chat.messages.first.type) {
+        case MessageType.text:
+          _subtitleText = _chat.messages.first.content;
+          break;
+        case MessageType.image:
+          _subtitleText = '图片';
+          break;
+        case MessageType.whitelist:
+          _subtitleText = '白名单';
+          break;
+        case MessageType.confirm:
+          _subtitleText = '好友请求';
+          break;
+        default:
+          _subtitleText = '';
+      }
+      /*_subtitleText = _chat.messages.first.type != MessageType.text
           ? 'Media Attachment'
-          : _chat.messages.first.content;
+          : _chat.messages.first.content;*/
       //print('subtitletest: $_subtitleText');
     }
     return Column(children: [

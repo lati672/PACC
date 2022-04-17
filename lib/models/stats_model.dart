@@ -1,5 +1,3 @@
-import './todo_list_model.dart';
-
 class StatsModel {
   int focustime;
   int nummonth;

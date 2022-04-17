@@ -551,6 +551,62 @@ class DatabaseService {
     }
   }
 
+  //updata a todo list status to doing
+  Future<void> updateTodoListStatustoDoing(String _todoID) async {
+    try {
+      await _dataBase.collection(todolistCollection).doc(_todoID).set(
+        {
+          'start_time': Timestamp.fromDate(DateTime.now()),
+          'status': 'doing',
+        },
+      );
+    } catch (error) {
+      debugPrint('$error');
+    }
+  }
+
+  //updata a todo list status to done
+  Future<void> updateTodoListStatustoDone(String _todoID) async {
+    try {
+      await _dataBase.collection(todolistCollection).doc(_todoID).set(
+        {
+          'status': 'done',
+        },
+      );
+    } catch (error) {
+      debugPrint('$error');
+    }
+  }
+
+//updata a todo list status to interrupted
+  Future<void> updateTodoListStatustoInterrupted(String _todoID) async {
+    try {
+      await _dataBase.collection(todolistCollection).doc(_todoID).set(
+        {
+          'status': 'interrupted',
+        },
+      );
+      //String chatid = await getChatid(_uid1, _uid2)
+    } catch (error) {
+      debugPrint('$error');
+    }
+  }
+
+  //get the current status of a todo list
+  Future<String> getTodolistStatus(String _todoID) async {
+    try {
+      String status = '';
+      DocumentSnapshot docshot =
+          await _dataBase.collection(todolistCollection).doc(_todoID).get();
+      status = docshot['stats'];
+      return status;
+    } catch (error) {
+      debugPrint('$error');
+      throw ('todolist not found!');
+    }
+  }
+
+  //#Parent-Student
   // check whether the chat members are friend
   Future<bool> checkFriendsbyChatid(String _chatid) async {
     bool result = false;
@@ -572,7 +628,6 @@ class DatabaseService {
     return result;
   }
 
-  //#Parent-Student
   //add a new parent-student relationship
   Future<void> addParentStudentRel(String _chatid) async {
     try {

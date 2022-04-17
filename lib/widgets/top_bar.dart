@@ -34,21 +34,31 @@ class _TopBarState extends State<TopBar> {
 
   Widget _buildUI() {
     return Container(
-      color: Colors.white24,
+        color: Colors.white24,
         child: SizedBox(
-      width: _deviceWidth,
-      height: _deviceHeight*.07,
-      child: Row(
-        mainAxisSize: MainAxisSize.max,
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          if (widget.secondaryAction != null) widget.secondaryAction!,
-          _titleBar(),
-          if (widget.primaryAction != null) widget.primaryAction!,
-        ],
-      ),
-    ));
+          width: _deviceWidth,
+          height: _deviceHeight * .07,
+          child: Row(
+            mainAxisSize: MainAxisSize.max,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              if (widget.secondaryAction != null)
+                widget.secondaryAction!
+              else
+                Container(
+                  width: 30,
+                ),
+              _titleBar(),
+              if (widget.primaryAction != null)
+                widget.primaryAction!
+              else
+                Container(
+                  width: 30,
+                ),
+            ],
+          ),
+        ));
   }
 
   Widget _titleBar() {

@@ -1,5 +1,6 @@
 // Packages
 import 'package:chatifyapp/pages/addfriends.dart';
+import 'package:chatifyapp/pages/stats.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
@@ -17,6 +18,7 @@ import 'package:chatifyapp/pages/parent_chat_page.dart';
 
 //Widget
 import '../widgets/top_bar.dart';
+import '../widgets/rounded_image_network.dart';
 // Models
 import 'package:chatifyapp/models/chat_user_model.dart';
 import 'package:chatifyapp/models/chats_model.dart';
@@ -77,20 +79,39 @@ class _FriendsState extends State<FriendsPage> {
                     return ListView.builder(
                       itemCount: _users.length,
                       itemBuilder: (context, index) {
-                        return TextButton(
-                            onPressed: () async {
-                              String chatid = await _database.getChatid(
-                                  _auth.user.uid, _users[index].uid);
-                              ChatsModel _chat = await _database
-                                  .getChatsbyChatId(chatid, _auth.user.uid);
-                              _navigation
-                                  .navigateToPage(ParentChatPage(chat: _chat));
-                            },
-                            child: Text(
-                              _users[index].name,
-                              style: const TextStyle(
-                                  color: Color.fromARGB(255, 15, 11, 11),
-                                  fontSize: 20),
+                        return SizedBox(
+                            height: _deviceHeight * 0.1,
+                            width: _deviceWidth * 0.9,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                RoundedImageNetwork(
+                                    imagePath: _users[index].imageUrl,
+                                    size: _deviceHeight * .08),
+                                TextButton(
+                                    onPressed: () async {
+                                      String chatid = await _database.getChatid(
+                                          _auth.user.uid, _users[index].uid);
+                                      ChatsModel _chat =
+                                          await _database.getChatsbyChatId(
+                                              chatid, _auth.user.uid);
+                                      _navigation.navigateToPage(
+                                          ParentChatPage(chat: _chat));
+                                    },
+                                    child: Text(
+                                      _users[index].name,
+                                      style: const TextStyle(
+                                          color:
+                                              Color.fromARGB(255, 15, 11, 11),
+                                          fontSize: 20),
+                                    )),
+                                IconButton(
+                                    onPressed: () => {
+                                          _navigation.navigateToPage(
+                                              StatsPage(uid: _users[index].uid))
+                                        },
+                                    icon: const Icon(Icons.bar_chart))
+                              ],
                             ));
                       },
                     );
@@ -143,19 +164,32 @@ class _FriendsState extends State<FriendsPage> {
                     return ListView.builder(
                       itemCount: _users.length,
                       itemBuilder: (context, index) {
-                        return TextButton(
-                            onPressed: () async {
-                              String chatid = await _database.getChatid(
-                                  _auth.user.uid, _users[index].uid);
-                              ChatsModel _chat = await _database
-                                  .getChatsbyChatId(chatid, _auth.user.uid);
-                              _navigation
-                                  .navigateToPage(ParentChatPage(chat: _chat));
-                            },
-                            child: Text(
-                              _users[index].name,
-                              style: const TextStyle(
-                                  color: Colors.black, fontSize: 20),
+                        return SizedBox(
+                            height: _deviceHeight * 0.1,
+                            width: _deviceWidth * 0.9,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                RoundedImageNetwork(
+                                    imagePath: _users[index].imageUrl,
+                                    size: _deviceHeight * .08),
+                                TextButton(
+                                    onPressed: () async {
+                                      String chatid = await _database.getChatid(
+                                          _auth.user.uid, _users[index].uid);
+                                      ChatsModel _chat =
+                                          await _database.getChatsbyChatId(
+                                              chatid, _auth.user.uid);
+                                      _navigation.navigateToPage(
+                                          ParentChatPage(chat: _chat));
+                                    },
+                                    child: Text(
+                                      _users[index].name,
+                                      style: const TextStyle(
+                                          color: Colors.black, fontSize: 20),
+                                    )),
+                                Container(width: _deviceWidth * 0.1)
+                              ],
                             ));
                       },
                     );

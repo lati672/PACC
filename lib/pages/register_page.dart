@@ -84,7 +84,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   height: _deviceHeight * .05,
                 ),
                 SizedBox(
-                  height: _deviceHeight*.35,
+                  height: _deviceHeight * .42,
                   child: _registerForm(),
                 ),
                 SizedBox(
@@ -94,11 +94,11 @@ class _RegisterPageState extends State<RegisterPage> {
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
                       SizedBox(
-                        width: 150,
+                        width: _deviceWidth * 0.4,
                         child: buildStudentCheckbox(),
                       ),
                       SizedBox(
-                        width: 150,
+                        width: _deviceWidth * 0.4,
                         child: buildParentCheckbox(),
                       ),
                     ]),
@@ -142,14 +142,6 @@ class _RegisterPageState extends State<RegisterPage> {
             image: 'assets/images/default-image.jpg',
             size: _deviceHeight * .15,
           );
-          /*
-          return RoundedImageNetwork(
-            key: UniqueKey(),
-            size: _deviceHeight * .15,
-            //imagePath: '../image/default-profile-icon-24.jpg'
-            imagePath:
-                'https://icon-library.com/images/default-profile-icon/default-profile-icon-24.jpg', //'http://i.pravatar.cc/1000?img=65',
-          );*/
         }
       }(),
     );
@@ -157,7 +149,7 @@ class _RegisterPageState extends State<RegisterPage> {
 
   Widget _registerForm() {
     return Container(
-      constraints: const BoxConstraints(maxHeight: 300),
+      constraints: BoxConstraints(maxHeight: _deviceHeight * 0.45),
       child: Form(
         key: _registerFormKey,
         child: Column(
@@ -165,7 +157,8 @@ class _RegisterPageState extends State<RegisterPage> {
           mainAxisSize: MainAxisSize.max,
           children: [
             Container(
-              margin: const EdgeInsets.symmetric(vertical: 15),
+              margin: EdgeInsets.symmetric(vertical: _deviceHeight * 0.02),
+              height: _deviceHeight * 0.1,
               width: _deviceWidth * .80,
               child: CustomTextFormField(
                 onSaved: (_value) {
@@ -173,15 +166,16 @@ class _RegisterPageState extends State<RegisterPage> {
                     _name = _value;
                   });
                 },
-                regularExpression: r'.{8}',
-                hintText: '用户名，长度需大于8位',
+                regularExpression: r'.{2}',
+                hintText: '用户名，长度需大于2位',
                 obscureText: false,
               ),
             ),
             // *Name
             // *Email Field
             Container(
-                margin: const EdgeInsets.symmetric(vertical: 15),
+                margin: EdgeInsets.symmetric(vertical: _deviceHeight * 0.02),
+                height: _deviceHeight * 0.1,
                 width: _deviceWidth * .80,
                 child: CustomTextFormField(
                   onSaved: (_value) {
@@ -197,16 +191,17 @@ class _RegisterPageState extends State<RegisterPage> {
             // TODO: Add Hide/Show Password toggle
             // *Password Field
             Container(
-              margin: const EdgeInsets.symmetric(vertical: 15),
+              margin: EdgeInsets.symmetric(vertical: _deviceHeight * 0.02),
               width: _deviceWidth * .80,
-              child:CustomTextFormField(
+              height: _deviceHeight * 0.1,
+              child: CustomTextFormField(
                 onSaved: (_value) {
                   setState(() {
                     _password = _value;
                   });
                 },
                 regularExpression: r".{8,}", //Password longer than 8 char
-                hintText: '密码长度需大于8位',
+                hintText: '密码长度需大于等于8位',
                 obscureText: true,
               ),
             )

@@ -83,6 +83,47 @@ class CustomListViewTileWithActivity extends StatelessWidget {
   }
 }
 
+class CustomFriendsListViewTile extends StatelessWidget {
+  const CustomFriendsListViewTile({
+    Key? key,
+    required this.height,
+    required this.title,
+    required this.isActive,
+    required this.imagePath,
+    required this.onTap,
+  }) : super(key: key);
+
+  final double height;
+  final String title;
+  final bool isActive;
+  final String imagePath;
+
+  final Function onTap;
+
+  //chats页对话列表的item
+  @override
+  Widget build(BuildContext context) {
+    return ListTile(
+      minVerticalPadding: height * .20,
+      onTap: () => onTap(),
+      leading: RoundedIMageNetworkWithStatusIndicator(
+        key: UniqueKey(),
+        imagePath: imagePath,
+        size: height / 2,
+        isActive: isActive,
+      ),
+      title: Text(
+        title,
+        style: const TextStyle(
+          color: Colors.black26,
+          fontSize: 18,
+          fontWeight: FontWeight.w500,
+        ),
+      ),
+    );
+  }
+}
+
 class CustomChatListViewTile extends StatelessWidget {
   ///* 聊天界面中的每一行消息
   const CustomChatListViewTile({
