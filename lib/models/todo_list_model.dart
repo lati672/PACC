@@ -6,11 +6,11 @@ import '../models/chat_message_model.dart';
 class TodoListModel {
   final String senderid;
   final String description;
-  final DateTime start_time;
-  String status;
+  final List<DateTime> start_time;
+  List<String> status;
   final String todolist_name;
   final int interval;
-  final DateTime sent_time;
+  final List<DateTime> sent_time;
 
   final List<String> recipients;
   final List<String> recipientsName;
@@ -18,10 +18,8 @@ class TodoListModel {
   TodoListModel({
     required this.senderid,
     required this.start_time,
-    // required this.status,
-    this.status = "todo",
-    // required this.description,
-    this.description = "",
+    required this.status,
+    required this.description,
     required this.todolist_name,
     required this.interval,
     required this.recipients,
@@ -30,10 +28,13 @@ class TodoListModel {
   });
   factory TodoListModel.fromJson(Map<String, dynamic> _json) {
     return TodoListModel(
-        sent_time: _json['sent_time'].toDate(),
+        sent_time: List.from(_json['sent_time']),
+        // sent_time: _json['sent_time'].toDate(),
         senderid: _json['senderid'],
-        start_time: _json['start_time'].toDate(),
-        status: _json['status'],
+        start_time: List.from(_json['start_time']),
+        // start_time: _json['start_time'].toDate(),
+        status: List.from(_json['status']),
+        // status: _json['status'],
         description: _json['description'],
         todolist_name: _json['todolist_name'],
         interval: _json['interval'],

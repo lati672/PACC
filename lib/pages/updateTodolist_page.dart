@@ -352,8 +352,8 @@ class _UpdateTodoListState extends State<UpdateTodoListPage> {
     }
     TodoListModel newTodo = TodoListModel(
       senderid: widget.todo.senderid,
-      start_time: DateTime.now(),
-      status: "todo",
+      start_time: [DateTime.now()],
+      status: ["todo"],
       description: _controller2.text,
       todolist_name: _controller1.text,
       interval: _interval,

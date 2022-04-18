@@ -334,8 +334,8 @@ class _PomodoroPageState extends State<PomodoroPage> {
   void startTodo() async {
     TodoListModel newTodo = TodoListModel(
       senderid: widget.todo.senderid,
-      start_time: DateTime.now(),
-      status: "doing",
+      start_time: [DateTime.now()],
+      status: ["doing"],
       description: widget.todo.description,
       todolist_name: widget.todo.todolist_name,
       interval: widget.todo.interval,
@@ -350,7 +350,7 @@ class _PomodoroPageState extends State<PomodoroPage> {
     TodoListModel newTodo = TodoListModel(
       senderid: widget.todo.senderid,
       start_time: widget.todo.start_time,
-      status: "done",
+      status: ["done"],
       description: widget.todo.description,
       todolist_name: widget.todo.todolist_name,
       interval: widget.todo.interval,
@@ -364,8 +364,8 @@ class _PomodoroPageState extends State<PomodoroPage> {
   stopTodo() async {
     TodoListModel newTodo = TodoListModel(
       senderid: widget.todo.senderid,
-      start_time: DateTime.now(),
-      status: "todo",
+      start_time: [DateTime.now()],
+      status: ["todo"],
       description: widget.todo.description,
       todolist_name: widget.todo.todolist_name,
       interval: widget.todo.interval,

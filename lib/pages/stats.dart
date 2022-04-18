@@ -72,7 +72,7 @@ class _StatsPageState extends State<StatsPage> {
             focustime: 0, nummonth: index + 1, month: months[index]));
 
     for (var i = 0; i < todos.length; i++) {
-      int m = todos[i].start_time.month;
+      int m = todos[i].start_time[i].month;
       if (todos[i].status == 'done') {
         stats[m - 1].focustime += todos[i].interval;
         cnt++;
@@ -162,10 +162,12 @@ class _StatsPageState extends State<StatsPage> {
                 List<TodoListModel> todos = [];
                 snapshot.data!.docs.forEach((doc) {
                   todos.add(TodoListModel(
-                      sent_time: doc['sent_time'].toDate(),
+                      sent_time: List.generate(doc['sent_time'].length,
+                          (index) => doc['sent_time'][index].toDate()),
                       senderid: doc['senderid'],
-                      start_time: doc['start_time'].toDate(),
-                      status: doc['status'],
+                      start_time: List.generate(doc['start_time'].length,
+                          (index) => doc['start_time'][index].toDate()),
+                      status: List.from(doc['status']),
                       description: doc['description'],
                       todolist_name: doc['todolist_name'],
                       interval: doc['interval'],
