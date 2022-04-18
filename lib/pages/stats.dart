@@ -41,6 +41,7 @@ class _StatsPageState extends State<StatsPage> {
   late AuthenticationProvider _auth;
   late ChatPageProvider _pageProvider;
   late NavigationService _navigation;
+  List<int> pos = [];
   int startmonth = 0;
   int endmonth = 11;
   int cnt = 0;
@@ -72,8 +73,8 @@ class _StatsPageState extends State<StatsPage> {
             focustime: 0, nummonth: index + 1, month: months[index]));
 
     for (var i = 0; i < todos.length; i++) {
-      int m = todos[i].start_time[i].month;
-      if (todos[i].status == 'done') {
+      int m = todos[i].start_time[pos[i]].month;
+      if (todos[i].status[pos[i]] == 'done') {
         stats[m - 1].focustime += todos[i].interval;
         cnt++;
         focustime += todos[i].interval;
@@ -161,9 +162,9 @@ class _StatsPageState extends State<StatsPage> {
               } else {
                 List<TodoListModel> todos = [];
                 snapshot.data!.docs.forEach((doc) {
+                  print('the doc id is ${doc.id}');
                   todos.add(TodoListModel(
-                      sent_time: List.generate(doc['sent_time'].length,
-                          (index) => doc['sent_time'][index].toDate()),
+                      sent_time: doc['sent_time'].toDate(),
                       senderid: doc['senderid'],
                       start_time: List.generate(doc['start_time'].length,
                           (index) => doc['start_time'][index].toDate()),
@@ -174,6 +175,14 @@ class _StatsPageState extends State<StatsPage> {
                       recipients: List.from(doc['recipients']),
                       recipientsName: List.from(doc['recipientsName'])));
                 });
+                for (var i = 0; i < todos.length; i++) {
+                  for (var j = 0; j < todos[i].recipients.length; j++) {
+                    if (todos[i].recipients[j] == _auth.user.uid) {
+                      pos.add(j);
+                      break;
+                    }
+                  }
+                }
                 statsdata = generate_statsdata(todos);
                 _generateData(statsdata);
                 return Column(

@@ -335,7 +335,7 @@ class _AddTodoListState extends State<AddTodoListPage> {
       recipients: [_auth.user.uid],
       // recipients: recipients,
       recipientsName: recipientsName,
-      sent_time: [DateTime.now()],
+      sent_time: DateTime.now(),
     );
     await _database.addTodoList(newTodo);
 

@@ -10,7 +10,7 @@ class TodoListModel {
   List<String> status;
   final String todolist_name;
   final int interval;
-  final List<DateTime> sent_time;
+  final DateTime sent_time;
 
   final List<String> recipients;
   final List<String> recipientsName;
@@ -28,7 +28,7 @@ class TodoListModel {
   });
   factory TodoListModel.fromJson(Map<String, dynamic> _json) {
     return TodoListModel(
-        sent_time: List.from(_json['sent_time']),
+        sent_time: _json['sent_time'],
         // sent_time: _json['sent_time'].toDate(),
         senderid: _json['senderid'],
         start_time: List.from(_json['start_time']),
