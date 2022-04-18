@@ -92,8 +92,8 @@ class _StatsPageState extends State<StatsPage> {
       startmonth = DateTime.now().month - 1;
       endmonth = DateTime.now().month;
     }
-    endmonth += 1;
-    startmonth += 1;
+    startmonth = startmonth - 1 >= 0 ? startmonth - 1 : 0;
+    endmonth = endmonth + 1 < 12 ? endmonth + 1 : 11;
     hour = focustime ~/ 60;
     min = focustime % 60;
     return stats;
