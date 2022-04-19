@@ -53,8 +53,9 @@ class TodoListPageProvider extends ChangeNotifier {
             _todos.add(TodoListModel(
                 sent_time: doc['sent_time'].toDate(),
                 senderid: doc['senderid'],
-                status: doc['status'],
-                start_time: doc['start_time'].toDate(),
+                status: List.from(doc['status']),
+                start_time: List.generate(doc['start_time'].length,
+                    (index) => doc['start_time'][index].toDate()),
                 description: doc['description'],
                 todolist_name: doc['todolist_name'],
                 interval: doc['interval'],
