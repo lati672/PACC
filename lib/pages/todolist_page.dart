@@ -147,6 +147,7 @@ class _TodoListState extends State<TodoListPage> {
                                     _navigation.navigateToPage(PomodoroPage(
                                         todo: todos[index],
                                         todoID: todosID?[index],
+                                        index: index,
                                         cameras: widget.cameras));
                                   })
                               : const Text(
@@ -157,7 +158,9 @@ class _TodoListState extends State<TodoListPage> {
                                 ),
                           onTap: () {
                             _navigation.navigateToPage(UpdateTodoListPage(
-                                todo: todos[index], todoID: todosID?[index]));
+                                todo: todos[index],
+                                todoID: todosID?[index],
+                                index: index));
                           },
                         ),
                         const Divider(

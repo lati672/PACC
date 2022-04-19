@@ -19,10 +19,12 @@ import '../widgets/top_bar.dart';
 import '../utils/showToast.dart';
 
 class UpdateTodoListPage extends StatefulWidget {
-  const UpdateTodoListPage({Key? key, required this.todo, required this.todoID})
+  const UpdateTodoListPage(
+      {Key? key, required this.todo, required this.todoID, required this.index})
       : super(key: key);
   final TodoListModel todo;
   final String todoID;
+  final int index;
   @override
   State<StatefulWidget> createState() {
     return _UpdateTodoListState();
@@ -86,6 +88,8 @@ class _UpdateTodoListState extends State<UpdateTodoListPage> {
 
   @override
   Widget build(BuildContext context) {
+    recipients = widget.todo.recipients;
+    recipientsName = widget.todo.recipientsName;
     _auth = Provider.of<AuthenticationProvider>(context);
     return MultiProvider(
       providers: [
@@ -107,6 +111,8 @@ class _UpdateTodoListState extends State<UpdateTodoListPage> {
         "h " +
         (interval % 60).toString() +
         "min";
+    _interval = interval;
+    _intervalStr = intervalStr;
 
     return Builder(
       builder: (_context) {
@@ -168,7 +174,7 @@ class _UpdateTodoListState extends State<UpdateTodoListPage> {
                   },
                 ),
                 ListTile(
-                  title: Text("任务时间    " + _intervalStr),
+                  title: Text("任务时间    " + intervalStr),
                   trailing: IconButton(
                     onPressed: () {
                       showPickerArray(context);
@@ -268,9 +274,6 @@ class _UpdateTodoListState extends State<UpdateTodoListPage> {
                                   });
                                 },
                               );
-                        print("1111111111111111111");
-                        print(recipients);
-                        print(recipientsName);
                         setState(() {
                           recipients = recipients;
                           recipientsName = recipientsName;
@@ -351,10 +354,15 @@ class _UpdateTodoListState extends State<UpdateTodoListPage> {
       showErrorToast('标题不能为空！');
       return;
     }
+    print("1111111111111111");
+    print(widget.index);
+    // List<String> _status = widget.todo.status;
+    // _status[widget.index] = "todo";
     TodoListModel newTodo = TodoListModel(
       senderid: widget.todo.senderid,
-      start_time: [DateTime.now()],
-      status: ["todo"],
+      start_time: widget.todo.start_time,
+      // status: _status,
+      status: widget.todo.status,
       description: _controller2.text,
       todolist_name: _controller1.text,
       interval: _interval,
