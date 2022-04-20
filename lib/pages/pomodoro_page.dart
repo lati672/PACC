@@ -83,7 +83,7 @@ class _PomodoroPageState extends State<PomodoroPage> {
       setState(() {
         isVideoOpen = true;
       });
-      // appLockTimer();
+      appLockTimer();
       takeVideoTimer();
     } else {
       // Processed on pause
@@ -307,7 +307,7 @@ class _PomodoroPageState extends State<PomodoroPage> {
   int _count = 0;
   void appLockTimer() {
     // 定义一个函数，将定时器包裹起来
-    _appLockTimer = Timer.periodic(Duration(milliseconds: 5000), (t) {
+    _appLockTimer = Timer.periodic(Duration(milliseconds: 1000), (t) {
       _count++;
       if (_count == 15) {
         t.cancel(); // 定时器内部触发销毁
