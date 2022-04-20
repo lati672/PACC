@@ -68,9 +68,6 @@ class TodoListPageProvider extends ChangeNotifier {
           notifyListeners();
         },
       );
-
-      print("1111111111111111111111111111");
-      print(todos);
     } catch (error) {
       debugPrint('$error');
     }

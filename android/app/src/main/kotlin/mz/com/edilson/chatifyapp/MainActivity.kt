@@ -1,4 +1,5 @@
 package mz.com.edilson.chatifyapp
+import android.annotation.SuppressLint
 import android.app.ActivityManager
 import android.app.AppOpsManager
 import android.app.usage.UsageStatsManager
@@ -13,10 +14,10 @@ import android.widget.Toast
 import androidx.annotation.RequiresApi
 import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.FlutterEngine
-import io.flutter.plugins.GeneratedPluginRegistrant
-import io.flutter.plugin.common.MethodChannel
-import io.flutter.plugin.common.MethodChannel.MethodCallHandler
 import io.flutter.plugin.common.MethodCall
+import io.flutter.plugin.common.MethodChannel
+import io.flutter.plugins.GeneratedPluginRegistrant
+
 
 class MainActivity : FlutterActivity() {
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
@@ -92,23 +93,40 @@ class MainActivity : FlutterActivity() {
     }
 
     // 跳转其他APP
+    @SuppressLint("MissingPermission")
     private fun launch() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-//        val intent = packageManager.getLaunchIntentForPackage("com.taobao.taobao")
-            val intent = packageManager.getLaunchIntentForPackage("com.example.chatifyapp")
-            // 这里如果intent为空，就说明没有安装要跳转的应用
-            if (intent != null) {
-                // 这里跟Activity传递参数一样的嘛，不要担心怎么传递参数，还有接收参数也是跟Activity和Activity传参数一样
-                intent.putExtra("name", "liangchaojie")
-                intent.putExtra("birthday", "1994-06-18")
-                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
 
-//                startActivity(intent)
-                startActivity(intent)
-            } else {
-                // 没有安装要跳转的app应用，提醒一下
-                Toast.makeText(applicationContext, "未安装此应用", Toast.LENGTH_LONG).show()
+//            val intent = Intent("android.intent.action.MAIN")
+//            intent.component = ComponentName(applicationContext.packageName, MainActivity::class.java.name)
+//            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+//            applicationContext.startActivity(intent)
+//        val intent = packageManager.getLaunchIntentForPackage("com.taobao.taobao")
+//            val intent = packageManager.getLaunchIntentForPackage("com.example.chatifyapp")
+            val activityManager = context.getSystemService(ACTIVITY_SERVICE) as ActivityManager
+//            val activityManager = context.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
+            /**获得当前运行的task(任务) */
+            val taskInfoList = activityManager.getRunningTasks(100)
+            for (taskInfo in taskInfoList) {
+                /**找到本应用的 task，并将它切换到前台 */
+                if (taskInfo.topActivity!!.packageName == context.packageName) {
+                    Log.i("TAG", "getAppProcessName: 11111111111111111111111111111111111111");
+                    activityManager.moveTaskToFront(taskInfo.id, 0)
+                    break
+                }
             }
+
+//            // 这里如果intent为空，就说明没有安装要跳转的应用
+//            if (intent != null) {
+//                // 这里跟Activity传递参数一样的嘛，不要担心怎么传递参数，还有接收参数也是跟Activity和Activity传参数一样
+//                intent.putExtra("name", "liangchaojie")
+//                intent.putExtra("birthday", "1994-06-18")
+////                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+//                startActivity(intent)
+//            } else {
+//                // 没有安装要跳转的app应用，提醒一下
+//                Toast.makeText(applicationContext, "未安装此应用", Toast.LENGTH_LONG).show()
+//            }
         }
     }
     //检测用户是否对本app开启了“Apps with usage access”权限

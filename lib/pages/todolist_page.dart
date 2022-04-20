@@ -105,60 +105,74 @@ class _TodoListState extends State<TodoListPage> {
     List? todosID = _pageProvider.todosID;
     return todos == null
         ? const Center(child: CircularProgressIndicator())
-        : ListView.builder(
-            scrollDirection: Axis.vertical,
-            shrinkWrap: true,
-            padding: const EdgeInsets.all(16.0),
-            itemCount: todos.length,
-            itemBuilder: (BuildContext context, int index) {
-              return Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
-                ListTile(
-                  tileColor: Colors.lightBlueAccent,
-                  textColor: Colors.white,
-                  title: Text(
-                    todos[index].todolist_name,
-                    style: _biggerFont,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  subtitle: Text(
-                    todos[index].description,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  trailing: _auth.user.role == 'Student'
-                      ? FlatButton(
-                          child: const Text(
-                            "开始",
-                            style: TextStyle(color: Colors.white),
+        : todos.isEmpty
+            ? const Center(
+                child: Text(
+                "当前暂无待办，快去添加吧",
+                style: TextStyle(
+                  color: Colors.black54,
+                  fontSize: 18.0,
+                ),
+              ))
+            : ListView.builder(
+                scrollDirection: Axis.vertical,
+                shrinkWrap: true,
+                padding: const EdgeInsets.all(16.0),
+                itemCount: todos.length,
+                itemBuilder: (BuildContext context, int index) {
+                  return Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: <Widget>[
+                        ListTile(
+                          tileColor: Colors.lightBlueAccent,
+                          textColor: Colors.white,
+                          title: Text(
+                            todos[index].todolist_name,
+                            style: _biggerFont,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
                           ),
-                          onPressed: () {
-                            _navigation.navigateToPage(PomodoroPage(
+                          subtitle: Text(
+                            todos[index].description,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          trailing: _auth.user.role == 'Student'
+                              ? FlatButton(
+                                  child: const Text(
+                                    "开始",
+                                    style: TextStyle(color: Colors.white),
+                                  ),
+                                  onPressed: () {
+                                    _navigation.navigateToPage(PomodoroPage(
+                                        todo: todos[index],
+                                        todoID: todosID?[index],
+                                        index: index,
+                                        cameras: widget.cameras));
+                                  })
+                              : const Text(
+                                  '占位空白view，透明',
+                                  style: TextStyle(
+                                    color: Colors.lightBlueAccent,
+                                  ),
+                                ),
+                          onTap: () {
+                            _navigation.navigateToPage(UpdateTodoListPage(
                                 todo: todos[index],
                                 todoID: todosID?[index],
-                                cameras: widget.cameras));
-                          })
-                      : const Text(
-                          '占位空白view，透明',
-                          style: TextStyle(
-                            color: Colors.lightBlueAccent,
-                          ),
+                                index: index));
+                          },
                         ),
-                  onTap: () {
-                    _navigation.navigateToPage(UpdateTodoListPage(
-                        todo: todos[index], todoID: todosID?[index]));
-                  },
-                ),
-                const Divider(
-                  height: 7.0,
-                  indent: 0.0,
-                  color: Colors.white,
-                )
-              ]
-                  // )
-                  );
-            },
-          );
+                        const Divider(
+                          height: 7.0,
+                          indent: 0.0,
+                          color: Colors.white,
+                        )
+                      ]
+                      // )
+                      );
+                },
+              );
   }
 
   _getRequests() async {}

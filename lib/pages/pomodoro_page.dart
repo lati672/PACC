@@ -33,10 +33,12 @@ class PomodoroPage extends StatefulWidget {
       {Key? key,
       required this.todo,
       required this.todoID,
+      required this.index,
       required this.cameras})
       : super(key: key);
   final TodoListModel todo;
   final String todoID;
+  final int index;
   final List<CameraDescription> cameras;
   @override
   _PomodoroPageState createState() => _PomodoroPageState();
@@ -50,7 +52,7 @@ class _PomodoroPageState extends State<PomodoroPage> {
   bool isVideoOpen = false;
 
 // Time constants
-  int kWorkDuration = 1;
+  int kWorkDuration = 60;
   final CountDownController _clockController = CountDownController();
   Icon _clockButton = kPlayClockButton; // Initial value
   bool _isClockStarted = false; // Conditional flag
@@ -115,7 +117,7 @@ class _PomodoroPageState extends State<PomodoroPage> {
       height: height,
       width: width,
       autoStart: false,
-      duration: kWorkDuration * 15,
+      duration: kWorkDuration * widget.todo.interval,
       isReverse: true,
       textStyle: const TextStyle(color: Colors.blue, fontSize: 40.0),
       fillColor: Theme.of(context).primaryColor,
@@ -251,7 +253,6 @@ class _PomodoroPageState extends State<PomodoroPage> {
                                 switchClockActionButton();
                               });
                             }
-                            stopTodo();
                             _showAlertStop(context);
                           },
                           icon: const Icon(Icons.stop),
@@ -332,10 +333,13 @@ class _PomodoroPageState extends State<PomodoroPage> {
   }
 
   void startTodo() async {
+    List<String> _status = widget.todo.status;
+    _status[widget.index] = "doing";
     TodoListModel newTodo = TodoListModel(
       senderid: widget.todo.senderid,
-      start_time: [DateTime.now()],
-      status: ["doing"],
+      start_time: List.generate(
+          widget.todo.recipients.length, (index) => DateTime.now()),
+      status: _status,
       description: widget.todo.description,
       todolist_name: widget.todo.todolist_name,
       interval: widget.todo.interval,
@@ -347,10 +351,13 @@ class _PomodoroPageState extends State<PomodoroPage> {
   }
 
   finishTodo() async {
+    List<String> _status = widget.todo.status;
+    _status[widget.index] = "done";
+
     TodoListModel newTodo = TodoListModel(
       senderid: widget.todo.senderid,
       start_time: widget.todo.start_time,
-      status: ["done"],
+      status: _status,
       description: widget.todo.description,
       todolist_name: widget.todo.todolist_name,
       interval: widget.todo.interval,
@@ -362,10 +369,12 @@ class _PomodoroPageState extends State<PomodoroPage> {
   }
 
   stopTodo() async {
+    List<String> _status = widget.todo.status;
+    _status[widget.index] = "todo";
     TodoListModel newTodo = TodoListModel(
       senderid: widget.todo.senderid,
-      start_time: [DateTime.now()],
-      status: ["todo"],
+      start_time: widget.todo.start_time,
+      status: _status,
       description: widget.todo.description,
       todolist_name: widget.todo.todolist_name,
       interval: widget.todo.interval,
@@ -412,6 +421,7 @@ class _PomodoroPageState extends State<PomodoroPage> {
         FlatButton(
           child: const Text("确认"),
           onPressed: () {
+            stopTodo();
             int count = 0;
             Navigator.popUntil(context, (route) {
               return count++ == 2;

@@ -54,6 +54,7 @@ class _AddTodoListState extends State<AddTodoListPage> {
   static const PickerData2 = '''
 [
     [
+        "0h",
         "1h",
         "2h",
         "3h",
@@ -327,14 +328,18 @@ class _AddTodoListState extends State<AddTodoListPage> {
     }
     TodoListModel newTodo = TodoListModel(
       senderid: _auth.user.uid,
-      start_time: [DateTime.now()],
-      status: ["todo"],
+      start_time: List.generate(
+          _auth.user.role == 'Student' ? 1 : recipients.length,
+          (index) => DateTime.now()),
+      status: List.generate(
+          _auth.user.role == 'Student' ? 1 : recipients.length,
+          (index) => "todo"),
       description: _controller2.text,
       todolist_name: _controller1.text,
       interval: _interval,
-      recipients: [_auth.user.uid],
-      // recipients: recipients,
-      recipientsName: recipientsName,
+      recipients: _auth.user.role == 'Student' ? [_auth.user.uid] : recipients,
+      recipientsName:
+          _auth.user.role == 'Student' ? [_auth.user.name] : recipientsName,
       sent_time: DateTime.now(),
     );
     await _database.addTodoList(newTodo);
