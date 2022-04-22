@@ -4,7 +4,7 @@ import 'package:chatifyapp/pages/whitelist_page.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:provider/provider.dart';
-
+import 'dart:async';
 // Widgets
 import '../widgets/top_bar.dart';
 import '../widgets/custom_list_view_tiles.dart';
@@ -40,7 +40,7 @@ class _StudentChatPageState extends State<StudentChatPage> {
   late ChatPageProvider _pageProvider;
   late NavigationService _navigation;
   late GlobalKey<FormState> _messageFormState;
-  late ScrollController _messagesListViewController;
+  final ScrollController _messagesListViewController = ScrollController();
   late String _memberid1, _memberid2;
   bool isfriends = false;
   bool _isComposing = false;
@@ -48,7 +48,6 @@ class _StudentChatPageState extends State<StudentChatPage> {
   @override
   void initState() {
     super.initState();
-    _messagesListViewController = ScrollController();
     _messageFormState = GlobalKey<FormState>();
   }
 
@@ -66,7 +65,6 @@ class _StudentChatPageState extends State<StudentChatPage> {
     _memberid2 = widget.chat.members[0].uid;
     return GestureDetector(
         onTap: () {
-          //print('ontap');
           FocusScopeNode currentFocus = FocusScope.of(context);
           if (!currentFocus.hasPrimaryFocus) {
             currentFocus.unfocus();
@@ -104,15 +102,6 @@ class _StudentChatPageState extends State<StudentChatPage> {
                   TopBar(
                     widget.chat.title(),
                     fontSize: 16,
-                    primaryAction: IconButton(
-                      onPressed: () {
-                        _pageProvider.deleteChat();
-                      },
-                      icon: const Icon(
-                        Icons.delete,
-                        color: Color.fromRGBO(0, 82, 218, 1),
-                      ),
-                    ),
                     secondaryAction: IconButton(
                       onPressed: () {
                         _navigation.goBack();
@@ -161,10 +150,8 @@ class _StudentChatPageState extends State<StudentChatPage> {
                                           sender_role: senderrole,
                                           receiver_role: receiverrole),
                                     ));
-                                //print('result: $result');
                                 if (result != null) {
                                   _pageProvider.sendWhiteList(result);
-                                  //print(_pageProvider.getchatid());
                                 }
                               },
                               icon: const Icon(
@@ -188,7 +175,20 @@ class _StudentChatPageState extends State<StudentChatPage> {
     });
   }
 
+  void _scrollDown() {
+    _messagesListViewController.animateTo(
+      _messagesListViewController.position.maxScrollExtent,
+      duration: const Duration(seconds: 2),
+      curve: Curves.fastOutSlowIn,
+    );
+  }
+
   Widget _buildTextComposer() {
+    //Timer(const Duration(milliseconds: 1000), () => _scrollDown());
+    // print('building text composer');
+    //final position = _messagesListViewController.position.maxScrollExtent;
+    //_messagesListViewController.jumpTo(position);
+
     //发送消息框
     return IconTheme(
         data: IconThemeData(color: Theme.of(context).accentColor),
@@ -250,7 +250,6 @@ class _StudentChatPageState extends State<StudentChatPage> {
             FlatButton(
               child: const Text("确认"),
               onPressed: () {
-                print('replying to the request');
                 _pageProvider.sendFriendRequestReply();
                 Navigator.of(context).pop();
               },

@@ -133,7 +133,7 @@ class _StatsPageState extends State<StatsPage> {
         children: [
           TopBar(
             '数据统计',
-            primaryAction: IconButton(
+            secondaryAction: IconButton(
               onPressed: () {
                 _navigation.goBack();
               },

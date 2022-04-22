@@ -25,7 +25,6 @@ class DatabaseService {
   Future<void> createUser(String _uid, String _email, String _name,
       String _imageUrl, String role) async {
     try {
-      // print('Creating User');
       // * Going to the collections (User) the to the user uid and overrides the values of the fields
       await _dataBase.collection(userCollection).doc(_uid).set(
         {
@@ -67,7 +66,6 @@ class DatabaseService {
 
   // Getting user by email
   Future<QuerySnapshot> getUserbyEmail(String _email) async {
-    //print('getting users by email');
     QuerySnapshot qshot = await _dataBase
         .collection(userCollection)
         .where('email', isEqualTo: _email)
@@ -77,7 +75,6 @@ class DatabaseService {
 
   //Getting user by name
   Future<QuerySnapshot> getUserbyName(String _name) async {
-    print('getting users by name');
     QuerySnapshot qshot = await _dataBase
         .collection(userCollection)
         .where('name', isEqualTo: _name)
@@ -190,9 +187,7 @@ class DatabaseService {
         .collection(chatCollection)
         .where('members', arrayContains: _uid1)
         .get();
-    if (qshot.size == 0) {
-      print('chat doesnt exist');
-    }
+    if (qshot.size == 0) {}
     qshot.docs.forEach((doc) {
       List<dynamic> l = doc['members'].toList();
       if (l.contains(_uid2)) {
@@ -400,7 +395,6 @@ class DatabaseService {
   // * Add messages to the firestore databse
   Future<void> addMessagesToChat(String _chatId, ChatMessage _message) async {
     try {
-      //print('in the database service: $_message.type');
       await _dataBase
           .collection(chatCollection)
           .doc(_chatId)
@@ -553,12 +547,23 @@ class DatabaseService {
   }
 
   //updata a todo list status to doing
-  Future<void> updateTodoListStatustoDoing(String _todoID) async {
+  Future<void> updateTodoListStatustoDoing(String _todoID, String _uid) async {
     try {
+      DocumentSnapshot docshot =
+          await _dataBase.collection(todolistCollection).doc(_todoID).get();
+      int pos = 0;
+      List<String> recipients = List.from(docshot['recipients']);
+      for (var i = 0; i < recipients.length; i++) {
+        if (recipients[i] == _uid) {
+          pos = i;
+          break;
+        }
+      }
+
       await _dataBase.collection(todolistCollection).doc(_todoID).set(
         {
-          'start_time': Timestamp.fromDate(DateTime.now()),
-          'status': 'doing',
+          'start_time'[pos]: Timestamp.fromDate(DateTime.now()),
+          'status'[pos]: 'doing',
         },
       );
     } catch (error) {
@@ -779,7 +784,6 @@ class DatabaseService {
           lastActive: usershot['last_active'].toDate()));
     }
     for (var i = 0; i < students.length; i++) {
-      print('the i user is ${students[i].name}');
       yield students[i];
     }
   }

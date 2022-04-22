@@ -70,13 +70,16 @@ class _AddFriendsPageState extends State<AddFriendsPage> {
             horizontal: _deviceWidth * .03,
             vertical: _deviceHeight * .02,
           ),
-          width: _deviceWidth * .97,
-          height: _deviceHeight * .98,
+          width: _deviceWidth,
+          height: _deviceHeight,
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.start,
+            mainAxisSize: MainAxisSize.max,
             children: [
               TopBar(
                 '添加好友',
-                primaryAction: IconButton(
+                secondaryAction: IconButton(
                   onPressed: () {
                     _navigation.goBack();
                   },

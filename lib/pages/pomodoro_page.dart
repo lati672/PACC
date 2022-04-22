@@ -319,7 +319,7 @@ class _PomodoroPageState extends State<PomodoroPage> {
 
   void takeVideoTimer() {
     // 定义一个函数，将定时器包裹起来
-    _takeVideoTimer = Timer.periodic(Duration(milliseconds: 3000), (t) {
+    _takeVideoTimer = Timer.periodic(Duration(milliseconds: 15000), (t) {
       setState(() {
         isVideoOpen = false;
       });

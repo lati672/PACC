@@ -55,6 +55,28 @@ class TodoListModel {
       'recipientsName': recipientsName
     };
   }
+
+  UpdateStatus(String _uid, String _status) {
+    int pos = 0;
+    for (var i = 0; i < recipients.length; i++) {
+      if (_uid == recipients[i]) {
+        pos = i;
+        break;
+      }
+      status[pos] = _status;
+    }
+  }
+
+  UpdateStartTime(String _uid, DateTime _starttime) {
+    int pos = 0;
+    for (var i = 0; i < recipients.length; i++) {
+      if (_uid == recipients[i]) {
+        pos = i;
+        break;
+      }
+      start_time[pos] = _starttime;
+    }
+  }
 //
 
   // Group chat image
