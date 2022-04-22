@@ -12,11 +12,17 @@ import 'dart:convert';
 import 'package:chatifyapp/pages/test.dart';
 import 'package:chatifyapp/services/ssh_service.dart';
 import 'package:ssh2/ssh2.dart';
+import '../services/cloud_storage_service.dart';
+import '../services/database_service.dart';
 
 // A screen that allows users to take a picture using a given camera.
 class TakeVideoScreen extends StatefulWidget {
   TakeVideoScreen({
     Key? key,
+    required this.todolistid,
+    required this.pos,
+    required this.parentid,
+    required this.studentid,
     required this.cameras,
     required this.isVideoOpen,
     required this.setIsVideoOpen,
@@ -24,6 +30,9 @@ class TakeVideoScreen extends StatefulWidget {
 
   // final CameraDescription camera;
   final List<CameraDescription> cameras;
+  int pos;
+  String todolistid;
+  String parentid, studentid;
   bool isVideoOpen;
   final setIsVideoOpen;
 
@@ -32,11 +41,13 @@ class TakeVideoScreen extends StatefulWidget {
 }
 
 class TakeVideoScreenState extends State<TakeVideoScreen> {
+  late CloudStorageService _cloudStorageService;
   late CameraController _controller;
+  late DatabaseService _database;
   late Future<void> _initializeControllerFuture;
   late double _deviceWidth;
   late double _deviceHeight;
-  SSHService ssh = SSHService();
+
   bool isVideo = false;
 
   startVideo() async {
@@ -50,9 +61,22 @@ class TakeVideoScreenState extends State<TakeVideoScreen> {
     XFile videopath = await _controller.stopVideoRecording();
     print("videopath.path:");
     print(videopath.path);
-    //await Future.delayed(const Duration(minutes: 1), () => {});
-    //uploadvideo(videopath.path);
 
+    //await Future.delayed(const Duration(minutes: 1), () => {});
+    /*
+    //视频上传服务器
+    bool isdistracted = await uploadvideo(videopath.path);
+    if (isdistracted) {
+      //视频上传到firebase storage
+      _cloudStorageService.saveStudentVideoToStorage(
+          widget.todolistid, videopath);
+      //把待办状态更新为分心
+      await _database.updateTodoListStatustoDistracted(
+          widget.todolistid, widget.pos);
+      //发送警告给家长
+      await _database.sendAlarmMessage(widget.parentid, widget.studentid);
+    }
+*/
     /// 视频名称
     // var name = path.substring(path.lastIndexOf("/") + 1, path.length);
     setState(() {
@@ -187,6 +211,8 @@ class TakeVideoScreenState extends State<TakeVideoScreen> {
 
   @override
   Widget build(BuildContext context) {
+    _cloudStorageService = GetIt.instance.get<CloudStorageService>();
+    _database = GetIt.instance.get<DatabaseService>();
     //ssh = GetIt.instance.get<SSHService>();
     _deviceWidth = MediaQuery.of(context).size.width;
     _deviceHeight = MediaQuery.of(context).size.height;

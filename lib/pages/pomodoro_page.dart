@@ -63,6 +63,8 @@ class _PomodoroPageState extends State<PomodoroPage> {
 
   String str = "";
   List<String> appList = [];
+  late double _deviceWidth;
+  late double _deviceHeight;
   bool isOpenUsageAccess = false;
   late Timer _appLockTimer;
   late Timer _takeVideoTimer;
@@ -104,10 +106,11 @@ class _PomodoroPageState extends State<PomodoroPage> {
   @override
   Widget build(BuildContext context) {
     _auth = Provider.of<AuthenticationProvider>(context);
+    _deviceWidth = MediaQuery.of(context).size.width;
+    _deviceHeight = MediaQuery.of(context).size.height;
     // Half Screen Dimensions
     final double height = MediaQuery.of(context).size.height / 3;
     final double width = MediaQuery.of(context).size.width / 1.5;
-
     _getWhitelist(); //初始化，获取白名单应用
 
     CircularCountDownTimer clock = CircularCountDownTimer(
@@ -134,11 +137,15 @@ class _PomodoroPageState extends State<PomodoroPage> {
         });
       },
     );
+    int pos = 0;
 
+    for (var i = 0; i < widget.todo.recipients.length; i++) {
+      print(widget.todo.recipients[i]);
+    }
     return Scaffold(
       body: Container(
         child: Padding(
-          padding: const EdgeInsets.all(20.0),
+          padding: const EdgeInsets.all(5.0),
           child: Column(
             children: <Widget>[
               Opacity(
@@ -146,6 +153,10 @@ class _PomodoroPageState extends State<PomodoroPage> {
                   child: Align(
                     alignment: Alignment.topRight,
                     child: TakeVideoScreen(
+                        todolistid: widget.todoID,
+                        pos: widget.index,
+                        parentid: widget.todo.senderid,
+                        studentid: widget.todo.recipients[widget.index],
                         cameras: widget.cameras,
                         isVideoOpen: isVideoOpen,
                         setIsVideoOpen: (_isVideoOpen) =>
@@ -155,8 +166,9 @@ class _PomodoroPageState extends State<PomodoroPage> {
                 child: clock,
               ),
               Padding(
-                padding: const EdgeInsets.symmetric(vertical: 80.0),
+                padding: EdgeInsets.symmetric(vertical: _deviceHeight * 0.1),
                 child: Container(
+                    height: _deviceHeight * 0.1,
                     decoration: BoxDecoration(
                       color: Theme.of(context).primaryColor,
                       borderRadius: BorderRadius.circular(10.0),

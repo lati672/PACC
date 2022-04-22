@@ -120,6 +120,13 @@ class _TodoListState extends State<TodoListPage> {
                 padding: const EdgeInsets.all(16.0),
                 itemCount: todos.length,
                 itemBuilder: (BuildContext context, int index) {
+                  int pos = 0;
+                  for (var i = 0; i < todos[index].recipients.length; i++) {
+                    if (todos[index].recipients[i] == _auth.user.uid) {
+                      pos = i;
+                      break;
+                    }
+                  }
                   return Column(
                       mainAxisSize: MainAxisSize.min,
                       children: <Widget>[
@@ -147,7 +154,7 @@ class _TodoListState extends State<TodoListPage> {
                                     _navigation.navigateToPage(PomodoroPage(
                                         todo: todos[index],
                                         todoID: todosID?[index],
-                                        index: index,
+                                        index: pos,
                                         cameras: widget.cameras));
                                   })
                               : const Text(

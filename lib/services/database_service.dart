@@ -428,6 +428,25 @@ class DatabaseService {
     }
   }
 
+  Future<void> addAlarmToChat(String _chatId, String currentuserid) async {
+    try {
+      final _message = ChatMessage(
+          senderID: currentuserid,
+          content: '您的孩子不专心',
+          type: MessageType.text,
+          sentTime: DateTime.now());
+      await _dataBase
+          .collection(chatCollection)
+          .doc(_chatId)
+          .collection(messagesCollection)
+          .add(
+            _message.toJson(),
+          );
+    } catch (error) {
+      debugPrint('$error');
+    }
+  }
+
   //Send a new friend request
   Future<void> sendFriendRequest(String _chatId, String currentuserid) async {
     try {
@@ -517,6 +536,11 @@ class DatabaseService {
     return _todo;
   }
 
+  Future<void> sendAlarmMessage(String _pid, String _sid) async {
+    String _chatid = await getChatid(_pid, _sid);
+    addAlarmToChat(_chatid, _sid);
+  }
+
   Stream<QuerySnapshot> getUserTodoList(String _userid) {
     return _dataBase
         .collection(todolistCollection)
@@ -546,50 +570,17 @@ class DatabaseService {
     }
   }
 
-  //updata a todo list status to doing
-  Future<void> updateTodoListStatustoDoing(String _todoID, String _uid) async {
+//updata a todo list status to interrupted
+  Future<void> updateTodoListStatustoDistracted(
+      String _todoID, int _index) async {
     try {
       DocumentSnapshot docshot =
           await _dataBase.collection(todolistCollection).doc(_todoID).get();
-      int pos = 0;
-      List<String> recipients = List.from(docshot['recipients']);
-      for (var i = 0; i < recipients.length; i++) {
-        if (recipients[i] == _uid) {
-          pos = i;
-          break;
-        }
-      }
-
-      await _dataBase.collection(todolistCollection).doc(_todoID).set(
+      List<String> status = List.from(docshot['status']);
+      status[_index] = 'distracted';
+      await _dataBase.collection(todolistCollection).doc(_todoID).update(
         {
-          'start_time'[pos]: Timestamp.fromDate(DateTime.now()),
-          'status'[pos]: 'doing',
-        },
-      );
-    } catch (error) {
-      debugPrint('$error');
-    }
-  }
-
-  //updata a todo list status to done
-  Future<void> updateTodoListStatustoDone(String _todoID) async {
-    try {
-      await _dataBase.collection(todolistCollection).doc(_todoID).set(
-        {
-          'status': 'done',
-        },
-      );
-    } catch (error) {
-      debugPrint('$error');
-    }
-  }
-
-//updata a todo list status to interrupted
-  Future<void> updateTodoListStatustoInterrupted(String _todoID) async {
-    try {
-      await _dataBase.collection(todolistCollection).doc(_todoID).set(
-        {
-          'status': 'interrupted',
+          'status': status,
         },
       );
       //String chatid = await getChatid(_uid1, _uid2)
