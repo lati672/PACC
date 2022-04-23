@@ -25,6 +25,7 @@ class WhitelistPageProvider extends ChangeNotifier {
   final AuthenticationProvider _auth;
   late DatabaseService _database;
   List<String>? appList;
+  List<String>? pacakageNameList;
 
 // * Once not longer needed, it will be disposed
   @override
@@ -38,13 +39,15 @@ class WhitelistPageProvider extends ChangeNotifier {
     //Future future = channel.invokeMethod("your_method_name", {"msg": msg} );
     String str = await platform.invokeMethod('getAppList');
     // 打印执行的结果
-    // print(str);
     List<String> _appList = [];
+    List<String> _packageNameList = [];
     var strList = str.split('/n');
-    for (var i = 0; i < strList.length - 1; i++) {
-      _appList.add(strList[i]);
+    for (int i = 0; i < strList.length - 1; i++) {
+      _appList.add(strList[i].split('+')[0]);
+      _packageNameList.add(strList[i].split('+')[1]);
     }
     appList = _appList;
+    pacakageNameList = _packageNameList;
     notifyListeners();
   }
 }

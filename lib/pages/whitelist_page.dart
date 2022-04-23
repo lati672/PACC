@@ -35,6 +35,7 @@ class _WhiteListPageState extends State<WhiteListPage> {
   late ScrollController _messagesListViewController;
   String str = "";
   List<String> appList = [];
+  List<String> pacakageNameList = [];
 
   Set<int> selected = Set<int>();
   @override
@@ -44,8 +45,10 @@ class _WhiteListPageState extends State<WhiteListPage> {
   }
 
   List<String> generateAppList(List<int> numseq) {
-    List<String> Applist =
-        new List.generate(numseq.length, (index) => appList[numseq[index]]);
+    List<String> Applist = new List.generate(
+        numseq.length,
+        (index) =>
+            (appList[numseq[index]] + '+' + pacakageNameList[numseq[index]]));
     return Applist;
   }
 
@@ -112,8 +115,10 @@ class _WhiteListPageState extends State<WhiteListPage> {
         //* Triggers the info in the widgets to render themselves
         _pageProvider = _context.watch<WhitelistPageProvider>();
         List<String>? _appList = _pageProvider.appList;
-        if (_appList != null) {
+        List<String>? _pacakageNameList = _pageProvider.pacakageNameList;
+        if (_appList != null && _pacakageNameList != null) {
           appList = _appList;
+          pacakageNameList = _pacakageNameList;
         }
         return Scaffold(
           body: SingleChildScrollView(

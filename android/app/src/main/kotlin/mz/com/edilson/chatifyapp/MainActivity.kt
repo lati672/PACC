@@ -79,10 +79,9 @@ class MainActivity : FlutterActivity() {
         for (i in pkgList.indices) {
             val pI = pkgList[i]
             val name = pI.applicationInfo.loadLabel(manager).toString()
-            val test = pI.applicationInfo.packageName;
-            Log.i("TAG", "getAppProcessName: "+test);
+            val packageName = pI.applicationInfo.packageName;
             if(!name.contains("huawei")&&!name.contains("android")){
-                list += name + "/n"
+                list += name + '+' + packageName + "/n"
             }
             //            list.add(pI.applicationInfo.loadLabel(manager).toString());
 //            appIcon=pI.applicationInfo.loadIcon(manager);

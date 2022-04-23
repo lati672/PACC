@@ -354,8 +354,6 @@ class _UpdateTodoListState extends State<UpdateTodoListPage> {
       showErrorToast('标题不能为空！');
       return;
     }
-    List<String> _status = widget.todo.status;
-    _status[widget.index] = "todo";
     TodoListModel newTodo = TodoListModel(
       senderid: widget.todo.senderid,
       start_time: widget.todo.start_time,

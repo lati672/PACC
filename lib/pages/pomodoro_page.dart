@@ -63,6 +63,7 @@ class _PomodoroPageState extends State<PomodoroPage> {
 
   String str = "";
   List<String> appList = [];
+  List<String> packageNameList = [];
   late double _deviceWidth;
   late double _deviceHeight;
   bool isOpenUsageAccess = false;
@@ -281,7 +282,11 @@ class _PomodoroPageState extends State<PomodoroPage> {
 
   void _getWhitelist() async {
     String list = await _database.getlatestWhitelistfromAlluser(_auth.user.uid);
-    appList = list.split(',');
+    var strList = list.split(',');
+    for (int i = 0; i < strList.length - 1; i++) {
+      appList.add(strList[i].split('+')[0]);
+      packageNameList.add(strList[i].split('+')[1]);
+    }
   }
 
   //判断用户是否开启“Apps with usage access”权限
@@ -345,55 +350,21 @@ class _PomodoroPageState extends State<PomodoroPage> {
   }
 
   void startTodo() async {
-    List<String> _status = widget.todo.status;
-    _status[widget.index] = "doing";
-    TodoListModel newTodo = TodoListModel(
-      senderid: widget.todo.senderid,
-      start_time: List.generate(
-          widget.todo.recipients.length, (index) => DateTime.now()),
-      status: _status,
-      description: widget.todo.description,
-      todolist_name: widget.todo.todolist_name,
-      interval: widget.todo.interval,
-      recipients: widget.todo.recipients,
-      recipientsName: widget.todo.recipientsName,
-      sent_time: widget.todo.sent_time,
-    );
+    TodoListModel newTodo = widget.todo;
+    newTodo.UpdateStartTime(_auth.user.uid, DateTime.now());
+    newTodo.UpdateStatus(_auth.user.uid, "doing");
     await _database.updateTodoList(newTodo, widget.todoID);
   }
 
   finishTodo() async {
-    List<String> _status = widget.todo.status;
-    _status[widget.index] = "done";
-
-    TodoListModel newTodo = TodoListModel(
-      senderid: widget.todo.senderid,
-      start_time: widget.todo.start_time,
-      status: _status,
-      description: widget.todo.description,
-      todolist_name: widget.todo.todolist_name,
-      interval: widget.todo.interval,
-      recipients: widget.todo.recipients,
-      recipientsName: widget.todo.recipientsName,
-      sent_time: widget.todo.sent_time,
-    );
+    TodoListModel newTodo = widget.todo;
+    newTodo.UpdateStatus(_auth.user.uid, "done");
     await _database.updateTodoList(newTodo, widget.todoID);
   }
 
   stopTodo() async {
-    List<String> _status = widget.todo.status;
-    _status[widget.index] = "todo";
-    TodoListModel newTodo = TodoListModel(
-      senderid: widget.todo.senderid,
-      start_time: widget.todo.start_time,
-      status: _status,
-      description: widget.todo.description,
-      todolist_name: widget.todo.todolist_name,
-      interval: widget.todo.interval,
-      recipients: widget.todo.recipients,
-      recipientsName: widget.todo.recipientsName,
-      sent_time: widget.todo.sent_time,
-    );
+    TodoListModel newTodo = widget.todo;
+    newTodo.UpdateStatus(_auth.user.uid, "todo");
     await _database.updateTodoList(newTodo, widget.todoID);
   }
 

@@ -129,7 +129,7 @@ class _CheckWhiteListPageState extends State<CheckWhiteListPage> {
                                 ? Icons.check_box
                                 : Icons.check_box_outline_blank,
                             color: Theme.of(context).primaryColor),
-                        title: Text(widget.applist[index]),
+                        title: Text(widget.applist[index].split('+')[0]),
                         onTap: () {
                           setState(() {
                             if (selected.contains(index)) {
