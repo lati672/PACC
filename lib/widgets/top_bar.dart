@@ -47,14 +47,14 @@ class _TopBarState extends State<TopBar> {
                 widget.secondaryAction!
               else
                 Container(
-                  width: 30,
+                  width: _deviceWidth / 12,
                 ),
               _titleBar(),
               if (widget.primaryAction != null)
                 widget.primaryAction!
               else
                 Container(
-                  width: 30,
+                  width: _deviceWidth / 12,
                 ),
             ],
           ),

@@ -59,7 +59,6 @@ class _ChatsPageState extends State<ChatsPage> {
   }
 
   Widget _buildUI() {
-    //print('in chat page the role is ${_auth.user.role}');
     return Builder(
       builder: (_context) {
         //* Triggers the info in the widgets to render themselves
@@ -130,7 +129,6 @@ class _ChatsPageState extends State<ChatsPage> {
     if (_chat.messages.isNotEmpty) {
       //The chat may not have any messages when created
       // final content = _chat.messages.first.content;
-      //print('messages content: $content');
       switch (_chat.messages.first.type) {
         case MessageType.text:
           _subtitleText = _chat.messages.first.content;
@@ -144,13 +142,15 @@ class _ChatsPageState extends State<ChatsPage> {
         case MessageType.confirm:
           _subtitleText = '好友请求';
           break;
+        case MessageType.todo:
+          _subtitleText = '待办状态';
+          break;
         default:
           _subtitleText = '';
       }
       /*_subtitleText = _chat.messages.first.type != MessageType.text
           ? 'Media Attachment'
           : _chat.messages.first.content;*/
-      //print('subtitletest: $_subtitleText');
     }
     return Column(children: [
       CustomListViewTileWithActivity(

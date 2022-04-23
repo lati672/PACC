@@ -162,7 +162,6 @@ class _StatsPageState extends State<StatsPage> {
               } else {
                 List<TodoListModel> todos = [];
                 snapshot.data!.docs.forEach((doc) {
-                  print('the doc id is ${doc.id}');
                   todos.add(TodoListModel(
                       sent_time: doc['sent_time'].toDate(),
                       senderid: doc['senderid'],

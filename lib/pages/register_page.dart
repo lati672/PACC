@@ -250,7 +250,6 @@ class _RegisterPageState extends State<RegisterPage> {
       width: _deviceWidth * .65,
       height: _deviceHeight * .075,
       onPress: () async {
-        //print('button clicked');
         if (_registerFormKey.currentState!.validate()) {
           //* Saving the input
           _registerFormKey.currentState!.save();
@@ -259,7 +258,6 @@ class _RegisterPageState extends State<RegisterPage> {
             _email!,
             _password!,
           );
-          //print('regist completed');
           //* Upload the user image to the Firebase Storage
           final String? _imageUrl;
           if (_profileImage != null) {
@@ -273,7 +271,6 @@ class _RegisterPageState extends State<RegisterPage> {
                 .saveDefaultUserImageProfileToStorage(_uid!);
           }
           // Go to database to create user with uid
-          //print('image uploaded');
           await _database.createUser(
             _uid,
             _email!,
@@ -281,7 +278,6 @@ class _RegisterPageState extends State<RegisterPage> {
             _imageUrl!,
             isChecked ? 'Student' : 'Parent',
           );
-          //print('user created');
           //* Once the user is created, we will go back to the login page where we can login with the registered credentials
           await _auth.logout();
           // * requires the login with the user previously created

@@ -97,13 +97,16 @@ class _ParentChatPageState extends State<ParentChatPage> {
                     widget.chat.title(),
                     fontSize: 16,
                     primaryAction: IconButton(
-                      onPressed: () {
-                        _pageProvider.deleteChat();
-                      },
                       icon: const Icon(
-                        Icons.delete,
+                        Icons.abc_outlined,
                         color: Color.fromRGBO(0, 82, 218, 1),
                       ),
+                      onPressed: () async {
+                        await _database.addAlarmToChat(
+                            widget.chat.uid,
+                            _auth.user.uid,
+                            'https://firebasestorage.googleapis.com/v0/b/chatifyapp-87454.appspot.com/o/videos%2Ftodolists%2FHL34vJ1MrbTBAWBibA0P%2Fvideo.mp4?alt=media&token=38d1cf81-08bf-40ee-b7bd-2f3f20f8baf3');
+                      },
                     ),
                     secondaryAction: IconButton(
                       onPressed: () {
@@ -200,7 +203,6 @@ class _ParentChatPageState extends State<ParentChatPage> {
             FlatButton(
               child: const Text("确认"),
               onPressed: () {
-                print('replying to the request');
                 _pageProvider.sendFriendRequestReply();
                 Navigator.of(context).pop();
               },
@@ -358,6 +360,10 @@ class _ParentChatPageState extends State<ParentChatPage> {
                         .first,
                     receiverid: _memberid2,
                   );
+                case MessageType.todo:
+                  {
+                    return Text('${_message.content.toString()}');
+                  }
                 default:
                   {
                     return Container();

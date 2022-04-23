@@ -314,6 +314,14 @@ class DatabaseService {
         {
           return MessageType.whitelist;
         }
+      case 'confirm':
+        {
+          return MessageType.confirm;
+        }
+      case 'todo':
+        {
+          return MessageType.todo;
+        }
       default:
         {
           return MessageType.unknown;
@@ -428,12 +436,13 @@ class DatabaseService {
     }
   }
 
-  Future<void> addAlarmToChat(String _chatId, String currentuserid) async {
+  Future<void> addAlarmToChat(
+      String _chatId, String currentuserid, String _url) async {
     try {
       final _message = ChatMessage(
           senderID: currentuserid,
-          content: '您的孩子不专心',
-          type: MessageType.text,
+          content: _url,
+          type: MessageType.todo,
           sentTime: DateTime.now());
       await _dataBase
           .collection(chatCollection)
@@ -536,9 +545,9 @@ class DatabaseService {
     return _todo;
   }
 
-  Future<void> sendAlarmMessage(String _pid, String _sid) async {
+  Future<void> sendAlarmMessage(String _pid, String _sid, String _url) async {
     String _chatid = await getChatid(_pid, _sid);
-    addAlarmToChat(_chatid, _sid);
+    addAlarmToChat(_chatid, _sid, _url);
   }
 
   Stream<QuerySnapshot> getUserTodoList(String _userid) {

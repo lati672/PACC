@@ -102,6 +102,18 @@ class _StudentChatPageState extends State<StudentChatPage> {
                   TopBar(
                     widget.chat.title(),
                     fontSize: 16,
+                    primaryAction: IconButton(
+                      icon: const Icon(
+                        Icons.abc_outlined,
+                        color: Color.fromRGBO(0, 82, 218, 1),
+                      ),
+                      onPressed: () async {
+                        await _database.addAlarmToChat(
+                            widget.chat.uid,
+                            _auth.user.uid,
+                            'https://firebasestorage.googleapis.com/v0/b/chatifyapp-87454.appspot.com/o/videos%2Ftodolists%2FHL34vJ1MrbTBAWBibA0P%2Fvideo.mp4?alt=media&token=38d1cf81-08bf-40ee-b7bd-2f3f20f8baf3');
+                      },
+                    ),
                     secondaryAction: IconButton(
                       onPressed: () {
                         _navigation.goBack();
@@ -185,10 +197,9 @@ class _StudentChatPageState extends State<StudentChatPage> {
 
   Widget _buildTextComposer() {
     //Timer(const Duration(milliseconds: 1000), () => _scrollDown());
-    // print('building text composer');
     //final position = _messagesListViewController.position.maxScrollExtent;
     //_messagesListViewController.jumpTo(position);
-
+    print(widget.chat.uid);
     //发送消息框
     return IconTheme(
         data: IconThemeData(color: Theme.of(context).accentColor),
@@ -357,6 +368,10 @@ class _StudentChatPageState extends State<StudentChatPage> {
                         .first,
                     receiverid: _memberid2,
                   );
+                case MessageType.todo:
+                  {
+                    return Text('${_message.content.toString()}');
+                  }
                 default:
                   {
                     return Container();

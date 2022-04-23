@@ -63,20 +63,21 @@ class TakeVideoScreenState extends State<TakeVideoScreen> {
     print(videopath.path);
 
     //await Future.delayed(const Duration(minutes: 1), () => {});
-    /*
+
     //视频上传服务器
     bool isdistracted = await uploadvideo(videopath.path);
     if (isdistracted) {
       //视频上传到firebase storage
-      _cloudStorageService.saveStudentVideoToStorage(
+      String? videourl = await _cloudStorageService.saveStudentVideoToStorage(
           widget.todolistid, videopath);
       //把待办状态更新为分心
       await _database.updateTodoListStatustoDistracted(
           widget.todolistid, widget.pos);
       //发送警告给家长
-      await _database.sendAlarmMessage(widget.parentid, widget.studentid);
+      await _database.sendAlarmMessage(
+          widget.parentid, widget.studentid, videourl!);
     }
-*/
+
     /// 视频名称
     // var name = path.substring(path.lastIndexOf("/") + 1, path.length);
     setState(() {

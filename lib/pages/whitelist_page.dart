@@ -69,7 +69,6 @@ class _WhiteListPageState extends State<WhiteListPage> {
             FlatButton(
               child: Text("取消"),
               onPressed: () {
-                print('in the cancel alert the context is $context');
                 //tmp = false;
                 is_sent = false;
                 //_navigation.goBack();
@@ -79,7 +78,6 @@ class _WhiteListPageState extends State<WhiteListPage> {
             FlatButton(
                 child: const Text("确定"),
                 onPressed: () {
-                  print('in the continue alert the context is $context');
                   is_sent = true;
                   //Navigator.pop(context, str);
                   //_navigation.goBack();

@@ -100,7 +100,6 @@ class _AddFriendsPageState extends State<AddFriendsPage> {
 
   //Submitted by email
   void _EmailhandleSubmitted(text) {
-    //print(_EmailtextController.text);
     addfriend(1);
 
     _EmailtextController.clear();
@@ -111,7 +110,6 @@ class _AddFriendsPageState extends State<AddFriendsPage> {
 
   //Submitted by user name
   void _NamehandleSubmitted(text) {
-    //print(_NametextController.text);
     addfriend(2);
 
     _NametextController.clear();
