@@ -10,16 +10,21 @@ import 'package:provider/provider.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:flutter_picker/flutter_picker.dart';
 import 'dart:convert';
+
 // Providers
 import '../providers/authentication_provider.dart';
 import '../providers/todolist_provider.dart';
+
 //pages
 import 'package:chatifyapp/pages/todolist_page.dart';
+
 // Services
 import '../services/navigation_service.dart';
 import '../services/database_service.dart';
+
 // Widgets
 import '../widgets/top_bar.dart';
+
 //Utils
 import '../utils/showToast.dart';
 
@@ -35,11 +40,14 @@ class _AddTodoListState extends State<AddTodoListPage> {
   DatabaseService _database = GetIt.instance.get<DatabaseService>();
   NavigationService _navigation = GetIt.instance.get<NavigationService>();
   late AuthenticationProvider _auth;
+
   // AuthenticationProvider _auth =
   //     Provider.of<AuthenticationProvider>(getContext);
   // List<TodoListModel> todos = [];
 
   late TodoListPageProvider _pageProvider;
+  late double _deviceWidth;
+  late double _deviceHeight;
   final _biggerFont = const TextStyle(fontSize: 18.0);
   TextEditingController _controller1 = TextEditingController();
   FocusNode _focusNode1 = FocusNode();
@@ -89,6 +97,8 @@ class _AddTodoListState extends State<AddTodoListPage> {
   @override
   Widget build(BuildContext context) {
     _auth = Provider.of<AuthenticationProvider>(context);
+    _deviceHeight = MediaQuery.of(context).size.width;
+    _deviceWidth = MediaQuery.of(context).size.width;
     return MultiProvider(
       providers: [
         ChangeNotifierProvider<TodoListPageProvider>(
@@ -119,153 +129,190 @@ class _AddTodoListState extends State<AddTodoListPage> {
           ),
           body: SafeArea(
               child: Container(
-            color: Colors.white,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.start,
-              mainAxisSize: MainAxisSize.max,
-              children: [
-                TextField(
-                  controller: _controller1,
-                  focusNode: _focusNode1,
-                  maxLength: 20,
-                  decoration: InputDecoration(
-                    hintText: "标题",
-                    contentPadding: const EdgeInsets.symmetric(vertical: 10.0),
-                  ),
-                  onSubmitted: (str) {
-                    print('_TextFieldViewState.buildView--$str');
-                  },
-                  textInputAction: TextInputAction.search,
-                  onChanged: (content) {
-                    print('_TextFieldViewState.buildView-changed:$content');
-                  },
-                ),
-                TextField(
-                  controller: _controller2,
-                  focusNode: _focusNode2,
-                  maxLength: 100,
-                  maxLines: 5,
-                  decoration: InputDecoration(
-                      hintText: "备注",
-                      contentPadding: EdgeInsets.all(10.0),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(5.0),
-                      )),
-                  onSubmitted: (str) {
-                    print('_TextFieldViewState.buildView--$str');
-                  },
-                  textInputAction: TextInputAction.search,
-                  onChanged: (content) {
-                    print('_TextFieldViewState.buildView-changed:$content');
-                  },
-                ),
-                ListTile(
-                  title: Text("任务时间    " + _intervalStr),
-                  trailing: IconButton(
-                    onPressed: () {
-                      showPickerArray(context);
-                    },
-                    icon: const Icon(
-                      Icons.keyboard_arrow_right,
-                      color: Color.fromRGBO(0, 82, 218, 1),
-                    ),
-                  ),
-                ),
-                if (_auth.user.role == 'Parent')
-                  ListTile(
-                    title: Text("发送到" + "   " + recipientsName.join(' , ')),
-                    trailing: IconButton(
-                      onPressed: () {
-                        List<String>? students = _pageProvider.students;
-                        List<String>? studentsName = _pageProvider.studentsName;
-                        (students == null || studentsName == null)
-                            ? const Center(child: CircularProgressIndicator())
-                            : showModalBottomSheet(
-                                backgroundColor: Colors.transparent,
-                                isScrollControlled: true,
-                                context: context,
-                                builder: (BuildContext context) {
-                                  return StatefulBuilder(
-                                      builder: (context1, setState1) {
-                                    return Container(
-                                      clipBehavior: Clip.antiAlias,
-                                      decoration: const BoxDecoration(
-                                        color: Colors.white,
-                                        borderRadius: BorderRadius.only(
-                                          topLeft: Radius.circular(20.0),
-                                          topRight: Radius.circular(20.0),
-                                        ),
-                                      ),
-                                      height:
-                                          MediaQuery.of(context).size.height /
-                                              2.0,
-                                      child: Column(children: [
-                                        _getModalSheetHeaderWithConfirm(
-                                          '发送到',
-                                          onCancel: () {
-                                            Navigator.of(context).pop();
-                                          },
-                                          onConfirm: () {
-                                            setState1(() {
-                                              recipients = [];
-                                              recipientsName = [];
-                                              selected.forEach((e) {
-                                                recipients.add(students[e]);
-                                                recipientsName
-                                                    .add(studentsName[e]);
-                                              });
-                                            });
+                  color: Colors.white,
+                  child: Container(
+                    padding:
+                        EdgeInsets.symmetric(horizontal: .03 * _deviceWidth),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.max,
+                      children: [
+                        TextField(
+                          controller: _controller1,
+                          focusNode: _focusNode1,
+                          maxLength: 20,
+                          decoration: const InputDecoration(
+                            hintText: "标题",
+                            contentPadding:
+                                EdgeInsets.symmetric(vertical: 10.0),
+                          ),
+                          onSubmitted: (str) {
+                            print('_TextFieldViewState.buildView--$str');
+                          },
+                          textInputAction: TextInputAction.search,
+                          onChanged: (content) {
+                            print(
+                                '_TextFieldViewState.buildView-changed:$content');
+                          },
+                        ),
+                        TextField(
+                          controller: _controller2,
+                          focusNode: _focusNode2,
+                          maxLength: 100,
+                          maxLines: 5,
+                          decoration: InputDecoration(
+                              hintText: "备注",
+                              contentPadding: const EdgeInsets.all(10.0),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(5.0),
+                              )),
+                          onSubmitted: (str) {
+                            print('_TextFieldViewState.buildView--$str');
+                          },
+                          textInputAction: TextInputAction.search,
+                          onChanged: (content) {
+                            print(
+                                '_TextFieldViewState.buildView-changed:$content');
+                          },
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text("任务时间    " + _intervalStr),
+                            IconButton(
+                              onPressed: () {
+                                showPickerArray(context);
+                              },
+                              icon: const Icon(
+                                Icons.keyboard_arrow_right,
+                                color: Color.fromRGBO(0, 82, 218, 1),
+                              ),
+                            ),
+                          ],
+                        ),
+                        // ListTile(
+                        //   title: Text("任务时间    " + _intervalStr),
+                        //   trailing: IconButton(
+                        //     onPressed: () {
+                        //       showPickerArray(context);
+                        //     },
+                        //     icon: const Icon(
+                        //       Icons.keyboard_arrow_right,
+                        //       color: Color.fromRGBO(0, 82, 218, 1),
+                        //     ),
+                        //   ),
+                        // ),
+                        if (_auth.user.role == 'Parent')
+                          ListTile(
+                            title: Text(
+                                "发送到" + "   " + recipientsName.join(' , ')),
+                            trailing: IconButton(
+                              onPressed: () {
+                                List<String>? students = _pageProvider.students;
+                                List<String>? studentsName =
+                                    _pageProvider.studentsName;
+                                (students == null || studentsName == null)
+                                    ? const Center(
+                                        child: CircularProgressIndicator())
+                                    : showModalBottomSheet(
+                                        backgroundColor: Colors.transparent,
+                                        isScrollControlled: true,
+                                        context: context,
+                                        builder: (BuildContext context) {
+                                          return StatefulBuilder(
+                                              builder: (context1, setState1) {
+                                            return Container(
+                                              clipBehavior: Clip.antiAlias,
+                                              decoration: const BoxDecoration(
+                                                color: Colors.white,
+                                                borderRadius: BorderRadius.only(
+                                                  topLeft:
+                                                      Radius.circular(20.0),
+                                                  topRight:
+                                                      Radius.circular(20.0),
+                                                ),
+                                              ),
+                                              height: MediaQuery.of(context)
+                                                      .size
+                                                      .height /
+                                                  2.0,
+                                              child: Column(children: [
+                                                _getModalSheetHeaderWithConfirm(
+                                                  '发送到',
+                                                  onCancel: () {
+                                                    Navigator.of(context).pop();
+                                                  },
+                                                  onConfirm: () {
+                                                    setState1(() {
+                                                      recipients = [];
+                                                      recipientsName = [];
+                                                      selected.forEach((e) {
+                                                        recipients
+                                                            .add(students[e]);
+                                                        recipientsName.add(
+                                                            studentsName[e]);
+                                                      });
+                                                    });
 
-                                            Navigator.of(context)
-                                                .pop(selected.toList());
-                                          },
-                                        ),
-                                        const Divider(height: 1.0),
-                                        Expanded(
-                                          child: ListView.builder(
-                                            itemBuilder: (BuildContext context,
-                                                int index) {
-                                              return ListTile(
-                                                trailing: Icon(
-                                                    selected.contains(index)
-                                                        ? Icons.check_box
-                                                        : Icons
-                                                            .check_box_outline_blank,
-                                                    color: Theme.of(context)
-                                                        .primaryColor),
-                                                title:
-                                                    Text(studentsName[index]),
-                                                onTap: () {
-                                                  setState1(() {
-                                                    if (selected
-                                                        .contains(index)) {
-                                                      selected.remove(index);
-                                                    } else {
-                                                      selected.add(index);
-                                                    }
-                                                  });
-                                                },
-                                              );
-                                            },
-                                            itemCount: studentsName.length,
-                                          ),
-                                        ),
-                                      ]),
-                                    );
-                                  });
-                                },
-                              );
-                      },
-                      icon: const Icon(
-                        Icons.keyboard_arrow_right,
-                        color: Color.fromRGBO(0, 82, 218, 1),
-                      ),
+                                                    Navigator.of(context)
+                                                        .pop(selected.toList());
+                                                  },
+                                                ),
+                                                const Divider(height: 1.0),
+                                                Expanded(
+                                                  child: ListView.builder(
+                                                    itemBuilder:
+                                                        (BuildContext context,
+                                                            int index) {
+                                                      return ListTile(
+                                                        trailing: Icon(
+                                                            selected.contains(
+                                                                    index)
+                                                                ? Icons
+                                                                    .check_box
+                                                                : Icons
+                                                                    .check_box_outline_blank,
+                                                            color: Theme.of(
+                                                                    context)
+                                                                .primaryColor),
+                                                        title: Text(
+                                                            studentsName[
+                                                                index]),
+                                                        onTap: () {
+                                                          setState1(() {
+                                                            if (selected
+                                                                .contains(
+                                                                    index)) {
+                                                              selected.remove(
+                                                                  index);
+                                                            } else {
+                                                              selected
+                                                                  .add(index);
+                                                            }
+                                                          });
+                                                        },
+                                                      );
+                                                    },
+                                                    itemCount:
+                                                        studentsName.length,
+                                                  ),
+                                                ),
+                                              ]),
+                                            );
+                                          });
+                                        },
+                                      );
+                              },
+                              icon: const Icon(
+                                Icons.keyboard_arrow_right,
+                                color: Color.fromRGBO(0, 82, 218, 1),
+                              ),
+                            ),
+                          ),
+                      ],
                     ),
-                  ),
-              ],
-            ),
-          )),
+                  ))),
         );
       },
     );
