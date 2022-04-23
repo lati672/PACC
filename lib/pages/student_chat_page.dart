@@ -104,7 +104,7 @@ class _StudentChatPageState extends State<StudentChatPage> {
                     fontSize: 16,
                     primaryAction: IconButton(
                       icon: const Icon(
-                        Icons.abc_outlined,
+                        Icons.ac_unit,
                         color: Color.fromRGBO(0, 82, 218, 1),
                       ),
                       onPressed: () async {

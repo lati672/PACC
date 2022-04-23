@@ -14,6 +14,8 @@ import 'package:chatifyapp/services/ssh_service.dart';
 import 'package:ssh2/ssh2.dart';
 import '../services/cloud_storage_service.dart';
 import '../services/database_service.dart';
+// Services
+import '../services/navigation_service.dart';
 
 // A screen that allows users to take a picture using a given camera.
 class TakeVideoScreen extends StatefulWidget {
@@ -49,6 +51,7 @@ class TakeVideoScreenState extends State<TakeVideoScreen> {
   late double _deviceHeight;
 
   bool isVideo = false;
+  NavigationService _navigation = GetIt.instance.get<NavigationService>();
 
   startVideo() async {
     await _controller.startVideoRecording();
@@ -76,6 +79,7 @@ class TakeVideoScreenState extends State<TakeVideoScreen> {
       //发送警告给家长
       await _database.sendAlarmMessage(
           widget.parentid, widget.studentid, videourl!);
+      _showAlertWarn(context);
     }
 
     /// 视频名称
@@ -84,6 +88,29 @@ class TakeVideoScreenState extends State<TakeVideoScreen> {
       isVideo = false;
     });
     widget.setIsVideoOpen(true);
+  }
+
+  //Show Alert based on alert type
+  void _showAlertWarn(BuildContext context) {
+    final alert = AlertDialog(
+      title: const Text("警告"),
+      content: const Text('检测到当前未在学习！'),
+      actions: [
+        FlatButton(
+          child: const Text("确定"),
+          onPressed: () {
+            _navigation.goBack();
+          },
+        ),
+      ],
+    );
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return alert;
+      },
+    );
   }
 
   @override
