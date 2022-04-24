@@ -19,6 +19,7 @@ import 'package:chatifyapp/pages/parent_chat_page.dart';
 //Widget
 import '../widgets/top_bar.dart';
 import '../widgets/rounded_image_network.dart';
+
 // Models
 import 'package:chatifyapp/models/chat_user_model.dart';
 import 'package:chatifyapp/models/chats_model.dart';
@@ -26,6 +27,7 @@ import 'package:chatifyapp/models/chats_model.dart';
 class FriendsPage extends StatefulWidget {
   const FriendsPage({Key? key, required this.role}) : super(key: key);
   final String role;
+
   @override
   _FriendsState createState() => _FriendsState();
 }
@@ -39,12 +41,12 @@ class _FriendsState extends State<FriendsPage> {
   late double _deviceHeight;
   late String role;
   late String id;
+
   Widget Parentbuilder() {
     return Builder(
       builder: (_context) {
         //* Triggers the info in the widgets to render themselves
-        return SafeArea(
-            child: Container(
+        return SizedBox(
           width: _deviceWidth,
           height: _deviceHeight,
           child: Column(
@@ -120,7 +122,7 @@ class _FriendsState extends State<FriendsPage> {
               )),
             ],
           ),
-        ));
+        );
       },
     );
   }
@@ -129,8 +131,7 @@ class _FriendsState extends State<FriendsPage> {
     return Builder(
       builder: (_context) {
         //* Triggers the info in the widgets to render themselves
-        return SafeArea(
-            child: Container(
+        return Container(
           width: _deviceWidth,
           height: _deviceHeight,
           child: Column(
@@ -198,7 +199,7 @@ class _FriendsState extends State<FriendsPage> {
               )),
             ],
           ),
-        ));
+        );
       },
     );
   }

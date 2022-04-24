@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/cupertino.dart';
 import '../models/todo_list_model.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
@@ -38,6 +39,8 @@ class _TodoListState extends State<TodoListPage> {
   late AuthenticationProvider _auth;
 
   late TodoListPageProvider _pageProvider;
+  late double _deviceWidth;
+  late double _deviceHeight;
   final _biggerFont = const TextStyle(fontSize: 18.0);
 
   @override
@@ -49,6 +52,8 @@ class _TodoListState extends State<TodoListPage> {
   @override
   Widget build(BuildContext context) {
     _auth = Provider.of<AuthenticationProvider>(context);
+    _deviceWidth = MediaQuery.of(context).size.width;
+    _deviceHeight = MediaQuery.of(context).size.height;
     return MultiProvider(
       providers: [
         ChangeNotifierProvider<TodoListPageProvider>(
@@ -65,9 +70,10 @@ class _TodoListState extends State<TodoListPage> {
       builder: (_context) {
         //* Triggers the info in the widgets to render themselves
         _pageProvider = _context.watch<TodoListPageProvider>();
-        return Scaffold(
-          body: SafeArea(
-              child: Column(
+        return SizedBox(
+          height: _deviceHeight,
+          width: _deviceWidth,
+          child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.start,
             mainAxisSize: MainAxisSize.max,
@@ -85,15 +91,20 @@ class _TodoListState extends State<TodoListPage> {
                   },
                   icon: const Icon(
                     Icons.add,
-                    color: Color.fromRGBO(0, 82, 218, 1),
+                    color: Colors.white,
                   ),
                 ),
               ),
               // _todosList(),
-              Expanded(child: _todosList()),
+              Expanded(child: Container(
+                color:const Color.fromRGBO(240, 240, 240, 1),
+                child: _todosList(),
+              ))
+
+
               // _todosList(),
             ],
-          )),
+          ),
         );
       },
     );
@@ -114,72 +125,80 @@ class _TodoListState extends State<TodoListPage> {
                   fontSize: 18.0,
                 ),
               ))
-            : ListView.builder(
-                scrollDirection: Axis.vertical,
-                shrinkWrap: true,
-                padding: const EdgeInsets.all(16.0),
-                itemCount: todos.length,
-                itemBuilder: (BuildContext context, int index) {
-                  int pos = 0;
-                  for (var i = 0; i < todos[index].recipients.length; i++) {
-                    if (todos[index].recipients[i] == _auth.user.uid) {
-                      pos = i;
-                      break;
+            : MediaQuery.removePadding(
+                removeTop: true,
+                context: context,
+                child: ListView.separated(
+                  padding: EdgeInsets.symmetric(horizontal: _deviceWidth*.03),
+                  scrollDirection: Axis.vertical,
+                  shrinkWrap: true,
+                  //padding: const EdgeInsets.all(16.0),
+                  itemCount: todos.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    int pos = 0;
+                    for (var i = 0; i < todos[index].recipients.length; i++) {
+                      if (todos[index].recipients[i] == _auth.user.uid) {
+                        pos = i;
+                        break;
+                      }
                     }
-                  }
-                  return Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: <Widget>[
-                        ListTile(
-                          tileColor: Colors.lightBlueAccent,
-                          textColor: Colors.white,
-                          title: Text(
-                            todos[index].todolist_name,
-                            style: _biggerFont,
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                          subtitle: Text(
-                            todos[index].description,
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                          trailing: _auth.user.role == 'Student'
-                              ? FlatButton(
-                                  child: const Text(
-                                    "开始",
-                                    style: TextStyle(color: Colors.white),
-                                  ),
-                                  onPressed: () {
-                                    _navigation.navigateToPage(PomodoroPage(
-                                        todo: todos[index],
-                                        todoID: todosID?[index],
-                                        index: pos,
-                                        cameras: widget.cameras));
-                                  })
-                              : const Text(
-                                  '占位空白view，透明',
-                                  style: TextStyle(
-                                    color: Colors.lightBlueAccent,
-                                  ),
-                                ),
-                          onTap: () {
-                            _navigation.navigateToPage(UpdateTodoListPage(
-                                todo: todos[index],
-                                todoID: todosID?[index],
-                                index: index));
-                          },
-                        ),
-                        const Divider(
-                          height: 7.0,
-                          indent: 0.0,
-                          color: Colors.white,
-                        )
-                      ]
-                      // )
-                      );
-                },
-              );
+                    return Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: <Widget>[
+                          Container(
+                            decoration: BoxDecoration(borderRadius: BorderRadius.circular(10), color: Colors.white),
+                            child: ListTile(
+                              //tileColor: Colors.lightBlueAccent,
+                              textColor: Colors.black,
+                              title: Text(
+                                todos[index].todolist_name,
+                                style: _biggerFont,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                              subtitle: Text(
+                                todos[index].description,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                              trailing: _auth.user.role == 'Student'
+                                  ? TextButton(
+                                      onPressed: () {
+                                        _navigation.navigateToPage(PomodoroPage(
+                                            todo: todos[index],
+                                            todoID: todosID?[index],
+                                            index: pos,
+                                            cameras: widget.cameras));
+                                      },
+                                      child: const Text(
+                                        "开始",
+                                        style: TextStyle(color: Colors.black),
+                                      ),
+                                    )
+                                  : const Text(
+                                      '占位空白view，透明',
+                                      style: TextStyle(
+                                        color: Colors.lightBlueAccent,
+                                      ),
+                                    ),
+                              onTap: () {
+                                _navigation.navigateToPage(UpdateTodoListPage(
+                                    todo: todos[index],
+                                    todoID: todosID?[index],
+                                    index: index));
+                              },
+                            ),
+                          )
+                        ]
+                        // )
+                        );
+                  },
+                  separatorBuilder: (BuildContext context, int index) {
+                    return const SizedBox(
+                      height: 10.0,
+                    );
+                  },
+                ));
   }
 
   _getRequests() async {}

@@ -63,8 +63,7 @@ class _ChatsPageState extends State<ChatsPage> {
       builder: (_context) {
         //* Triggers the info in the widgets to render themselves
         _pageProvider = _context.watch<ChatsPageProvider>();
-        return SafeArea(
-            child: Container(
+        return SizedBox(
           width: _deviceWidth,
           height: _deviceHeight,
           child: Column(
@@ -76,7 +75,7 @@ class _ChatsPageState extends State<ChatsPage> {
               _chatsList(),
             ],
           ),
-        ));
+        );
       },
     );
   }
@@ -88,14 +87,17 @@ class _ChatsPageState extends State<ChatsPage> {
       child: (() {
         if (_chats != null) {
           if (_chats.isNotEmpty) {
-            return ListView.builder(
-              itemCount: _chats.length,
-              itemBuilder: (BuildContext _context, int _index) {
+            return MediaQuery.removePadding(
+                removeTop: true,
+                context: context,
+                child: ListView.builder(
+                  itemCount: _chats.length,
+                  itemBuilder: (BuildContext _context, int _index) {
                 return _chatTile(
                   _chats[_index],
                 );
-              },
-            );
+                  },
+                ));
           } else {
             return const Center(
               child: Text(

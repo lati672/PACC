@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:provider/provider.dart';
 import 'dart:async';
+
 // Widgets
 import '../widgets/top_bar.dart';
 import '../widgets/custom_list_view_tiles.dart';
@@ -55,7 +56,6 @@ class _StudentChatPageState extends State<StudentChatPage> {
   Widget build(BuildContext context) {
     // * Initializations
     _database = GetIt.instance.get<DatabaseService>();
-    _deviceTop = MediaQuery.of(context).padding.top;
     _deviceWidth = MediaQuery.of(context).size.width;
     _deviceHeight = MediaQuery.of(context).size.height;
     _auth = Provider.of<AuthenticationProvider>(context);
@@ -90,10 +90,9 @@ class _StudentChatPageState extends State<StudentChatPage> {
         _pageProvider = _context.watch<ChatPageProvider>();
 
         return Scaffold(
-            body: SizedBox(
-          width: _deviceWidth,
-          height: _deviceHeight,
-          child: SafeArea(
+          body: SizedBox(
+            width: _deviceWidth,
+            height: _deviceHeight,
             child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.start,
@@ -104,8 +103,8 @@ class _StudentChatPageState extends State<StudentChatPage> {
                     fontSize: 16,
                     primaryAction: IconButton(
                       icon: const Icon(
-                        Icons.ac_unit,
-                        color: Color.fromRGBO(0, 82, 218, 1),
+                        Icons.architecture,
+                        color: Colors.white,
                       ),
                       onPressed: () async {
                         await _database.addAlarmToChat(
@@ -120,7 +119,7 @@ class _StudentChatPageState extends State<StudentChatPage> {
                       },
                       icon: const Icon(
                         Icons.arrow_back_ios,
-                        color: Color.fromRGBO(0, 82, 218, 1),
+                        color: Colors.white,
                       ),
                     ),
                   ),
@@ -174,7 +173,7 @@ class _StudentChatPageState extends State<StudentChatPage> {
                       )),
                 ]),
           ),
-        ));
+        );
       },
     );
   }

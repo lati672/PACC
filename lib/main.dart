@@ -1,5 +1,8 @@
+
+
 import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
+import 'package:flutter/services.dart';
 
 // Packages
 import 'package:provider/provider.dart';
@@ -15,6 +18,7 @@ import './pages/splash_page.dart';
 import './pages/login_page.dart';
 import './pages/register_page.dart';
 import './pages/home_page.dart';
+import 'dart:io';
 
 List<CameraDescription> cameras = [];
 
@@ -24,6 +28,14 @@ Future<Null> main() async {
     cameras = await availableCameras();
   } on CameraException catch (e) {
     print('Error: $e.code\nError Message: $e.message');
+  }
+  //顶部状态栏透明
+  if (Platform.isAndroid) {
+    // 设置Appbar上面的电池显示的状态栏的背景与颜色
+    SystemUiOverlayStyle systemUiOverlayStyle =
+    const SystemUiOverlayStyle(statusBarColor: Colors.transparent);
+    SystemChrome.setSystemUIOverlayStyle(systemUiOverlayStyle);
+    // SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: []); //隐藏状态栏
   }
   runApp(
     SplashPage(
