@@ -120,6 +120,7 @@ class _StatsPageState extends State<StatsPage> {
     _deviceWidth = MediaQuery.of(context).size.width;
     _deviceHeight = MediaQuery.of(context).size.height;
     _auth = Provider.of<AuthenticationProvider>(context);
+
     _navigation = GetIt.instance.get<NavigationService>();
     return Scaffold(
         body: SafeArea(
@@ -176,7 +177,7 @@ class _StatsPageState extends State<StatsPage> {
                 });
                 for (var i = 0; i < todos.length; i++) {
                   for (var j = 0; j < todos[i].recipients.length; j++) {
-                    if (todos[i].recipients[j] == _auth.user.uid) {
+                    if (todos[i].recipients[j] == widget.uid) {
                       pos.add(j);
                       break;
                     }
