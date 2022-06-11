@@ -1,4 +1,5 @@
 // Packages
+import 'package:PACCPolicyapp/pages/register/register_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
@@ -8,7 +9,7 @@ import '../services/database_service.dart';
 import '../services/navigation_service.dart';
 
 // Models
-import 'package:chatifyapp/models/chat_user_model.dart';
+import 'package:PACCPolicyapp/models/chat_user_model.dart';
 
 class AuthenticationProvider extends ChangeNotifier {
   AuthenticationProvider() {
@@ -39,7 +40,8 @@ class AuthenticationProvider extends ChangeNotifier {
                 }
               }
               //* Automatic navigates to the home page
-              _navigationService.removeAndNavigateToRoute('/home');
+              if (!isregister)
+                _navigationService.removeAndNavigateToRoute('/home');
             },
           );
         } else {
@@ -64,6 +66,7 @@ class AuthenticationProvider extends ChangeNotifier {
   late final FirebaseAuth _auth;
   late final NavigationService _navigationService;
   late final DatabaseService _databaseService;
+  bool isregister = false;
 
   late ChatUserModel user;
 
@@ -72,6 +75,7 @@ class AuthenticationProvider extends ChangeNotifier {
     try {
       await _auth.signInWithEmailAndPassword(
           email: _email, password: _password);
+      isregister = false;
       debugPrint('${_auth.currentUser}');
     } on FirebaseAuthException {
       debugPrint('Error login user into Firebase.');
@@ -86,6 +90,7 @@ class AuthenticationProvider extends ChangeNotifier {
     String _password,
   ) async {
     try {
+      isregister = true;
       UserCredential _credentials = await _auth.createUserWithEmailAndPassword(
           email: _email, password: _password);
       return _credentials.user!.uid;

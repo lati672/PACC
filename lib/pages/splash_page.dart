@@ -8,7 +8,7 @@ import 'package:get_it/get_it.dart';
 import '../services/navigation_service.dart';
 import '../services/media_service.dart';
 import '../services/cloud_storage_service.dart';
-import 'package:chatifyapp/services/database_service.dart';
+import 'package:PACCPolicyapp/services/database_service.dart';
 
 class SplashPage extends StatefulWidget {
   const SplashPage({
@@ -39,7 +39,7 @@ class _SplashPageState extends State<SplashPage> {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'Chatify',
+      title: 'PACC Policy',
       theme: ThemeData(
         backgroundColor: const Color.fromRGBO(36, 35, 49, 1),
         scaffoldBackgroundColor: const Color.fromRGBO(36, 35, 49, 1),
@@ -54,7 +54,7 @@ class _SplashPageState extends State<SplashPage> {
               image: DecorationImage(
                 fit: BoxFit.contain,
                 image: AssetImage(
-                  'assets/images/logo.png',
+                  'assets/images/tree.png',
                 ),
               ),
             ),

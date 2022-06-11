@@ -1,7 +1,6 @@
 import 'dart:io';
 
 // Packages
-import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -23,25 +22,6 @@ class CloudStorageService {
           _firebaseStorage.ref('images/users/$_uid/profile.${_file.extension}');
       UploadTask _task = _reference.putFile(
         File(_file.path as String),
-      );
-      //* Returning the photo url
-      return await _task.then(
-        (_result) => _result.ref.getDownloadURL(),
-      );
-    } catch (error) {
-      debugPrint('$error');
-    }
-    return null;
-  }
-
-  Future<String?> saveStudentVideoToStorage(String _todoid, XFile _file) async {
-    try {
-      File file = File(_file.path);
-      final _reference =
-          _firebaseStorage.ref('videos/todolists/$_todoid/video.mp4');
-      print(_reference.name);
-      UploadTask _task = _reference.putFile(
-        file,
       );
       //* Returning the photo url
       return await _task.then(
@@ -76,7 +56,7 @@ class CloudStorageService {
   Future<String?> saveDefaultUserImageProfileToStorage(String _uid) async {
     try {
       final _reference = _firebaseStorage.ref('images/users/$_uid/profile.jpg');
-      String img = 'assets/images/default-image.jpg';
+      String img = 'assets/images/default-profile-icon.jpg';
       String imageName = img
           .substring(img.lastIndexOf("/"), img.lastIndexOf("."))
           .replaceAll("/", "");

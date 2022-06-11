@@ -6,7 +6,6 @@ class ChatUserModel {
     required this.name,
     required this.email,
     required this.imageUrl,
-    required this.role,
     required this.lastActive,
   });
 
@@ -14,7 +13,6 @@ class ChatUserModel {
   final String name;
   final String email;
   final String imageUrl;
-  final String role;
   late DateTime lastActive;
 
   factory ChatUserModel.fromJson(Map<String, dynamic> _json) {
@@ -23,12 +21,9 @@ class ChatUserModel {
       name: _json['name'],
       email: _json['email'],
       imageUrl: _json['image'],
-      role: _json['role'],
       lastActive: _json['last_active'].toDate(),
     );
   }
-
-  
 
   String lastDayActive() {
     return '${lastActive.month}/${lastActive.day}/${lastActive.year}';

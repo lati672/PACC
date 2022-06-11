@@ -1,4 +1,4 @@
-# chatifyapp
+# PACC Policy app
 
 A new Flutter project.
 

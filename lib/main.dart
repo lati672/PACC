@@ -1,7 +1,4 @@
-
-
 import 'package:flutter/material.dart';
-import 'package:camera/camera.dart';
 import 'package:flutter/services.dart';
 
 // Packages
@@ -11,32 +8,16 @@ import 'package:provider/provider.dart';
 import './services/navigation_service.dart';
 
 // Providers
-import 'package:chatifyapp/providers/authentication_provider.dart';
+import 'package:PACCPolicyapp/providers/authentication_provider.dart';
 
 // pages
-import './pages/splash_page.dart';
-import './pages/login_page.dart';
-import './pages/register_page.dart';
-import './pages/home_page.dart';
+import 'package:PACCPolicyapp/pages/splash_page.dart';
+import 'package:PACCPolicyapp/pages/login/login_page.dart';
+import 'package:PACCPolicyapp/pages/register/register_page.dart';
+import 'package:PACCPolicyapp/pages/home/home_page.dart';
 import 'dart:io';
 
-List<CameraDescription> cameras = [];
-
-Future<Null> main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  try {
-    cameras = await availableCameras();
-  } on CameraException catch (e) {
-    print('Error: $e.code\nError Message: $e.message');
-  }
-  //顶部状态栏透明
-  if (Platform.isAndroid) {
-    // 设置Appbar上面的电池显示的状态栏的背景与颜色
-    SystemUiOverlayStyle systemUiOverlayStyle =
-    const SystemUiOverlayStyle(statusBarColor: Colors.transparent);
-    SystemChrome.setSystemUIOverlayStyle(systemUiOverlayStyle);
-    // SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: []); //隐藏状态栏
-  }
+void main() {
   runApp(
     SplashPage(
       key: UniqueKey(),
@@ -60,7 +41,7 @@ class MainApp extends StatelessWidget {
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
-        title: 'Chatify',
+        title: 'PACC Policy app',
         theme: ThemeData(
           backgroundColor: const Color.fromRGBO(255, 255, 255, 1),
           scaffoldBackgroundColor: const Color.fromRGBO(255, 255, 255, 1),
@@ -76,7 +57,7 @@ class MainApp extends StatelessWidget {
         routes: {
           '/login': (BuildContext _context) => const LoginPage(),
           '/register': (BuildContext _context) => const RegisterPage(),
-          '/home': (BuildContext _context) => HomePage(cameras: cameras),
+          '/home': (BuildContext _context) => HomePage(),
         },
       ),
     );
