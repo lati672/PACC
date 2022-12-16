@@ -1,3 +1,7 @@
+/*
+Summary of File:.
+  This file contains codes which is the entrance of the app.
+*/
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 

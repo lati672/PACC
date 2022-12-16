@@ -66,13 +66,14 @@ class CommentProvider extends ChangeNotifier {
     }
   }
 
-  void sendComment(String threadid, String comment) {
+  void sendComment(String threadid, String comment) async {
     final _commentToAdd = CommentModel(
         avatar: _auth.user.imageUrl,
         username: _auth.user.name,
         time: DateTime.now(),
         comment: comment);
-    _database.addComment(threadid, _commentToAdd);
+    await _database.addComment(threadid, _commentToAdd);
+    notifyListeners();
   }
 
   void vote(String threadid) async {

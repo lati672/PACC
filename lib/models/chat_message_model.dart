@@ -1,12 +1,14 @@
+/*
+Summary of File:
+  This file contains codes which define the chat message model.
+  There are 
+*/
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 enum MessageType {
   text,
   image,
-  whitelist,
-  confirm,
-  todo,
   unknown,
 }
 
@@ -33,15 +35,6 @@ class ChatMessage {
       case 'image':
         _messageType = MessageType.image;
         break;
-      case 'whitelist':
-        _messageType = MessageType.whitelist;
-        break;
-      case 'confirm':
-        _messageType = MessageType.confirm;
-        break;
-      case 'todo':
-        _messageType = MessageType.todo;
-        break;
       default:
         _messageType = MessageType.unknown;
     }
@@ -62,18 +55,6 @@ class ChatMessage {
         {
           return MessageType.image;
         }
-      case 'whitelist':
-        {
-          return MessageType.whitelist;
-        }
-      case 'confirm':
-        {
-          return MessageType.confirm;
-        }
-      case 'todo':
-        {
-          return MessageType.todo;
-        }
       default:
         {
           return MessageType.unknown;
@@ -89,15 +70,6 @@ class ChatMessage {
         break;
       case MessageType.image:
         _messageType = 'image';
-        break;
-      case MessageType.whitelist:
-        _messageType = 'whitelist';
-        break;
-      case MessageType.confirm:
-        _messageType = 'confirm';
-        break;
-      case MessageType.todo:
-        _messageType = 'todo';
         break;
       default:
         _messageType = '';

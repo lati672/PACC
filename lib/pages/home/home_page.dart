@@ -1,3 +1,8 @@
+/*
+Summary of File:
+  This file contains codes is the home page.
+  Include navigator bar in the bottom.
+*/
 // Packages
 
 import 'package:PACCPolicyapp/pages/threads/thread.dart';

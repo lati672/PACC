@@ -1,3 +1,8 @@
+/*
+Summary of File:
+  This file contains codes which define the comment model and how the data are transformed with database.
+
+*/
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class CommentModel {
@@ -28,6 +33,7 @@ class CommentModel {
     };
   }
 
+  //This function is for test
   void output() {
     print('avatar:$avatar, username:$username, time:$time, comment:$comment');
   }

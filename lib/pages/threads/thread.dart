@@ -77,26 +77,6 @@ class _ThreadPageState extends State<ThreadPage> {
           width: _deviceWidth,
           height: _deviceHeight,
           child: _Thread(),
-          /*Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.start,
-            mainAxisSize: MainAxisSize.max,
-            children: [
-              TopBar(
-                'Thread',
-                secondaryAction: IconButton(
-                  onPressed: () {
-                    _navigation.goBack();
-                  },
-                  icon: const Icon(
-                    Icons.arrow_back_ios,
-                    color: Colors.white,
-                  ),
-                ),
-              ),
-              _Thread(),
-            ],
-          ),*/
         ),
       );
     });
@@ -120,22 +100,11 @@ class _ThreadPageState extends State<ThreadPage> {
   Widget scroll() {
     ThreadModel _thread = _pageProvider.thread!;
     bool voted = _thread.votedusers.contains(_auth.user.uid) ? true : false;
-    print('$_deviceHeight, $_deviceWidth');
+    //print('$_deviceHeight, $_deviceWidth');
     return CustomScrollView(
       slivers: [
         SliverAppBar(
           toolbarHeight: 70,
-          /*title: Row(mainAxisAlignment: MainAxisAlignment.start, children: [
-            /* IconButton(
-              onPressed: () {
-                _navigation.goBack();
-              },
-              icon: const Icon(
-                Icons.arrow_back_ios,
-                color: Colors.white,
-              ),
-            ),*/
-          ]),*/
           bottom: PreferredSize(
               preferredSize: const Size.fromHeight(20),
               child: Container(
@@ -159,7 +128,7 @@ class _ThreadPageState extends State<ThreadPage> {
           expandedHeight: _deviceHeight * 0.15,
           flexibleSpace: FlexibleSpaceBar(
             background: Image.asset(
-              'assets/images/background_tree.jpg',
+              'assets/images/top_tree.jpg',
               width: double.maxFinite,
               fit: BoxFit.cover,
             ),
@@ -227,92 +196,6 @@ class _ThreadPageState extends State<ThreadPage> {
             ],
           ),
         )
-      ],
-    );
-  }
-
-  Widget forum(ThreadModel _thread) {
-    // print('in the forum');
-    //_thread.output;
-    bool voted = _thread.votedusers.contains(_auth.user.uid) ? true : false;
-    return Column(
-      children: <Widget>[
-        Container(
-          width: _deviceWidth * 0.9,
-          decoration: const BoxDecoration(
-            color: Color.fromARGB(255, 46, 170, 223),
-            borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(10.0),
-                topRight: Radius.circular(10.0)),
-          ),
-          child: Row(
-            children: <Widget>[
-              const Padding(padding: EdgeInsets.only(left: 2.0)),
-              RoundedImageNetwork(
-                  imagePath: _thread.avatar, size: _deviceWidth * 0.1),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    Text(_thread.username),
-                    Text(timeago.format(_thread.time)),
-                  ],
-                ),
-              ),
-              Row(
-                children: <Widget>[
-                  Padding(
-                      padding: const EdgeInsets.all(2.0),
-                      child: IconButton(
-                        icon: Icon(
-                          Icons.thumb_up,
-                          color: voted ? Colors.green : Colors.white,
-                        ),
-                        onPressed: () {
-                          _pageProvider.vote(_thread.id);
-                        },
-                      )),
-                  Padding(
-                    padding: const EdgeInsets.all(2.0),
-                    child: Text(_thread.likes.toString()),
-                  ),
-                  const Padding(padding: EdgeInsets.only(right: 2.0)),
-                ],
-              )
-            ],
-          ),
-        ),
-        Container(
-          width: _deviceWidth * 0.9,
-          margin: const EdgeInsets.only(left: 2.0, right: 2.0),
-          padding: const EdgeInsets.all(8.0),
-          decoration: BoxDecoration(
-            color: Colors.grey[200],
-          ),
-          child: Text(
-            _thread.title,
-            style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-          ),
-        ),
-        Container(
-          width: _deviceWidth * 0.9,
-          margin: const EdgeInsets.only(left: 2.0, right: 2.0, bottom: 2.0),
-          padding: const EdgeInsets.all(8.0),
-          decoration: BoxDecoration(
-              color: Colors.grey[200],
-              borderRadius: const BorderRadius.only(
-                  bottomLeft: Radius.circular(20.0),
-                  bottomRight: Radius.circular(20.0))),
-          child: Text(_thread.body.replaceAll("<br>", "\n")),
-        ),
-        _buildTextComposer(_thread.id),
-        _thread.comments == null
-            ? const Center(
-                child: CircularProgressIndicator(
-                  color: Colors.blue,
-                ),
-              )
-            : comments(_thread.comments!)
       ],
     );
   }
@@ -387,10 +270,17 @@ class _ThreadPageState extends State<ThreadPage> {
         itemBuilder: (BuildContext _context, int _index) {
           return Column(
             children: <Widget>[
+              Divider(
+                indent: _deviceWidth * 0.05,
+                endIndent: _deviceWidth * 0.05,
+                thickness: 1.5,
+                color: Colors.grey,
+              ),
               Container(
                 width: _deviceWidth * 0.9,
                 decoration: const BoxDecoration(
-                  color: Color.fromARGB(255, 46, 170, 223),
+                  //color: Color.fromARGB(255, 129, 155, 4),
+                  color: Colors.grey,
                   borderRadius: BorderRadius.only(
                       topLeft: Radius.circular(20.0),
                       topRight: Radius.circular(20.0)),

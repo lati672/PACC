@@ -57,11 +57,6 @@ class ThreadsProvider extends ChangeNotifier {
             ).toList(),
           );
           notifyListeners();
-          /*if (threads != null) {
-            for (var i = 0; i < threads!.length; i++) {
-              threads![i].output();
-            }
-          }*/
         },
       );
     } catch (error) {

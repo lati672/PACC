@@ -45,8 +45,9 @@ dependencies:
   flutter_keyboard_visibility: ^5.1.0
   timeago: ^3.2.2
   get: ^4.6.1
-
-
+  filesystem_picker: ^2.0.1
+  flutter_quill: ^5.0.3
+  universal_html: ^2.0.8
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -72,7 +73,7 @@ flutter:
   assets:
     - assets/images/background_tree.jpg
     - assets/images/
-    - assets/images/whiteList.png
+    - assets/images/top_tree.jpg
 
   #   - images/a_dot_ham.jpeg
 

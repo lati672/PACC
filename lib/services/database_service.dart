@@ -155,7 +155,7 @@ class DatabaseService {
   }
 
   //add a new comment to the thread
-  void addComment(String _threadid, CommentModel _comment) async {
+  Future<void> addComment(String _threadid, CommentModel _comment) async {
     try {
       await _dataBase
           .collection(threadsCollection)

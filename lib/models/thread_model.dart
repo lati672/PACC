@@ -1,3 +1,7 @@
+/*
+Summary of File:
+  This file contains codes which define the Thread model and how the data are transformed with database.
+*/
 import 'package:PACCPolicyapp/models/comment_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
@@ -29,6 +33,7 @@ class ThreadModel {
     comments = _comment;
   }
 
+  //This function is for test
   void output() {
     print('Threads:');
     print(

@@ -1,3 +1,7 @@
+/*
+Summary of File:
+  This file contains codes which pick image from mobile phone.
+*/
 import 'package:file_picker/file_picker.dart';
 
 class MediaService {

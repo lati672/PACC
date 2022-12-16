@@ -1,3 +1,7 @@
+/*
+Summary of File:
+  This file contains codes is a temporary welcome page
+*/
 import 'package:flutter/material.dart';
 
 class BlankPage extends StatelessWidget {

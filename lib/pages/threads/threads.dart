@@ -1,6 +1,7 @@
 // Packages
 import 'package:PACCPolicyapp/models/comment_model.dart';
 import 'package:PACCPolicyapp/models/thread_model.dart';
+import 'package:PACCPolicyapp/pages/editor/editor.dart';
 import 'package:PACCPolicyapp/pages/threads/thread.dart';
 import 'package:PACCPolicyapp/providers/threads_provider.dart';
 import 'package:flutter/material.dart';
@@ -83,8 +84,16 @@ class _ThreadsPageState extends State<ThreadsPage> {
           mainAxisAlignment: MainAxisAlignment.start,
           mainAxisSize: MainAxisSize.max,
           children: [
-            const TopBar(
+            TopBar(
               'Threads',
+              primaryAction: IconButton(
+                onPressed: () {
+                  _navigation.navigateToPage(EditorPage());
+                },
+                icon: const Icon(
+                  Icons.add,
+                ),
+              ),
             ),
             _Threads(),
           ],
